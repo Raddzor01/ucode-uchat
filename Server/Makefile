@@ -3,7 +3,7 @@ CFLAGS = -std=c11 -Wall -Werror -Wextra -Wpedantic -pthread -g
 
 OBJDIR = obj
 SRCDIR = src src/api src/db
-SRVR_INFO_DIR = ../info
+SRVR_INFO_DIR = info
 UCHAT = ../uchat_server
 
 SRC = $(foreach dir, $(SRCDIR), $(wildcard $(dir)/*.c))

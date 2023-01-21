@@ -25,8 +25,10 @@
 #define ADDR "localhost"
 #define LISTEN_BACKLOG 10
 #define MAX_SEND_DATA 4000
-#define SSL_CRT "Server/ssl/cert.crt"
-#define SSL_KEY "Server/ssl/key.key"
+#define ERROR_LOG 1
+#define INFO_LOG 0
+#define SSL_CRT "Server/ssl/server_certificate.crt"
+#define SSL_KEY "Server/ssl/server_key.key"
 
 typedef struct s_user_info {
     char *username;
@@ -41,9 +43,9 @@ typedef struct s_client_info {
 
 void ssl_init(SSL_CTX **ctx);
 void *threads_control(void *arg);
-
+void server_init(struct sockaddr_in *server_address, socklen_t addr_size, int *server_socket, char *port);
 void connect_new_client(SSL* ssl, int client_socket);
 char *read_client_data(SSL *ssl);
 char* get_client_request(SSL* ssl, int length);
 char* read_client_data(SSL *ssl);
-void daemon_init();
+void daemon();

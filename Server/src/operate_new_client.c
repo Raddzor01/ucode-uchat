@@ -5,11 +5,11 @@ void connect_new_client(SSL* ssl, int client_socket) {
     pthread_t thread;
 
     if (SSL_accept(ssl) == -1) {
-        mx_printerr("No SSL accept");
+        mx_logs("No SSL accept from client", 1);
         exit(EXIT_FAILURE);
     }
 
-    int flags = fcntl(client_socket,F_GETFL,0);
+    int flags = fcntl(client_socket, F_GETFL, 0);
     fcntl(client_socket, F_SETFL, flags | O_NONBLOCK);
     fcntl(client_socket, F_SETFD, O_NONBLOCK);
 
@@ -22,17 +22,6 @@ void connect_new_client(SSL* ssl, int client_socket) {
 
 }
 
-// char *read_client_data(SSL *ssl) {
-    
-//     char buffer[MAX_SEND_DATA];
-//     int nbr_of_bytes = SSL_read(ssl, buffer, sizeof(buffer));
-//     if(nbr_of_bytes > 0) {
-//         return mx_strdup(buffer);
-//     } else {
-//         return NULL;
-//     }
-    
-// }
 char* get_client_request(SSL* ssl, int length) {
 
     char buffer[MAX_SEND_DATA] = "";
@@ -64,22 +53,22 @@ char* get_client_request(SSL* ssl, int length) {
 
 } 
 
-// Read client data (a request to be handled)
 char* read_client_data(SSL *ssl) {
 
     char buffer[MAX_SEND_DATA];
-    int bytes = SSL_read(ssl,buffer, MAX_SEND_DATA);
-    if(bytes > 0)
-        printf("Message from client:\n%s\n", buffer);
-    // int n_bytes = 0;
-    // while ((n_bytes = SSL_read(ssl, buffer, MAX_SEND_DATA)) <= 0) {
+    // int bytes = SSL_read(ssl, buffer, MAX_SEND_DATA);
+    // if(bytes > 0)
+    //     mx_logs(buffer, INFO_LOG);
+    int n_bytes = 0;
+    while ((n_bytes = SSL_read(ssl, buffer, MAX_SEND_DATA)) <= 0) {
         
-    //     if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
-    //         continue;
-    //     }
-    //     return NULL;
+        if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
+            continue;
+        }
+        return NULL;
     
-    // }
+    }
+    mx_logs(buffer, INFO_LOG);
     // buffer[n_bytes] = '\0';
     // return mx_strdup(buffer);
     // return get_client_request(ssl, atoi(buffer));

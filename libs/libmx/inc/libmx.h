@@ -74,7 +74,7 @@ t_list *mx_sort_list(t_list*lst, bool(*cmp)(void*, void*));
 
 // additional functions
 
-void logger(const char* info, bool is_error);
+void mx_logs(char* info, bool is_error);
 bool mx_isspace(char c);
 bool mx_isdigit(int c);
 bool mx_isalpha(int c);
