@@ -6,9 +6,13 @@ int main(int argc, char *argv[]) {
         mx_printerr("usage: ./uchat_server [port]\n");
         exit(1);
     }
-    
+
     struct sockaddr_in server_address;
     socklen_t addr_size = sizeof(struct sockaddr_in);
+
+    SSL_CTX *ctx = NULL;
+    SSL *ssl = NULL;
+    ssl_init(&ctx);
 
     server_address.sin_addr.s_addr = INADDR_ANY;
     server_address.sin_family = AF_INET;
@@ -17,9 +21,6 @@ int main(int argc, char *argv[]) {
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
     bind(server_socket, (struct sockaddr *)&server_address, addr_size);
     listen(server_socket, LISTEN_BACKLOG);
-
-    SSL_CTX *ctx = ssl_init();
-    SSL *ssl = NULL;
 
     struct sockaddr_in client_address;
     int client_socket;
@@ -30,7 +31,9 @@ int main(int argc, char *argv[]) {
         	ssl = SSL_new(ctx);
 			SSL_set_fd(ssl, client_socket);
 			
-			// new_client_create(ssl, client_socket);
+			connect_new_client(ssl, client_socket);
+        } else {
+            mx_printerr(strerror(errno));
         }
     }
     

@@ -1,10 +1,11 @@
 CC = clang
-CFLAGS = -std=c11 -Wall -Werror -Wextra -Wpedantic -pthread -g
+# CFLAGS = -std=gnu11 -pthread -g 
+# -Wall -Wextra -Werror -Wpedantic
+CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -pthread
 
 OBJDIR = obj
-SRCDIR = src src/api src/db
-SRVR_INFO_DIR = ../info
-UCHAT = ../uchat_server
+SRCDIR = src src/request_handlers src/gui
+UCHAT = ../uchat
 
 SRC = $(foreach dir, $(SRCDIR), $(wildcard $(dir)/*.c))
 OBJS = $(OBJDIR)/*.o
@@ -19,14 +20,14 @@ SSL_DIR = ../libs/openssl
 SSL_FILES:= ../local_lib/lib
 SSL_INC_FILES:= $(SSL_DIR)
 
-LIB_FLAGS = -lmx -lcjson -lsqlite3 -lssl -lcrypto \
-			-L$(LIBMX_DIR) $(LIBMX_NAME) \
-			-L$(CJSON_DIR) $(CJSON_NAME)
+LIB_FLAGS = -lmx -lcjson -lsqlite3 -lssl -lcrypto\
+			-L$(LIBMX_DIR) $(LIBMX_NAME)\
+			-L$(CJSON_DIR) $(CJSON_NAME)\
+			# -L$(SSL_FILES) -I$(SSL_INC_FILES)
 
 all: clean $(UCHAT)
 
 $(UCHAT):
-	mkdir $(SRVR_INFO_DIR)
 	mkdir $(OBJDIR)
 	$(CC) $(CFLAGS) -c $(SRC)
 	mv *.o $(OBJDIR)
@@ -34,8 +35,7 @@ $(UCHAT):
 
 clean:
 	rm -f $(OBJS)
-	rm -df $(OBJDIR)
-	rm -rdf $(SRVR_INFO_DIR)
+	rm -rdf $(OBJDIR)
 
 uninstall:
 	make clean

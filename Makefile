@@ -14,7 +14,7 @@ CJSON = $(CJSON_DIR)/cjson.a
 SRC = $(SRCDIR)/*.c
 OBJS = $(OBJDIR)/*.o
 
-all: clean $(LIBMX) $(CJSON) $(SERVER)
+all: clean $(LIBMX) $(CJSON) $(SERVER) $(CLIENT)
 
 $(LIBMX):
 	make -sC $(LIBMX_DIR)
