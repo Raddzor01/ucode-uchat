@@ -11,7 +11,7 @@ void *threads_control(void *arg) {
         if(!(request = read_client_data(client_info->ssl))) {
             continue;
         }
-
+        mx_logs(request, INFO_LOG);
         mx_strdel(&request);
     }
     

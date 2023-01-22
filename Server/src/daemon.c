@@ -2,10 +2,9 @@
 
 void daemon() {
 
-    pid_t pid;
     pid_t sid;
-    
-    pid = fork();
+    pid_t pid = fork();
+
     if (pid < 0) {
         perror("fork error");
         exit(1);
