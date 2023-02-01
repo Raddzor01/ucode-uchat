@@ -9,7 +9,7 @@ OBJ_FILES = $(addprefix $(OBJ_DIR)/, $(notdir $(SRC_FILES:%.c=%.o)))
 INC_FILES = $(wildcard $(INC_DIR)/*.h)
 
 CC = clang
-CFLAGS = -std=c11 -Wall -Wextra -Werror -Wpedantic
+CFLAGS = -std=c11 -Wall -Wextra -Werror -Wpedantic -gdwarf-4
 
 all: $(NAME)
 

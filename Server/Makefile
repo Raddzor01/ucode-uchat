@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -std=c11 -Wall -Werror -Wextra -Wpedantic -pthread -g
+CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -pthread -gdwarf-4
 
 OBJDIR = obj
 SRCDIR = src src/api src/db

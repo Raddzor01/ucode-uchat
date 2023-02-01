@@ -15,20 +15,22 @@
 #include <unistd.h>
 #include <errno.h>
 #include <arpa/inet.h>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <stdbool.h>
 #include <pthread.h>
 #include <sqlite3.h>
 #include <time.h>
 
-#define PORT 8230
-#define ADDR "localhost"
 #define LISTEN_BACKLOG 10
-#define MAX_SEND_DATA 4000
+#define MAX_SEND_DATA 1024
+
 #define ERROR_LOG 1
 #define INFO_LOG 0
+
 #define SSL_CRT "Server/ssl/server_certificate.crt"
 #define SSL_KEY "Server/ssl/server_key.key"
+
 
 typedef struct s_user_info {
     char *username;
@@ -41,11 +43,23 @@ typedef struct s_client_info {
     t_user_info *user;
 }   t_client_info;
 
-void ssl_init(SSL_CTX **ctx);
-void *threads_control(void *arg);
-void server_init(struct sockaddr_in *server_address, socklen_t addr_size, int *server_socket, char *port);
+typedef enum e_req_type {
+    REQ_COMMON_MESSAGE,
+    REQ_TEST_RESPONDE,
+    REQ_LOGOUT,
+    REQ_EXIT,
+}   t_req_type;
+
+SSL_CTX *ssl_ctx_init();
+void *thread_control(void *arg);
+int server_init(char *port);
 void connect_new_client(SSL* ssl, int client_socket);
 char *read_client_data(SSL *ssl);
 char* get_client_request(SSL* ssl, int length);
 char* read_client_data(SSL *ssl);
 void daemon();
+t_req_type handle_request(t_client_info *client_info, char *request);
+void usage_error_check(int argc);
+void log_client_conection(struct in_addr sa);
+
+void handle_responde(cJSON *json, t_client_info *client_info);

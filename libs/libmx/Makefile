@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -std=c11 -Wall -Wextra -Werror -Wpedantic -g
+CFLAGS = -std=c11 -Wall -Wextra -Werror -Wpedantic -gdwarf-4
 NAME = libmx.a
 
 OBJ_FOLDER = obj
