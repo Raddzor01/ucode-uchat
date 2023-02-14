@@ -16,10 +16,9 @@
 #include <netinet/in.h>
 #include <stdbool.h>
 #include <pthread.h>
-#include <sqlite3.h>
+// #include <sqlite3.h>
 #include <time.h>
 
-#include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
+#include<gtk/gtk.h>
 
 #define IP_ADDRESS "127.0.0.1"

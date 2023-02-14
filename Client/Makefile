@@ -1,11 +1,16 @@
 CC = clang
+GCC = gcc
 # CFLAGS = -std=gnu11 -pthread -g 
 # -Wall -Wextra -Werror -Wpedantic
+
+GTK_FLAGS = `pkg-config --cflags gtk+-3.0`
+GTK_LIBS_FLAGS = `pkg-config --cflags --libs gtk+-3.0`
+	
 CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -pthread -gdwarf-4
 
 OBJDIR = obj
 SRCDIR = src src/request_handlers src/gui
-UCHAT = ../uchat
+UCHAT = ../ucode-uchat
 
 SRC = $(foreach dir, $(SRCDIR), $(wildcard $(dir)/*.c))
 OBJS = $(OBJDIR)/*.o
@@ -29,9 +34,9 @@ all: clean $(UCHAT)
 
 $(UCHAT):
 	mkdir $(OBJDIR)
-	$(CC) $(CFLAGS) -c $(SRC)
+	$(CC) ${GTK_FLAGS} $(CFLAGS) -c $(SRC) 
 	mv *.o $(OBJDIR)
-	$(CC) $(CFLAGS) -o $(UCHAT) $(OBJS) $(LIB_FLAGS)
+	$(CC) $(CFLAGS) ${GTK_LIB_FLAGS} -o $(UCHAT) $(OBJS) $(LIB_FLAGS)
 
 clean:
 	rm -f $(OBJS)
