@@ -1,5 +1,4 @@
 CC = clang
-GCC = gcc
 # CFLAGS = -std=gnu11 -pthread -g 
 # -Wall -Wextra -Werror -Wpedantic
 
@@ -34,9 +33,10 @@ all: clean $(UCHAT)
 
 $(UCHAT):
 	mkdir $(OBJDIR)
-	$(CC) ${GTK_FLAGS} $(CFLAGS) -c $(SRC) 
+	$(CC) $(CFLAGS) $(GTK_FLAGS) -c $(SRC)
 	mv *.o $(OBJDIR)
-	$(CC) $(CFLAGS) ${GTK_LIB_FLAGS} -o $(UCHAT) $(OBJS) $(LIB_FLAGS)
+	$(CC) $(CFLAGS) $(GTK_LIBS_FLAGS) -o $(UCHAT) $(OBJS) $(LIB_FLAGS)
+	# ${GCC} ${GTKFLAGS} -o chat ./src/*.c ${LIBS}
 
 clean:
 	rm -f $(OBJS)

@@ -72,16 +72,18 @@ void send_message(GtkWidget *entry, GtkTextView *text_view) {
 
 static void send_button_clicked(GtkButton *button, GtkWidget *entry) {
     GtkTextView *text_view;
+    if(button){}
+    (void)entry;
 
     text_view = g_object_get_data (G_OBJECT (entry), "text_view");
     send_message (entry, text_view);
 }
     
-static void create_text_view(GtkWidget *container) {
-    GtkWidget *text_view = gtk_text_view_new();
-    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
-    gtk_container_add(GTK_CONTAINER(container), text_view);
-}
+// static void create_text_view(GtkWidget *container) {
+//     GtkWidget *text_view = gtk_text_view_new();
+//     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
+//     gtk_container_add(GTK_CONTAINER(container), text_view);
+// }
 
 int main(int argc, char **argv) {
     GtkWidget *window;
