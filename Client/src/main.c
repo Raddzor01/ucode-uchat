@@ -72,11 +72,11 @@ void send_message(GtkWidget *entry, GtkTextView *text_view) {
 
 static void send_button_clicked(GtkButton *button, GtkWidget *entry) {
     GtkTextView *text_view;
-    if(button){}
-    (void)entry;
 
     text_view = g_object_get_data (G_OBJECT (entry), "text_view");
     send_message (entry, text_view);
+    button = NULL;
+    button++;
 }
     
 // static void create_text_view(GtkWidget *container) {
@@ -86,6 +86,25 @@ static void send_button_clicked(GtkButton *button, GtkWidget *entry) {
 // }
 
 int main(int argc, char **argv) {
+
+    (void)argc;
+	srand(time(NULL));
+
+	int server_socket = 0;
+	SSL_CTX *ctx = NULL; 
+	SSL *ssl = NULL;
+
+	connect_to_server(argv[1], atoi(argv[2]), &server_socket, &ctx, &ssl);
+	char request_str[100] = "";
+
+	while(true) {
+	    printf("Write message to server:\n");
+	    scanf("%s", request_str);
+        send_to_server(ssl, request_str);
+	}
+
+    printf("2\n");
+
     GtkWidget *window;
     GtkWidget *box;
     GtkWidget *entry;
@@ -126,6 +145,10 @@ int main(int argc, char **argv) {
     gtk_widget_show_all(window);
 
     gtk_main();
+
+    printf("1\n");
+
+    // cock
 
     return 0;
 }
