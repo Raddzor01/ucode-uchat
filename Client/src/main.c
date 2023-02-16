@@ -1,91 +1,12 @@
 #include "../inc/client.h"
-
-SSL *ssl;
-
-int send_to_server(SSL *ssl, const char* request_str) {
-    // int req_len = mx_strlen(request_str);
-	SSL_write(ssl, request_str, mx_strlen(request_str));
-    return 0;
-}
-
-void init_ssl(SSL_CTX **ctx) {
-    SSL_library_init();
-    OpenSSL_add_all_algorithms();
-    SSL_load_error_strings();
-    
-    *ctx = SSL_CTX_new(TLS_client_method());
-    if (*ctx == NULL) {
-		exit(EXIT_FAILURE);
-    } 
-}
-
-void connect_ssl(SSL **ssl, int* server_fd, SSL_CTX **ctx) {
-	*ssl = SSL_new(*ctx);
-	SSL_set_mode(*ssl, SSL_MODE_ASYNC);
-	SSL_set_fd(*ssl, *server_fd);
-
-	if (SSL_connect(*ssl) == -1) {
-        mx_printerr("3");
-		exit(EXIT_FAILURE);
-	}
-}
-
-void connect_to_server(const char* ip_address, int port, int* server_fd, SSL_CTX **ctx, SSL **ssl) {
-    struct sockaddr_in server_addr;
-
-	init_ssl(ctx);
-
-    server_addr.sin_family = AF_INET;
-	// server_addr.sin_addr.s_addr = inet_addr(ip_address);
-    server_addr.sin_addr.s_addr = inet_addr(IP_ADDRESS);
-    ip_address++;
-	// inet_aton(ip_address, &server_addr.sin_addr);
-	// inet_aton();
-	server_addr.sin_port = htons(port);
-	
-	if ((*server_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {		
-		mx_printerr("1");
-		exit(EXIT_FAILURE);
-	}
-
-	if (connect(*server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1) {
-		mx_printerr("2");
-		exit(EXIT_FAILURE);
-	}
-
-	connect_ssl(ssl, server_fd, ctx);
-}
-
-
-void send_message(GtkWidget *entry, GtkTextView *text_view) {
-    GtkTextBuffer *buffer;
-    GtkTextIter iter;
-    const char *text;
-
-    buffer = gtk_text_view_get_buffer (text_view);
-    text = gtk_entry_get_text (GTK_ENTRY (entry));
-    send_to_server(ssl, text);
-    gtk_text_buffer_get_end_iter (buffer, &iter);
-    gtk_text_buffer_insert (buffer, &iter, text, -1);
-    gtk_text_buffer_insert (buffer, &iter, "\n", -1);
-    gtk_entry_set_text (GTK_ENTRY (entry), "");
-    gtk_text_view_scroll_to_iter (text_view, &iter, 0.0, FALSE, 0.0, 0.0);
-}
-
-static void send_button_clicked(GtkButton *button, GtkWidget *entry) {
-    GtkTextView *text_view;
-
-    text_view = g_object_get_data (G_OBJECT (entry), "text_view");
-    send_message (entry, text_view);
-    if(button){}
-        (void)entry;
-}
     
 // static void create_text_view(GtkWidget *container) {
 //     GtkWidget *text_view = gtk_text_view_new();
 //     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
 //     gtk_container_add(GTK_CONTAINER(container), text_view);
 // }
+
+SSL *ssl;
 
 int main(int argc, char **argv) {
 
