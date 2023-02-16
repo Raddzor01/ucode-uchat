@@ -6,7 +6,7 @@ int server_init(char *port) {
     struct sockaddr_in server_address;
     int server_socket;
 
-    daemon();
+    // daemon();
 
     server_address.sin_addr.s_addr = INADDR_ANY;
     server_address.sin_family = AF_INET;

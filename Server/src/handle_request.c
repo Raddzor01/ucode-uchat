@@ -8,8 +8,8 @@ void request_switch(cJSON *json, t_client_info *client_info) {
         case REQ_TEST_RESPONDE:
             mx_logs(cJSON_Print(json), INFO_LOG);
             break;
-        case REQ_COMMON_MESSAGE:
-            handle_responde(json, client_info);
+        case REQ_USER_SIGNUP:
+            user_signup(json, client_info);
             break;
         default:
             mx_logs("Unknown request type", INFO_LOG);
@@ -38,5 +38,3 @@ t_req_type handle_request(t_client_info *client_info, char *request) {
     return type;
 
 }
-
-
