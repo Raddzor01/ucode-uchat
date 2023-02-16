@@ -19,6 +19,6 @@
 // #include <sqlite3.h>
 #include <time.h>
 
-#include<gtk/gtk.h>
+#include <gtk/gtk.h>
 
 #define IP_ADDRESS "127.0.0.1"

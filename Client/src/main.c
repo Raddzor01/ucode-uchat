@@ -1,11 +1,11 @@
 #include "../inc/client.h"
 
+SSL *ssl;
+
 int send_to_server(SSL *ssl, const char* request_str) {
-
-    int req_len = mx_strlen(request_str);
-	SSL_write(ssl, request_str, req_len);
+    // int req_len = mx_strlen(request_str);
+	SSL_write(ssl, request_str, mx_strlen(request_str));
     return 0;
-
 }
 
 void init_ssl(SSL_CTX **ctx) {
@@ -31,13 +31,14 @@ void connect_ssl(SSL **ssl, int* server_fd, SSL_CTX **ctx) {
 }
 
 void connect_to_server(const char* ip_address, int port, int* server_fd, SSL_CTX **ctx, SSL **ssl) {
-
     struct sockaddr_in server_addr;
 
 	init_ssl(ctx);
 
     server_addr.sin_family = AF_INET;
-	server_addr.sin_addr.s_addr = inet_addr(ip_address);
+	// server_addr.sin_addr.s_addr = inet_addr(ip_address);
+    server_addr.sin_addr.s_addr = inet_addr(IP_ADDRESS);
+    ip_address++;
 	// inet_aton(ip_address, &server_addr.sin_addr);
 	// inet_aton();
 	server_addr.sin_port = htons(port);
@@ -59,10 +60,11 @@ void connect_to_server(const char* ip_address, int port, int* server_fd, SSL_CTX
 void send_message(GtkWidget *entry, GtkTextView *text_view) {
     GtkTextBuffer *buffer;
     GtkTextIter iter;
-    const gchar *text;
+    const char *text;
 
     buffer = gtk_text_view_get_buffer (text_view);
     text = gtk_entry_get_text (GTK_ENTRY (entry));
+    send_to_server(ssl, text);
     gtk_text_buffer_get_end_iter (buffer, &iter);
     gtk_text_buffer_insert (buffer, &iter, text, -1);
     gtk_text_buffer_insert (buffer, &iter, "\n", -1);
@@ -75,8 +77,8 @@ static void send_button_clicked(GtkButton *button, GtkWidget *entry) {
 
     text_view = g_object_get_data (G_OBJECT (entry), "text_view");
     send_message (entry, text_view);
-    button = NULL;
-    button++;
+    if(button){}
+        (void)entry;
 }
     
 // static void create_text_view(GtkWidget *container) {
@@ -87,23 +89,16 @@ static void send_button_clicked(GtkButton *button, GtkWidget *entry) {
 
 int main(int argc, char **argv) {
 
-    // (void)argc;
-	// srand(time(NULL));
+    (void)argc;
+	srand(time(NULL));
 
-	// int server_socket = 0;
-	// SSL_CTX *ctx = NULL; 
-	// SSL *ssl = NULL;
+	int server_socket = 0;
+	SSL_CTX *ctx = NULL;
+    ssl = NULL;
 
-	// connect_to_server(argv[1], atoi(argv[2]), &server_socket, &ctx, &ssl);
-	// char request_str[100] = "";
+	connect_to_server(argv[1], atoi(argv[2]), &server_socket, &ctx, &ssl);
 
-	// while(true) {
-	//     printf("Write message to server:\n");
-	//     scanf("%s", request_str);
-    //     send_to_server(ssl, request_str);
-	// }
-
-    // printf("2\n");
+    // normal part
 
     GtkWidget *window;
     GtkWidget *box;
@@ -145,10 +140,6 @@ int main(int argc, char **argv) {
     gtk_widget_show_all(window);
 
     gtk_main();
-
-    printf("1\n");
-
-    // cock
 
     return 0;
 }
