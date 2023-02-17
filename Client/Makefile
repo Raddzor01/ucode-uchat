@@ -9,7 +9,7 @@ CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -pthread -gdwarf-4
 
 OBJDIR = obj
 SRCDIR = src src/request_handlers src/gui
-UCHAT = ../ucode-uchat
+UCHAT = ../uchat
 
 SRC = $(foreach dir, $(SRCDIR), $(wildcard $(dir)/*.c))
 OBJS = $(OBJDIR)/*.o
