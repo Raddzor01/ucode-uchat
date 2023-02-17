@@ -31,8 +31,8 @@
 #define SSL_CRT "Server/ssl/server_certificate.crt"
 #define SSL_KEY "Server/ssl/server_key.key"
 
-#define DB_NAME "Server/src/db/database.db"
-#define SQL_NAME "Server/src/db/db_up.sql"
+#define DB_NAME "Server/db/database.db"
+#define SQL_NAME "Server/db/db_up.sql"
 
 typedef struct s_user_info {
     char *username;
@@ -47,6 +47,7 @@ typedef struct s_client_info {
 
 typedef enum e_req_type {
     REQ_USER_SIGNUP,
+    REQ_USER_LOGIN,
     REQ_TEST_RESPONDE,
     REQ_LOGOUT,
     REQ_EXIT,
@@ -54,6 +55,8 @@ typedef enum e_req_type {
 
 typedef enum e_error_type {
     ERR_SUCCESS,
+    ERR_JSON,
+    ERR_USER_EXISTS
 }   t_error_type;
 
 SSL_CTX *ssl_ctx_init();
@@ -73,6 +76,8 @@ void user_signup(cJSON *json, t_client_info *client_info);
 sqlite3 *db_open();
 int db_init();
 int db_execute_request(char *request);
+int db_check_user_exists(char* username);
+void user_login(cJSON *json, t_client_info *client_info);
 
 void handle_responde(cJSON *json, t_client_info *client_info);
 void send_responde(SSL *ssl, t_req_type req_type, t_error_type err_code);

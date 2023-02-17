@@ -11,6 +11,9 @@ void request_switch(cJSON *json, t_client_info *client_info) {
         case REQ_USER_SIGNUP:
             user_signup(json, client_info);
             break;
+        case REQ_USER_LOGIN:
+            user_login(json, client_info);
+            break;
         default:
             mx_logs("Unknown request type", INFO_LOG);
             break;

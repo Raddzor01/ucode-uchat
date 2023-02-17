@@ -81,3 +81,22 @@ int db_execute_request(char *request) {
     return 0;
 
 }
+
+int db_check_user_exists(char* username) {
+
+    char buff[MAX_BUF_SIZE];
+    sprintf(buff, "SELECT EXISTS (SELECT `id` FROM `users` WHERE `username` = '%s')", username);
+    
+    sqlite3* db = db_open();
+    sqlite3_stmt* stmt;
+
+    sqlite3_prepare_v2(db, buff, -1, &stmt, NULL);
+    sqlite3_step(stmt);
+    int user_exists = sqlite3_column_int64(stmt, 0);
+
+    sqlite3_finalize(stmt);
+    sqlite3_close(db);
+
+    return user_exists;
+
+}
