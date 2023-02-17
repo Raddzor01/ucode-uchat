@@ -2,7 +2,7 @@ CC = clang
 CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -pthread -gdwarf-4
 
 OBJDIR = obj
-SRCDIR = src src/api src/db
+SRCDIR = src src/api db
 SRVR_INFO_DIR = info
 UCHAT = ../uchat_server
 
@@ -14,10 +14,6 @@ LIBMX_NAME = $(LIBMX_DIR)/libmx.a
 
 CJSON_DIR = ../libs/cjson
 CJSON_NAME = $(CJSON_DIR)/libcjson.a
-
-SSL_DIR = ../libs/openssl
-SSL_FILES:= ../local_lib/lib
-SSL_INC_FILES:= $(SSL_DIR)
 
 LIB_FLAGS = -lmx -lcjson -lsqlite3 -lssl -lcrypto \
 			-L$(LIBMX_DIR) $(LIBMX_NAME) \
