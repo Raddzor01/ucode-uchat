@@ -2,8 +2,13 @@
 
 
 int send_to_server(SSL *ssl, const char* request_str) {
-    // int req_len = mx_strlen(request_str);
-	SSL_write(ssl, request_str, mx_strlen(request_str));
+    cJSON *json = cJSON_CreateObject();
+    cJSON_AddStringToObject(json, "name", request_str);
+    cJSON_AddNumberToObject(json, "type", 0);
+    char* json_str = cJSON_PrintUnformatted(json);
+	SSL_write(ssl, json_str, mx_strlen(json_str));
+    cJSON_Delete(json);
+    free(json_str);
     return 0;
 }
 
@@ -24,7 +29,7 @@ void connect_ssl(SSL **ssl, int* server_fd, SSL_CTX **ctx) {
 	SSL_set_fd(*ssl, *server_fd);
 
 	if (SSL_connect(*ssl) == -1) {
-        mx_printerr("3");
+        mx_printerr(strerror(errno));
 		exit(EXIT_FAILURE);
 	}
 }
