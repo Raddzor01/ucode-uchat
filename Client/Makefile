@@ -1,6 +1,10 @@
 CC = clang
 # CFLAGS = -std=gnu11 -pthread -g 
 # -Wall -Wextra -Werror -Wpedantic
+
+GTK_FLAGS = `pkg-config --cflags gtk+-3.0`
+GTK_LIBS_FLAGS = `pkg-config --cflags --libs gtk+-3.0`
+	
 CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -pthread -gdwarf-4
 
 OBJDIR = obj
@@ -25,13 +29,14 @@ LIB_FLAGS = -lmx -lcjson -lsqlite3 -lssl -lcrypto\
 			-L$(CJSON_DIR) $(CJSON_NAME)\
 			# -L$(SSL_FILES) -I$(SSL_INC_FILES)
 
-all: clean $(UCHAT)
+all: uninstall $(UCHAT)
 
 $(UCHAT):
 	mkdir $(OBJDIR)
-	$(CC) $(CFLAGS) -c $(SRC)
+	$(CC) $(CFLAGS) $(GTK_FLAGS) -c $(SRC)
 	mv *.o $(OBJDIR)
-	$(CC) $(CFLAGS) -o $(UCHAT) $(OBJS) $(LIB_FLAGS)
+	$(CC) $(CFLAGS) $(GTK_LIBS_FLAGS) -o $(UCHAT) $(OBJS) $(LIB_FLAGS)
+	# ${GCC} ${GTKFLAGS} -o chat ./src/*.c ${LIBS}
 
 clean:
 	rm -f $(OBJS)

@@ -16,10 +16,35 @@
 #include <netinet/in.h>
 #include <stdbool.h>
 #include <pthread.h>
-#include <sqlite3.h>
+// #include <sqlite3.h>
 #include <time.h>
 
+// #include "glib-2.0/include"
+// #include "glib-2.0/glib/gtypes.h"
+// #include "glib-2.0/glib/galloca.h"
+// #include "glib-2.0/glib.h"
+// #include "gtk-3.0/gdk/gdkconfig.h"
+// #include "gtk-3.0/gdk/gdk.h"
+// #include "gtk-3.0/gtk/gtk.h"
+
 #include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
 
 #define IP_ADDRESS "127.0.0.1"
+
+extern GtkWidget *main_window;
+
+// struct for sending to server
+typedef struct s_info {
+    GtkWidget *entry;
+    SSL *ssl;
+}   t_info;
+
+void send_message(t_info *info, GtkTextView *text_view);
+void send_button_clicked(GtkButton *button, t_info *info);
+int send_to_server(SSL *ssl, const char* request_str);
+void init_ssl(SSL_CTX **ctx);
+void connect_ssl(SSL **ssl, int* server_fd, SSL_CTX **ctx);
+void connect_to_server(const char* ip_address, int port, int* server_fd, SSL_CTX **ctx, SSL **ssl);
+void chat_window(t_info info);
+GtkWidget* create_new_window(char *title, int width, int height, bool resizable);
+void log_menu(t_info info);
