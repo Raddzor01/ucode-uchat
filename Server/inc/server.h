@@ -31,8 +31,8 @@
 #define SSL_CRT "Server/ssl/server_certificate.crt"
 #define SSL_KEY "Server/ssl/server_key.key"
 
-#define DB_NAME "Server/db/database.db"
-#define SQL_NAME "Server/db/db_up.sql"
+#define DB_NAME "Server/src/db/database.db"
+#define SQL_NAME "Server/src/db/db_up.sql"
 
 typedef struct s_user_info {
     char *username;
