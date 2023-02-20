@@ -54,3 +54,5 @@ dkms.conf
 *db
 /uchat
 /uchat_server
+info/
+obj/
