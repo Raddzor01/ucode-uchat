@@ -45,6 +45,6 @@ int send_to_server(SSL *ssl, const char* request_str);
 void init_ssl(SSL_CTX **ctx);
 void connect_ssl(SSL **ssl, int* server_fd, SSL_CTX **ctx);
 void connect_to_server(const char* ip_address, int port, int* server_fd, SSL_CTX **ctx, SSL **ssl);
-void chat_window(t_info info);
+void chat_window(t_info *info);
 GtkWidget* create_new_window(char *title, int width, int height, bool resizable);
-void log_menu(t_info info);
+void log_menu(t_info *info);

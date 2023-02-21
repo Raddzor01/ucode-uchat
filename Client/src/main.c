@@ -31,7 +31,9 @@ int main(int argc, char **argv) {
 
     gtk_init(&argc, &argv);
 
-    log_menu(info);
+    // chat_window(&info);
+
+    log_menu(&info);
 
     gtk_main();
 

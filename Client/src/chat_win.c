@@ -24,7 +24,7 @@ void send_button_clicked(GtkButton *button, t_info *info) {
         (void)info->entry;
 }
 
-void chat_window(t_info info) {
+void chat_window(t_info *info) {
     GtkWidget *box;
     GtkWidget *entry;
     GtkWidget *text_view;
@@ -60,8 +60,8 @@ void chat_window(t_info info) {
 
     send_button = gtk_button_new_with_label("Send");
     gtk_box_pack_start(GTK_BOX(box), send_button, FALSE, FALSE, 0);
-    info.entry = entry;
-    g_signal_connect(send_button, "clicked", G_CALLBACK(send_button_clicked), &info);
+    info->entry = entry;
+    g_signal_connect(send_button, "clicked", G_CALLBACK(send_button_clicked), info);
 
     g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 

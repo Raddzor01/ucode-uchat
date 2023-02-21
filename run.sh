@@ -1,3 +1,3 @@
-make all
-./uchat_server 1
-./ucode-uchat 1 1
+make reinstall
+./uchat_server 8000
+./uchat 1 8000

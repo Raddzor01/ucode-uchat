@@ -14,7 +14,7 @@ void login_clicked(GtkWidget *widget, t_info *info) {
 
     if (g_strcmp0(username, "user") == 0 && g_strcmp0(password, "pass") == 0) {
         // Login successful
-        chat_window(*info);
+        chat_window(info);
     } else {
         // Login failed
     }
@@ -32,7 +32,7 @@ GtkWidget* create_new_window(char *title, int width, int height, bool resizable)
 	return window;
 }
 
-void log_menu(t_info info) {
+void log_menu(t_info *info) {
 
     if (main_window)
         gtk_widget_destroy(main_window);
@@ -60,7 +60,7 @@ void log_menu(t_info info) {
 
     login_button = gtk_button_new_with_label("Login");
     gtk_box_pack_start(GTK_BOX(box), login_button, FALSE, FALSE, 0);
-    g_signal_connect(login_button, "clicked", G_CALLBACK(login_clicked), &info);
+    g_signal_connect(login_button, "clicked", G_CALLBACK(login_clicked), info);
 
     g_signal_connect (main_window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 
