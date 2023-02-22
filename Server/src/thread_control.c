@@ -11,6 +11,8 @@ void *thread_control(void *arg) {
         request = read_client_data(client_info->ssl);
         if(!request) continue;
 
+        mx_logs(request, INFO_LOG);
+
         if(handle_request(client_info, request) == REQ_EXIT) {
             mx_strdel(&request);
             break;

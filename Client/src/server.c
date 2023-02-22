@@ -3,8 +3,9 @@
 
 int send_to_server(SSL *ssl, const char* request_str) {
     cJSON *json = cJSON_CreateObject();
-    cJSON_AddStringToObject(json, "name", request_str);
+    cJSON_AddStringToObject(json, "username", request_str);
     cJSON_AddNumberToObject(json, "type", 0);
+	cJSON_AddStringToObject(json, "password", request_str);
     char* json_str = cJSON_PrintUnformatted(json);
 	SSL_write(ssl, json_str, mx_strlen(json_str));
     cJSON_Delete(json);

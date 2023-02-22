@@ -19,14 +19,6 @@
 // #include <sqlite3.h>
 #include <time.h>
 
-// #include "glib-2.0/include"
-// #include "glib-2.0/glib/gtypes.h"
-// #include "glib-2.0/glib/galloca.h"
-// #include "glib-2.0/glib.h"
-// #include "gtk-3.0/gdk/gdkconfig.h"
-// #include "gtk-3.0/gdk/gdk.h"
-// #include "gtk-3.0/gtk/gtk.h"
-
 #include <gtk/gtk.h>
 
 #define IP_ADDRESS "127.0.0.1"
