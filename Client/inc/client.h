@@ -36,10 +36,11 @@ extern GtkWidget *main_window;
 // struct for sending to server
 typedef struct s_info {
     GtkWidget *entry;
+    GtkTextView *text_view;
     SSL *ssl;
 }   t_info;
 
-void send_message(t_info *info, GtkTextView *text_view);
+void send_message(GtkButton *button, t_info *info);
 void send_button_clicked(GtkButton *button, t_info *info);
 int send_to_server(SSL *ssl, const char* request_str);
 void init_ssl(SSL_CTX **ctx);

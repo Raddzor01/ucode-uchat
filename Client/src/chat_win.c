@@ -1,27 +1,28 @@
 #include "../inc/client.h"
 
-void send_message(t_info *info, GtkTextView *text_view) {
+void send_message(GtkButton *button, t_info *info) {
     GtkTextBuffer *buffer;
     GtkTextIter iter;
     const char *text;
 
-    buffer = gtk_text_view_get_buffer (text_view);
+    buffer = gtk_text_view_get_buffer (info->text_view);
     text = gtk_entry_get_text (GTK_ENTRY (info->entry));
     send_to_server(info->ssl, text);
     gtk_text_buffer_get_end_iter (buffer, &iter);
     gtk_text_buffer_insert (buffer, &iter, text, -1);
     gtk_text_buffer_insert (buffer, &iter, "\n", -1);
     gtk_entry_set_text (GTK_ENTRY (info->entry), "");
-    gtk_text_view_scroll_to_iter (text_view, &iter, 0.0, FALSE, 0.0, 0.0);
+    gtk_text_view_scroll_to_iter (info->text_view, &iter, 0.0, FALSE, 0.0, 0.0);
+    if(button){}
+        (void)info->entry;
 }
 
 void send_button_clicked(GtkButton *button, t_info *info) {
     GtkTextView *text_view;
 
     text_view = g_object_get_data (G_OBJECT (info->entry), "text_view");
-    send_message (info, text_view);
-    if(button){}
-        (void)info->entry;
+    info->text_view = text_view;
+    send_message (button ,info);
 }
 
 void chat_window(t_info *info) {
@@ -56,7 +57,8 @@ void chat_window(t_info *info) {
     entry = gtk_entry_new();
     gtk_box_pack_start(GTK_BOX(box), entry, FALSE, FALSE, 0);
     g_object_set_data(G_OBJECT(entry), "text_view", text_view);
-    g_signal_connect(entry, "activate", G_CALLBACK(send_message), text_view);
+    info->text_view = GTK_TEXT_VIEW(text_view);
+    g_signal_connect(entry, "activate", G_CALLBACK(send_message), info);
 
     send_button = gtk_button_new_with_label("Send");
     gtk_box_pack_start(GTK_BOX(box), send_button, FALSE, FALSE, 0);

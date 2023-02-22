@@ -2,7 +2,7 @@ CC = clang
 CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -pthread -gdwarf-4
 
 OBJDIR = obj
-SRCDIR = src src/api db
+SRCDIR = src src/api src/db
 SRVR_INFO_DIR = info
 UCHAT = ../uchat_server
 
