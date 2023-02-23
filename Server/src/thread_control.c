@@ -21,8 +21,10 @@ void *thread_control(void *arg)
         }
 
         mx_strdel(&request);
+
     }
 
     pthread_detach(pthread_self());
     return NULL;
+
 }
