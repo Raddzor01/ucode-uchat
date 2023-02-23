@@ -9,6 +9,9 @@
 #define MX_MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MX_MIN(x, y) (((x) < (y)) ? (x) : (y))
 
+#define ERROR_LOG 1
+#define INFO_LOG 0
+
 typedef struct s_list {
     void *data;
     struct s_list *next;
