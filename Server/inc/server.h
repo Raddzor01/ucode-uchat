@@ -31,19 +31,24 @@
 #define DB_NAME "Server/db/database.db"
 #define SQL_NAME "Server/db/db_tables.sql"
 
+#define TABLE_SIZE 1000
+
 typedef struct s_user_info
 {
     int id;
     char *username;
     char *password;
-    int user_id;
 } t_user_info;
 typedef struct s_client_info
 {
     int socket_info;
+    int hash_id;
     SSL *ssl;
     t_user_info *user;
+    struct s_client_info *next;
 } t_client_info;
+
+extern t_client_info *hash_table[TABLE_SIZE];
 
 typedef enum e_req_type
 {
@@ -58,6 +63,7 @@ typedef enum e_error_type
 {
     ERR_SUCCESS,
     ERR_JSON,
+    ERR_INVALID_PASSWORD,
     ERR_USER_EXISTS
 } t_error_type;
 
@@ -97,3 +103,7 @@ static t_map_entry request_map[MAP_SIZE] = {
     {REQ_USER_SIGNUP, user_signup},
     {REQ_USER_LOGIN, user_login},
 };
+
+void add_client(t_client_info *client);
+t_client_info *find_client(int id);
+void remove_client(int id);
