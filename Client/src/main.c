@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
 
     // chat_window(&info);
 
-    log_menu(&info);
+    log_menu(main_window ,&info);
 
     gtk_main();
 
