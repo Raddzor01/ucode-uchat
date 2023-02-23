@@ -37,9 +37,26 @@ typedef struct s_info {
     SSL *ssl;
 }   t_info;
 
+typedef enum e_req_type {
+    REQ_USER_SIGNUP,
+    REQ_USER_LOGIN,
+    REQ_UNKNOWN,
+    REQ_LOGOUT,
+    REQ_EXIT,
+}   t_req_type;
+
+typedef enum e_error_type {
+    ERR_SUCCESS,
+    ERR_JSON,
+    ERR_USER_EXISTS
+}   t_error_type;
+
 void send_message(t_info *info, GtkTextView *text_view);
 void send_button_clicked(GtkButton *button, t_info *info);
 int send_to_server(SSL *ssl, const char* request_str);
 void init_ssl(SSL_CTX **ctx);
 void connect_ssl(SSL **ssl, int* server_fd, SSL_CTX **ctx);
 void connect_to_server(const char* ip_address, int port, int* server_fd, SSL_CTX **ctx, SSL **ssl);
+
+void check_message_from_server(SSL *ssl);
+char* send_from_server(SSL *ssl);

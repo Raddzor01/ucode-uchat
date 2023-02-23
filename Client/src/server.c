@@ -12,6 +12,27 @@ int send_to_server(SSL *ssl, const char* request_str) {
     return 0;
 }
 
+char* send_from_server(SSL *ssl) {
+	char *buffer = malloc(1024 * sizeof(char));
+	int bytes = SSL_read(ssl, &buffer, sizeof(buffer));
+	if(bytes > 0) {
+		buffer[bytes] = 0;
+		return mx_strdup(buffer);
+	}
+	free(buffer);
+	return NULL;
+}
+
+void check_message_from_server(SSL *ssl) {
+	char *str = send_from_server(ssl);
+	cJSON *json = cJSON_Parse(str);
+	t_req_type type = cJSON_GetObjectItem(json, "type")->valueint;
+	t_error_type error = cJSON_GetObjectItem(json, "error_code")->valueint;
+	if(error != 0) {
+		exit(EXIT_FAILURE);
+	}
+}
+
 void init_ssl(SSL_CTX **ctx) {
     SSL_library_init();
     OpenSSL_add_all_algorithms();
