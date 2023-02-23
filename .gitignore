@@ -51,5 +51,8 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-uchat
-uchat_server
+*.db
+/uchat
+/uchat_server
+info/
+obj/
