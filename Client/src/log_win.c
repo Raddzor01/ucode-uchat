@@ -1,6 +1,6 @@
 #include "../inc/client.h"
 
-void log_menu(t_info *info) {
+void log_menu(GtkWidget *widget, t_info *info) {
 
     if (main_window)
         clear_window(main_window);
@@ -10,9 +10,12 @@ void log_menu(t_info *info) {
     build_login(info);
 
     gtk_widget_show_all (main_window);
+
+    if(info){}
+        (void)widget;
 }
 
-void sign_up_menu(t_info *info) {
+void sign_up_menu(GtkWidget *widget, t_info *info) {
     
     if (main_window)
         clear_window(main_window);
@@ -22,4 +25,6 @@ void sign_up_menu(t_info *info) {
     build_signup(info);
 
     gtk_widget_show_all (main_window);
+    if(info){}
+        (void)widget;
 }

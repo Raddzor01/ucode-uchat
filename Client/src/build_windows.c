@@ -14,6 +14,7 @@ void login_clicked(GtkWidget *widget, t_info *info) {
         chat_window(info);
     } else {
         // Login failed
+        pop_up_window("wrong password or login!");
     }
 }
 
@@ -53,7 +54,7 @@ void build_login(t_info *info) {
     gtk_box_pack_start(GTK_BOX(box), login_button, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(box), signup_button, FALSE, FALSE, 0);
     g_signal_connect(login_button, "clicked", G_CALLBACK(login_clicked), info);
-    g_signal_connect(signup_button, "clicked", G_CALLBACK(signup_clicked), info);
+    g_signal_connect(signup_button, "clicked", G_CALLBACK(sign_up_menu), info);
 
     g_signal_connect (main_window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 }
@@ -79,8 +80,8 @@ void build_signup(t_info *info) {
     GtkWidget *signup_button = gtk_button_new_with_label("Sign up");
     gtk_box_pack_start(GTK_BOX(box), login_button, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(box), signup_button, FALSE, FALSE, 0);
-    g_signal_connect(login_button, "clicked", G_CALLBACK(log_menu), &info);
-    g_signal_connect(signup_button, "clicked", G_CALLBACK(signup_clicked), &info);
+    g_signal_connect(login_button, "clicked", G_CALLBACK(log_menu), info);
+    g_signal_connect(signup_button, "clicked", G_CALLBACK(signup_clicked), info);
 
     g_signal_connect (main_window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 }
@@ -122,4 +123,18 @@ void build_chat_window(t_info *info) {
     g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 }
 
+void pop_up_window(char *text) {
+    GtkWidget *popup = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_position(GTK_WINDOW(popup), GTK_WIN_POS_CENTER);
+    gtk_window_set_default_size(GTK_WINDOW(popup), 200, 40);
+    gtk_window_set_resizable(GTK_WINDOW(popup), FALSE);
 
+    GtkWidget *label = gtk_label_new(text);
+
+    GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_container_add(GTK_CONTAINER(vbox), label);
+
+    gtk_container_add(GTK_CONTAINER(popup), vbox);
+
+    gtk_widget_show_all(popup);
+} 
