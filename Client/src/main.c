@@ -31,6 +31,8 @@ int main(int argc, char **argv) {
 
     gtk_init(&argc, &argv);
 
+    load_css();
+
     // chat_window(&info);
 
     log_menu(main_window ,&info);

@@ -56,3 +56,8 @@ void build_signup(t_info *info);
 GtkWidget *get_widget_by_name_r(GtkWidget *container, char *name);
 void build_chat_window(t_info *info);
 void pop_up_window(char *text);
+void add_class(GtkWidget *widget, char *class_name);
+void load_css ();
+void hog();
+
+

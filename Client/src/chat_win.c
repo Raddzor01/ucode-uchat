@@ -27,6 +27,8 @@ void send_button_clicked(GtkButton *button, t_info *info) {
 
 void chat_window(t_info *info) {
 
+    hog();
+
     if (main_window)
         clear_window(main_window);
 

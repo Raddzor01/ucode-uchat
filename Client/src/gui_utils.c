@@ -1,5 +1,16 @@
 #include "../inc/client.h"
 
+void load_css () {
+	GtkCssProvider *styles = gtk_css_provider_new();
+    gtk_css_provider_load_from_path(styles, "Client/src/style/main.css", NULL);
+    gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(styles), GTK_STYLE_PROVIDER_PRIORITY_USER);
+}
+
+void add_class(GtkWidget *widget, char *class_name) {
+	GtkStyleContext *context = gtk_widget_get_style_context(widget);
+	gtk_style_context_add_class(context, class_name);
+}
+
 void clear_window(GtkWidget *window)
 {
     // Get the container widget of the window
@@ -16,6 +27,7 @@ void create_new_window(char *title, int width, int height, bool resizable)
 {
     if (!main_window) {
         main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+        gtk_window_set_title(GTK_WINDOW(main_window), title);
         gtk_window_set_default_size(GTK_WINDOW(main_window), 400, 0);
         g_signal_connect(main_window, "delete_event", G_CALLBACK(gtk_main_quit), NULL);
     }
