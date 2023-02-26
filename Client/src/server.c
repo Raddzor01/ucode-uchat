@@ -16,7 +16,7 @@ char* send_from_server(SSL *ssl) {
 	char *buffer = malloc(1024 * sizeof(char));
 	int bytes = SSL_read(ssl, &buffer, sizeof(buffer));
 	if(bytes > 0) {
-		buffer[bytes] = 0;
+		buffer[bytes] = '\0';
 		return mx_strdup(buffer);
 	}
 	free(buffer);
