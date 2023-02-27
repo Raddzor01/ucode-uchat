@@ -1,6 +1,6 @@
 #include "../inc/client.h"
 
-void log_menu(GtkWidget *widget, t_info *info) {
+void log_menu(GtkWidget *widget) {
 
     if (main_window)
         clear_window(main_window);
@@ -15,7 +15,7 @@ void log_menu(GtkWidget *widget, t_info *info) {
         (void)widget;
 }
 
-void sign_up_menu(GtkWidget *widget, t_info *info) {
+void sign_up_menu(GtkWidget *widget) {
     
     if (main_window)
         clear_window(main_window);

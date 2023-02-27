@@ -8,24 +8,25 @@
 
 GtkWidget *main_window;
 
-int main(int argc, char **argv) {
+t_info* info;
 
+int main(int argc, char **argv) {
+    
     // server part
 
     (void)argc;
 	srand(time(NULL));
 
+    info = malloc(sizeof(*info));
 	int server_socket = 0;
 	SSL_CTX *ctx = NULL;
     SSL *ssl = NULL;
 
 	connect_to_server(argv[1], atoi(argv[2]), &server_socket, &ctx, &ssl);
 
+    info->ssl = ssl;
+
     // gtk part
-
-    t_info info;
-
-    info.ssl = ssl;
 
     // GtkTextBuffer *buffer;
 
@@ -33,11 +34,11 @@ int main(int argc, char **argv) {
 
     load_css();
 
-    // chat_window(&info);
-
-    log_menu(main_window ,&info);
+    log_menu(main_window);
 
     gtk_main();
+
+    free(info);
 
     return 0;
 }

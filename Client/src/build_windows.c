@@ -3,7 +3,29 @@
 GtkWidget *password_entry;
 GtkWidget *username_entry;
 
-void login_clicked(GtkWidget *widget, t_info *info) {
+void login_clicked(GtkWidget *widget) {
+    if(info){}
+        (void)widget;
+    const gchar *username = gtk_entry_get_text(GTK_ENTRY(username_entry));
+    const gchar *password = gtk_entry_get_text(GTK_ENTRY(password_entry));
+
+    // if (g_strcmp0(username, "user") == 0 && g_strcmp0(password, "pass") == 0) {
+    //     // Login successful
+    //     chat_window(info);
+    // } else {
+    //     // Login failed
+    //     pop_up_window("Wrong password or login!");
+    // }
+    if (g_strcmp0(username, "user") == 0 && g_strcmp0(password, "pass") == 0) {
+        // Login successful
+        chat_window(info);
+    } else {
+        // Login failed
+        pop_up_window("Wrong password or login!");
+    }
+}
+
+void signup_clicked(GtkWidget *widget) {
     if(info){}
         (void)widget;
     const gchar *username = gtk_entry_get_text(GTK_ENTRY(username_entry));
@@ -11,28 +33,15 @@ void login_clicked(GtkWidget *widget, t_info *info) {
 
     if (g_strcmp0(username, "user") == 0 && g_strcmp0(password, "pass") == 0) {
         // Login successful
-        chat_window(info);
+        // chat_window(info);
+        pop_up_window("This user already exists!");
     } else {
         // Login failed
-        pop_up_window("wrong password or login!");
+        send_sign_up_to_server(info->ssl, username, password);
     }
 }
 
-void signup_clicked(GtkWidget *widget, t_info *info) {
-    if(info){}
-        (void)widget;
-    const gchar *username = gtk_entry_get_text(GTK_ENTRY(username_entry));
-    const gchar *password = gtk_entry_get_text(GTK_ENTRY(password_entry));
-
-    if (g_strcmp0(username, "user") == 0 && g_strcmp0(password, "pass") == 0) {
-        // Login successful
-        chat_window(info);
-    } else {
-        // Login failed
-    }
-}
-
-void build_login(t_info *info) {
+void build_login() {
     GtkWidget *box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 10);
     gtk_container_add (GTK_CONTAINER (main_window), box);
 
@@ -55,13 +64,13 @@ void build_login(t_info *info) {
     add_class(signup_button, "button");
     gtk_box_pack_start(GTK_BOX(box), login_button, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(box), signup_button, FALSE, FALSE, 0);
-    g_signal_connect(login_button, "clicked", G_CALLBACK(login_clicked), info);
-    g_signal_connect(signup_button, "clicked", G_CALLBACK(sign_up_menu), info);
+    g_signal_connect(login_button, "clicked", G_CALLBACK(login_clicked), NULL);
+    g_signal_connect(signup_button, "clicked", G_CALLBACK(sign_up_menu), NULL);
 
     g_signal_connect (main_window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 }
 
-void build_signup(t_info *info) {
+void build_signup() {
     GtkWidget *box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 10);
     gtk_container_add (GTK_CONTAINER (main_window), box);
 
@@ -82,13 +91,13 @@ void build_signup(t_info *info) {
     GtkWidget *signup_button = gtk_button_new_with_label("Sign up");
     gtk_box_pack_start(GTK_BOX(box), login_button, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(box), signup_button, FALSE, FALSE, 0);
-    g_signal_connect(login_button, "clicked", G_CALLBACK(log_menu), info);
-    g_signal_connect(signup_button, "clicked", G_CALLBACK(signup_clicked), info);
+    g_signal_connect(login_button, "clicked", G_CALLBACK(log_menu), NULL);
+    g_signal_connect(signup_button, "clicked", G_CALLBACK(signup_clicked), NULL);
 
     g_signal_connect (main_window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 }
 
-void build_chat_window(t_info *info) {
+void build_chat_window() {
 
     GtkWidget *box;
     GtkWidget *entry;
@@ -122,7 +131,7 @@ void build_chat_window(t_info *info) {
     send_button = gtk_button_new_with_label("Send");
     gtk_box_pack_start(GTK_BOX(box), send_button, FALSE, FALSE, 0);
     info->entry = entry;
-    g_signal_connect(send_button, "clicked", G_CALLBACK(send_button_clicked), info);
+    g_signal_connect(send_button, "clicked", G_CALLBACK(send_button_clicked), NULL);
 
     g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 }
@@ -141,20 +150,18 @@ void pop_up_window(char *text) {
     gtk_container_add(GTK_CONTAINER(popup), vbox);
 
     gtk_widget_show_all(popup);
-} 
+}
 
 static GtkWidget *popup_window = NULL;
 
-static gboolean close_popup_window(gpointer data)
-{
+static gboolean close_popup_window(gpointer data) {
     if(data){}
     gtk_widget_destroy(popup_window);
     popup_window = NULL;
     return G_SOURCE_REMOVE;
 }
 
-void hog()
-{
+void hog() {
     if (popup_window != NULL) {
         return;
     }

@@ -27,7 +27,6 @@ void create_new_window(char *title, int width, int height, bool resizable)
 {
     if (!main_window) {
         main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        gtk_window_set_title(GTK_WINDOW(main_window), title);
         gtk_window_set_default_size(GTK_WINDOW(main_window), 400, 0);
         g_signal_connect(main_window, "delete_event", G_CALLBACK(gtk_main_quit), NULL);
     }
