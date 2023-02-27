@@ -32,15 +32,11 @@ int send_login_to_server(SSL *ssl, const char* username, const char* password) {
 char* send_from_server(SSL *ssl) {
 	char *buffer = malloc(1024 * sizeof(char));
 	int bytes = SSL_read(ssl, buffer, sizeof(buffer));
-	int req_len = mx_strlen(buffer);
-    char* len_str = mx_itoa(req_len);
-    SSL_write(ssl, len_str, mx_strlen(len_str));
 	printf("2\n\t%d\n\t%s\n\t%d\n", bytes, buffer, sizeof(buffer));
 	if(bytes > 0) {
 		buffer[bytes] = '\0';
 		return buffer;
 	}
-	free(len_str);
 	free(buffer);
 	return NULL;
 }
