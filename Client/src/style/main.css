@@ -18,9 +18,22 @@ entry {
     color: transparent;
     background-color: transparent;
 }
-.chat {
+
+scrolledwindow text{
     color: rgb(123, 78, 247);
+    background-image: url("Client/Ass/HOG.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+scrolledwindow{
     background-color: rgb(31, 22, 58);
+    border-width: 2px;
+    border-color: rgb(18, 5, 54);
+    padding: 10px;
+    padding-bottom: 0px; 
+    margin: 10px;
 }
 
 /* Set the font for all buttons */
