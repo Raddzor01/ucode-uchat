@@ -1,17 +1,27 @@
 /* Set the background color of the window */
+
+@define-color main-bg-color #221E2A;
+@define-color main-color #AC9BD0;
+
+@define-color fill-bg-color #564875;
+@define-color fill-color rgb(255, 255, 255);
+@define-color fill-hbg-color #AC9BD0;
+
+@define-color entry-bg-color #191520;
+@define-color entry-color #F5F5F5;
+
 window {
     font-family: Arial;
     font-size: 16px;
     font-weight: bold;
-    color: rgb(123, 78, 247);
-    /*background-color: rgb(18, 5, 54); */
-    background-color: rgb(18, 5, 54);
+    color: @main-color;
+    background-color: @main-bg-color;
 }
 
 entry {
-    color: rgb(123, 78, 247);
-    background-color: rgb(31, 22, 58);
-    border-radius: 20px;
+    color: @entry-color;
+    background-color: @entry-bg-color;
+    border-radius: 10px;
 }
 
 .pop {
@@ -20,7 +30,8 @@ entry {
 }
 
 scrolledwindow text{
-    color: rgb(123, 78, 247);
+    color: @entry-color;
+    background-color: @entry-bg-color;
     background-image: url("Client/Ass/HOG.png");
     background-repeat: no-repeat;
     background-position: center;
@@ -28,41 +39,30 @@ scrolledwindow text{
 }
 
 scrolledwindow{
-    background-color: rgb(31, 22, 58);
+    background-color: @entry-bg-color;
     border-width: 2px;
-    border-color: rgb(18, 5, 54);
+    border-color: @main-bg-color;
     padding: 10px;
     padding-bottom: 0px; 
     margin: 10px;
 }
 
-/* Set the font for all buttons */
 button {
     font-family: Arial;
     font-size: 14px;
     font-weight: bold;
-    background-color: rgb(12, 12, 107);
+    background-color: @fill-bg-color;
     background-image: url("Client/Ass/HOG.png");
     background-repeat: no-repeat;
     background-position: center;
-    background-size: cover;
-    
-    color: rgb(123, 78, 247);
-    border-radius: 20px;
-    border-color: rgba(45, 6, 153, 0.863);
-    border-width: 2px;
+    background-size: cover; 
+    color: @fill-color;
     padding: 5px;
+    border-radius: 20px;
 }
 
-/* Change button color when hovered over */
 button:hover {
-    background-color: #00AEEF;
-    border-color: #00AEEF;
+    background-color: @fill-hbg-color;
 }
 
-/* Change button color when clicked */
-button:active {
-    background-color: #003E8E;
-    border-color: #003E8E;
-}
 
