@@ -4,7 +4,7 @@ void check_account_from_server(SSL *ssl);
 
 int send_sign_up_to_server(SSL *ssl, const char* username, const char* password) {
     cJSON *json = cJSON_CreateObject();
-	cJSON_AddNumberToObject(json, "type", REQ_USER_SIGNUP);
+	cJSON_AddNumberToObject(json, "type", REQ_USER_LOGIN);
     cJSON_AddStringToObject(json, "username", username);
 	cJSON_AddStringToObject(json, "password", password);
     char* json_str = cJSON_PrintUnformatted(json);
@@ -17,7 +17,7 @@ int send_sign_up_to_server(SSL *ssl, const char* username, const char* password)
 
 int send_login_to_server(SSL *ssl, const char* username, const char* password) {
     cJSON *json = cJSON_CreateObject();
-	cJSON_AddNumberToObject(json, "type", REQ_USER_LOGIN);
+	cJSON_AddNumberToObject(json, "type", REQ_USER_SIGNUP);
     cJSON_AddStringToObject(json, "username", username);
 	cJSON_AddStringToObject(json, "password", password);
     char* json_str = cJSON_PrintUnformatted(json);
@@ -30,12 +30,12 @@ int send_login_to_server(SSL *ssl, const char* username, const char* password) {
 }
 
 char* send_from_server(SSL *ssl) {
-	char *buffer = malloc(1024 * sizeof(char));
+	char buffer[1024];
 	int bytes = SSL_read(ssl, buffer, sizeof(buffer));
-	printf("2\n\t%d\n\t%s\n\t%d\n", bytes, buffer, sizeof(buffer));
+	mx_logs(buffer, INFO_LOG);
 	if(bytes > 0) {
-		buffer[bytes] = '\0';
-		return buffer;
+		buffer[bytes] = 0;
+		return mx_strdup(buffer);
 	}
 	free(buffer);
 	return NULL;
@@ -57,28 +57,29 @@ void check_account_from_server(SSL *ssl) {
 	char *str = send_from_server(ssl);
 	printf("3\n");
 	cJSON *json = cJSON_Parse(str);
-	if (json == NULL)
+	if (json == NULL) {
 		pop_up_window("Error json!");
+		return;
+	}
 	printf("31\n");
 	// t_req_type type = cJSON_GetObjectItem(json, "type")->valueint;
-	t_req_type type = cJSON_GetObjectItem(json, "type");
-	printf("311\n");
-	t_error_type error = cJSON_GetObjectItem(json, "error_code");
-	printf("312\n");
-	int id = cJSON_GetObjectItem(json, "id");
-	printf("313\n");
-	// char *username = cJSON_GetObjectItem(json, "username")->valuestring;
-	char *username = cJSON_GetObjectItem(json, "username");
-	printf("314\n");
-	char *password = cJSON_GetObjectItem(json, "password");
-	printf("315\n");
+	t_req_type type = cJSON_GetObjectItem(json, "type")->valueint;
+	t_error_type error = cJSON_GetObjectItem(json, "error_code")->valueint;
+
+	// add error checks
 	if(error != 0)
 		pop_up_window("Error mesage!");
+		return;
+
+	int id = cJSON_GetObjectItem(json, "id")->valueint;
+	char *username = cJSON_GetObjectItem(json, "username")->valuestring;
+	char *password = cJSON_GetObjectItem(json, "password")->valuestring;
+
+
+
 	printf("32\n\t%d\n\t%s\n", error, username);
 	cJSON_Delete(json);
-    free(str);
-	free(username);
-	free(password);
+
 	printf("4\n");
 }
 

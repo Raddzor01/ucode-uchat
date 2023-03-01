@@ -16,8 +16,9 @@ void login_clicked(GtkWidget *widget) {
     //     // Login failed
     //     pop_up_window("Wrong password or login!");
     // }
-    if (g_strcmp0(username, "user") == 0 && g_strcmp0(password, "pass") == 0) {
+    if (g_strcmp0(username, "user") != 0 && g_strcmp0(password, "pass") != 0) {
         // Login successful
+        send_login_to_server(info->ssl, username, password);
         chat_window(info);
     } else {
         // Login failed

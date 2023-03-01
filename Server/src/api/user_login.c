@@ -26,12 +26,13 @@ void user_login(cJSON *json, t_client_info *client_info) {
     }
 
     cJSON *json1 = cJSON_CreateObject();
-    cJSON_AddNumberToObject(json1, "type", REQ_USER_LOGIN);
-    cJSON_AddNumberToObject(json1, "id", client_info->user->id);
     cJSON_AddStringToObject(json1, "username", client_info->user->username);
     cJSON_AddStringToObject(json1, "password", client_info->user->password);
+    cJSON_AddNumberToObject(json1, "type", REQ_USER_LOGIN);
+    cJSON_AddNumberToObject(json1, "id", client_info->user->id);
     cJSON_AddNumberToObject(json1, "error_code", ERR_SUCCESS);
     char* user_info = cJSON_PrintUnformatted(json1);
+    mx_logs(user_info, INFO_LOG);
     cJSON_Delete(json1);
     SSL_write(client_info->ssl, user_info, mx_strlen(user_info));
     mx_strdel(&user_info);
