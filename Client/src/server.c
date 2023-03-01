@@ -1,43 +1,40 @@
 #include "../inc/client.h"
 
-void check_account_from_server(SSL *ssl);
-
-int send_sign_up_to_server(SSL *ssl, const char* username, const char* password) {
-    cJSON *json = cJSON_CreateObject();
-	cJSON_AddNumberToObject(json, "type", REQ_USER_LOGIN);
-    cJSON_AddStringToObject(json, "username", username);
-	cJSON_AddStringToObject(json, "password", password);
-    char* json_str = cJSON_PrintUnformatted(json);
-	// printf("%d\n", SSL_write(ssl, json_str, mx_strlen(json_str)));
-	SSL_write(ssl, json_str, mx_strlen(json_str));
-    cJSON_Delete(json);
-    free(json_str);
-    return 0;
-}
-
-int send_login_to_server(SSL *ssl, const char* username, const char* password) {
+int send_sign_up_to_server(const char* username, const char* password) {
     cJSON *json = cJSON_CreateObject();
 	cJSON_AddNumberToObject(json, "type", REQ_USER_SIGNUP);
     cJSON_AddStringToObject(json, "username", username);
 	cJSON_AddStringToObject(json, "password", password);
     char* json_str = cJSON_PrintUnformatted(json);
 	// printf("%d\n", SSL_write(ssl, json_str, mx_strlen(json_str)));
-	SSL_write(ssl, json_str, mx_strlen(json_str));
-	check_account_from_server(info->ssl);
+	SSL_write(info->ssl, json_str, mx_strlen(json_str));
     cJSON_Delete(json);
     free(json_str);
     return 0;
 }
 
-char* send_from_server(SSL *ssl) {
+int send_login_to_server(const char* username, const char* password) {
+    cJSON *json = cJSON_CreateObject();
+	cJSON_AddNumberToObject(json, "type", REQ_USER_LOGIN);
+    cJSON_AddStringToObject(json, "username", username);
+	cJSON_AddStringToObject(json, "password", password);
+    char* json_str = cJSON_PrintUnformatted(json);
+	// printf("%d\n", SSL_write(ssl, json_str, mx_strlen(json_str)));
+	SSL_write(info->ssl, json_str, mx_strlen(json_str));
+	bool success = check_account_from_server(info->ssl);
+    cJSON_Delete(json);
+    free(json_str);
+    return success;
+}
+
+char* send_from_server() {
 	char buffer[1024];
-	int bytes = SSL_read(ssl, buffer, sizeof(buffer));
+	int bytes = SSL_read(info->ssl, buffer, sizeof(buffer));
 	mx_logs(buffer, INFO_LOG);
 	if(bytes > 0) {
 		buffer[bytes] = 0;
 		return mx_strdup(buffer);
 	}
-	free(buffer);
 	return NULL;
 }
 
@@ -52,35 +49,28 @@ char* send_from_server(SSL *ssl) {
 // 		pop_up_window("Error mesage!");
 // }
 
-void check_account_from_server(SSL *ssl) {
-	printf("1\n");
-	char *str = send_from_server(ssl);
-	printf("3\n");
+bool check_account_from_server() {
+	char *str = send_from_server();
 	cJSON *json = cJSON_Parse(str);
-	if (json == NULL) {
-		pop_up_window("Error json!");
-		return;
-	}
-	printf("31\n");
+
+	if (json == NULL)
+		return 0;
+
+	account->username = cJSON_GetObjectItem(json, "username")->valuestring;
+	// char *password = cJSON_GetObjectItem(json, "password")->valuestring;
 	// t_req_type type = cJSON_GetObjectItem(json, "type")->valueint;
-	t_req_type type = cJSON_GetObjectItem(json, "type")->valueint;
+	account->id = cJSON_GetObjectItem(json, "id")->valueint;
 	t_error_type error = cJSON_GetObjectItem(json, "error_code")->valueint;
 
-	// add error checks
-	if(error != 0)
-		pop_up_window("Error mesage!");
-		return;
-
-	int id = cJSON_GetObjectItem(json, "id")->valueint;
-	char *username = cJSON_GetObjectItem(json, "username")->valuestring;
-	char *password = cJSON_GetObjectItem(json, "password")->valuestring;
-
-
-
-	printf("32\n\t%d\n\t%s\n", error, username);
 	cJSON_Delete(json);
+	free(str);
 
-	printf("4\n");
+	// add error checks
+	if (error != 0) {
+		mx_printerr("Error in account cJSON");
+		return 0;
+	} else 
+		return 1;
 }
 
 void init_ssl(SSL_CTX **ctx) {

@@ -8,7 +8,7 @@ void send_message(GtkButton *button) {
     buffer = gtk_text_view_get_buffer (info->text_view);
     text = gtk_entry_get_text (GTK_ENTRY (info->entry));
     // send_sign_up_to_server(info->ssl, text);
-    send_login_to_server(info->ssl, text, text);
+    send_login_to_server(text, text);
     gtk_text_buffer_get_end_iter (buffer, &iter);
     gtk_text_buffer_insert (buffer, &iter, text, -1);
     gtk_text_buffer_insert (buffer, &iter, "\n", -1);

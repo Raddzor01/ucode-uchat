@@ -7,8 +7,8 @@
 // }
 
 GtkWidget *main_window;
-
 t_info* info;
+t_account* account;
 
 int main(int argc, char **argv) {
     
@@ -18,6 +18,7 @@ int main(int argc, char **argv) {
 	srand(time(NULL));
 
     info = malloc(sizeof(*info));
+    account = malloc(sizeof(*account));
 	int server_socket = 0;
 	SSL_CTX *ctx = NULL;
     SSL *ssl = NULL;
@@ -38,6 +39,7 @@ int main(int argc, char **argv) {
 
     gtk_main();
 
+    free(account);
     free(info);
 
     return 0;

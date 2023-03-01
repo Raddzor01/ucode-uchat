@@ -21,6 +21,7 @@
 
 #include <gtk/gtk.h>
 
+// local host
 #define IP_ADDRESS "127.0.0.1"
 
 // struct for sending to server
@@ -29,6 +30,12 @@ typedef struct s_info {
     GtkTextView *text_view;
     SSL* ssl;
 }   t_info;
+
+// user data structure
+typedef struct s_account {
+    int id;
+    char* username;
+}   t_account;
 
 typedef enum e_req_type {
     REQ_USER_SIGNUP,
@@ -46,16 +53,22 @@ typedef enum e_error_type {
 } t_error_type;
 
 extern GtkWidget *main_window;
-
 extern t_info *info;
+extern t_account *account;
 
-void send_message(GtkButton *button);
-void send_button_clicked(GtkButton *button);
-int send_sign_up_to_server(SSL *ssl, const char* username, const char* password);
-int send_login_to_server(SSL *ssl, const char* username, const char* password);
+// Interaction with the server
+int send_sign_up_to_server(const char* username, const char* password);
+int send_login_to_server(const char* username, const char* password);
+bool check_account_from_server();
+
+// Conection to the server
 void init_ssl(SSL_CTX **ctx);
 void connect_ssl(SSL **ssl, int* server_fd, SSL_CTX **ctx);
 void connect_to_server(const char* ip_address, int port, int* server_fd, SSL_CTX **ctx, SSL **ssl);
+
+// GTK part
+void send_message(GtkButton *button);
+void send_button_clicked(GtkButton *button);
 void chat_window();
 void create_new_window(char *title, int width, int height, bool resizable);
 void log_menu(GtkWidget *widget);
@@ -67,5 +80,7 @@ GtkWidget *get_widget_by_name_r(GtkWidget *container, char *name);
 void build_chat_window();
 void pop_up_window(char *text);
 void add_class(GtkWidget *widget, char *class_name);
-void load_css ();
+
+// CSS part
+void load_css();
 void hog();

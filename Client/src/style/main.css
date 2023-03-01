@@ -29,7 +29,7 @@ entry {
     background-color: transparent;
 }
 
-scrolledwindow text{
+scrolledwindow text {
     color: @entry-color;
     background-color: @entry-bg-color;
     background-image: url("Client/Ass/HOG.png");
@@ -38,12 +38,12 @@ scrolledwindow text{
     background-size: cover;
 }
 
-scrolledwindow{
+scrolledwindow {
     background-color: @entry-bg-color;
     border-width: 2px;
     border-color: @main-bg-color;
     padding: 10px;
-    padding-bottom: 0px; 
+    padding-bottom: 0px;
     margin: 10px;
 }
 
@@ -55,7 +55,7 @@ button {
     background-image: url("Client/Ass/HOG.png");
     background-repeat: no-repeat;
     background-position: center;
-    background-size: cover; 
+    background-size: cover;
     color: @fill-color;
     padding: 5px;
     border-radius: 20px;
@@ -64,5 +64,3 @@ button {
 button:hover {
     background-color: @fill-hbg-color;
 }
-
-
