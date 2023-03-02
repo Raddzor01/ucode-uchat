@@ -10,7 +10,7 @@ void user_login(cJSON *json, t_client_info *client_info) {
     cJSON *password = cJSON_GetObjectItemCaseSensitive(json, "password");
 
     sqlite3_prepare_v2(db,  "SELECT users.id, users.username, users.password "
-                            "FROM `users` WHERE `username` = ?", -1, &stmt, NULL);
+                            "FROM users WHERE username = ?", -1, &stmt, NULL);
     sqlite3_bind_text(stmt, 1, username->valuestring, -1, NULL);
     if(sqlite3_step(stmt) == SQLITE_ROW) {
         client_info->user =(t_user_info *) malloc(sizeof(t_user_info));
