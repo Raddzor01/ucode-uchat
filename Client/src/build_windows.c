@@ -188,3 +188,5 @@ void hog() {
     g_timeout_add(100, close_popup_window, NULL);
 }
 
+    gtk_widget_show_all(popup);
+} 

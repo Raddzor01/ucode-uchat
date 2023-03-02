@@ -95,7 +95,7 @@ int db_check_user_exists(char *username)
 {
 
     char buff[MAX_BUF_SIZE];
-    sprintf(buff, "SELECT EXISTS (SELECT `id` FROM `users` WHERE `username` = '%s')", username);
+    sprintf(buff, "SELECT EXISTS (SELECT id FROM users WHERE username = '%s')", username);
 
     sqlite3 *db = db_open();
     sqlite3_stmt *stmt;

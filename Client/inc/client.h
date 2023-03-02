@@ -85,3 +85,4 @@ void add_class(GtkWidget *widget, char *class_name);
 // CSS part
 void load_css();
 void hog();
+

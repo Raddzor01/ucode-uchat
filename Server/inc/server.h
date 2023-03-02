@@ -54,6 +54,7 @@ typedef enum e_req_type
 {
     REQ_USER_SIGNUP,
     REQ_USER_LOGIN,
+    REQ_SEND_MSG,
     REQ_UNKNOWN,
     REQ_LOGOUT,
     REQ_EXIT,
@@ -82,6 +83,7 @@ void log_client_conection(struct in_addr sa);
 
 void user_signup(cJSON *json, t_client_info *client_info);
 void user_login(cJSON *json, t_client_info *client_info);
+void send_message(cJSON *json, t_client_info *client_info);
 
 sqlite3 *db_open();
 int db_init();
@@ -99,10 +101,11 @@ typedef struct
     t_req_type type;
     request_handler handler;
 } t_map_entry;
-#define MAP_SIZE 2
+#define MAP_SIZE 3
 static t_map_entry request_map[MAP_SIZE] = {
     {REQ_USER_SIGNUP, user_signup},
     {REQ_USER_LOGIN, user_login},
+    {REQ_SEND_MSG, send_message}
 };
 
 void add_client(t_client_info *client);
