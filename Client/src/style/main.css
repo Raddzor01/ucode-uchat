@@ -1,0 +1,66 @@
+/* Set the background color of the window */
+
+@define-color main-bg-color #221E2A;
+@define-color main-color #AC9BD0;
+
+@define-color fill-bg-color #564875;
+@define-color fill-color rgb(255, 255, 255);
+@define-color fill-hbg-color #AC9BD0;
+
+@define-color entry-bg-color #191520;
+@define-color entry-color #F5F5F5;
+
+window {
+    font-family: Arial;
+    font-size: 16px;
+    font-weight: bold;
+    color: @main-color;
+    background-color: @main-bg-color;
+}
+
+entry {
+    color: @entry-color;
+    background-color: @entry-bg-color;
+    border-radius: 10px;
+}
+
+.pop {
+    color: transparent;
+    background-color: transparent;
+}
+
+scrolledwindow text {
+    color: @entry-color;
+    background-color: @entry-bg-color;
+    background-image: url("Client/Ass/HOG.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+scrolledwindow {
+    background-color: @entry-bg-color;
+    border-width: 2px;
+    border-color: @main-bg-color;
+    padding: 10px;
+    padding-bottom: 0px;
+    margin: 10px;
+}
+
+button {
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: @fill-bg-color;
+    background-image: url("Client/Ass/HOG.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    color: @fill-color;
+    padding: 5px;
+    border-radius: 20px;
+}
+
+button:hover {
+    background-color: @fill-hbg-color;
+}

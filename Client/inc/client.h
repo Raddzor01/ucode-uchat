@@ -19,40 +19,70 @@
 // #include <sqlite3.h>
 #include <time.h>
 
-// #include "glib-2.0/include"
-// #include "glib-2.0/glib/gtypes.h"
-// #include "glib-2.0/glib/galloca.h"
-// #include "glib-2.0/glib.h"
-// #include "gtk-3.0/gdk/gdkconfig.h"
-// #include "gtk-3.0/gdk/gdk.h"
-// #include "gtk-3.0/gtk/gtk.h"
-
 #include <gtk/gtk.h>
 
+// local host
 #define IP_ADDRESS "127.0.0.1"
-
-extern GtkWidget *main_window;
 
 // struct for sending to server
 typedef struct s_info {
     GtkWidget *entry;
     GtkTextView *text_view;
-    SSL *ssl;
+    SSL* ssl;
 }   t_info;
 
-void send_message(GtkButton *button, t_info *info);
-void send_button_clicked(GtkButton *button, t_info *info);
-int send_to_server(SSL *ssl, const char* request_str);
+// user data structure
+typedef struct s_account {
+    int id;
+    char* username;
+}   t_account;
+
+typedef enum e_req_type {
+    REQ_USER_SIGNUP,
+    REQ_USER_LOGIN,
+    REQ_UNKNOWN,
+    REQ_LOGOUT,
+    REQ_EXIT
+} t_req_type;
+
+typedef enum e_error_type {
+    ERR_SUCCESS,
+    ERR_JSON,
+    ERR_INVALID_PASSWORD,
+    ERR_USER_EXISTS,
+    ERR_USER_NONEXIST
+} t_error_type;
+
+extern GtkWidget *main_window;
+extern t_info *info;
+extern t_account *account;
+
+// Interaction with the server
+int send_sign_up_to_server(const char* username, const char* password);
+int send_login_to_server(const char* username, const char* password);
+bool check_account_from_server();
+
+// Conection to the server
 void init_ssl(SSL_CTX **ctx);
 void connect_ssl(SSL **ssl, int* server_fd, SSL_CTX **ctx);
 void connect_to_server(const char* ip_address, int port, int* server_fd, SSL_CTX **ctx, SSL **ssl);
-void chat_window(t_info *info);
+
+// GTK part
+void send_message(GtkButton *button);
+void send_button_clicked(GtkButton *button);
+void chat_window();
 void create_new_window(char *title, int width, int height, bool resizable);
-void log_menu(GtkWidget *widget, t_info *info);
+void log_menu(GtkWidget *widget);
 void clear_window(GtkWidget *window);
-void build_login(t_info *info);
-void sign_up_menu(GtkWidget *widget, t_info *info);
-void build_signup(t_info *info);
+void build_login();
+void sign_up_menu(GtkWidget *widget);
+void build_signup();
 GtkWidget *get_widget_by_name_r(GtkWidget *container, char *name);
-void build_chat_window(t_info *info);
+void build_chat_window();
 void pop_up_window(char *text);
+void add_class(GtkWidget *widget, char *class_name);
+
+// CSS part
+void load_css();
+void hog();
+
