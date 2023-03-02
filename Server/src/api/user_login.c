@@ -20,9 +20,15 @@ void user_login(cJSON *json, t_client_info *client_info) {
         add_client(client_info);
     }
     sqlite3_finalize(stmt);
+
+    if(client_info->user == NULL) {
+        send_responde(client_info->ssl, REQ_USER_LOGIN, ERR_USER_EXISTS);
+        return;
+    }
     if(mx_strcmp(find_client(client_info->user->id)->user->password, password->valuestring) != 0) {
         remove_client(client_info->user->id);
         send_responde(client_info->ssl, REQ_USER_LOGIN, ERR_INVALID_PASSWORD);
+        return;
     }
 
     cJSON *json1 = cJSON_CreateObject();
@@ -32,7 +38,6 @@ void user_login(cJSON *json, t_client_info *client_info) {
     cJSON_AddNumberToObject(json1, "id", client_info->user->id);
     cJSON_AddNumberToObject(json1, "error_code", ERR_SUCCESS);
     char* user_info = cJSON_PrintUnformatted(json1);
-    mx_logs(user_info, INFO_LOG);
     cJSON_Delete(json1);
     SSL_write(client_info->ssl, user_info, mx_strlen(user_info));
     mx_strdel(&user_info);

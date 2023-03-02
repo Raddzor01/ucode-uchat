@@ -64,7 +64,8 @@ typedef enum e_error_type
     ERR_SUCCESS,
     ERR_JSON,
     ERR_INVALID_PASSWORD,
-    ERR_USER_EXISTS
+    ERR_USER_EXISTS,
+    ERR_USER_NONEXIST
 } t_error_type;
 
 SSL_CTX *ssl_ctx_init();

@@ -34,14 +34,14 @@ void signup_clicked(GtkWidget *widget) {
         return;
     }
 
-    if (send_login_to_server(username, password) == 1) {
-        // Login successful
-        // chat_window(info);
-        pop_up_window("This user already exists!");
-    } else {
-        // Login failed
+    // if (send_login_to_server(username, password) == 1) {
+    //     // Login successful
+    //     // chat_window(info);
+    //     pop_up_window("This user already exists!");
+    // } else {
+    //     // Login failed
         send_sign_up_to_server(username, password);
-    }
+    // }
 }
 
 void build_login() {
