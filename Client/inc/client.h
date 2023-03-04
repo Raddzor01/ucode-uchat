@@ -40,6 +40,7 @@ typedef struct s_account {
 typedef enum e_req_type {
     REQ_USER_SIGNUP,
     REQ_USER_LOGIN,
+    REQ_SEND_MSG,
     REQ_UNKNOWN,
     REQ_LOGOUT,
     REQ_EXIT

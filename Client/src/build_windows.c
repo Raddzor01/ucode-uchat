@@ -187,6 +187,3 @@ void hog() {
     // Set a timer to close the window after 1 second
     g_timeout_add(100, close_popup_window, NULL);
 }
-
-    gtk_widget_show_all(popup);
-} 

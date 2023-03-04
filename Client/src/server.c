@@ -4,13 +4,15 @@ char* send_from_server();
 
 int send_sign_up_to_server(const char* username, const char* password) {
     cJSON *json = cJSON_CreateObject();
-	cJSON_AddNumberToObject(json, "type", REQ_USER_SIGNUP);
-    cJSON_AddStringToObject(json, "username", username);
-	cJSON_AddStringToObject(json, "password", password);
+	cJSON_AddNumberToObject(json, "type", REQ_SEND_MSG);
+	cJSON_AddNumberToObject(json, "user_id", 1);
+	cJSON_AddNumberToObject(json, "chat_id", 2);
+	cJSON_AddStringToObject(json, "message", password);
+	cJSON_AddNumberToObject(json, "time", 3);
     char* json_str = cJSON_PrintUnformatted(json);
 	// printf("%d\n", SSL_write(ssl, json_str, mx_strlen(json_str)));
 	SSL_write(info->ssl, json_str, mx_strlen(json_str));
-	mx_logs(send_from_server(), INFO_LOG);
+	// mx_logs(send_from_server(), INFO_LOG);
     cJSON_Delete(json);
     free(json_str);
     return 0;
