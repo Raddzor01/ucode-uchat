@@ -72,3 +72,61 @@ GtkWidget *get_widget_by_name_r(GtkWidget *container, char *name)
     return result;
 }
 
+void file_select(GtkWidget *widget, gpointer data) {
+
+    if(data){};
+        (void)widget;
+
+    GtkWidget *dialog;
+    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+    gint res;
+
+    dialog = gtk_file_chooser_dialog_new("Open File", NULL, action, "_Cancel", 
+                                         GTK_RESPONSE_CANCEL, "_Open", GTK_RESPONSE_ACCEPT, NULL);
+    res = gtk_dialog_run(GTK_DIALOG(dialog));
+    if (res == GTK_RESPONSE_ACCEPT) {
+        char *filename;
+        GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
+        filename = gtk_file_chooser_get_filename(chooser);
+        
+        // Do something with the selected file...
+        g_free(filename);
+    }
+
+    gtk_widget_destroy(dialog);
+}
+
+void user_box(GtkWidget *widget) {
+    GtkWidget *button;
+    GtkWidget *image;
+    GtkWidget *label;
+    GtkWidget *box;
+
+    GdkPixbuf *pixbuf;
+    GError *error = NULL;
+
+    // Load the image from a file
+    pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", &error);
+    if (error != NULL) {
+        g_error("Error loading image: %s", error->message);
+    }
+
+    // Scale the image to a new size
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
+
+    // Create a new GtkImage widget from the scaled image
+    image = gtk_image_new_from_pixbuf(pixbuf);
+
+    // create a label
+    label = gtk_label_new("User Hog");
+
+    // create a box to hold the image and label
+    box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
+
+    // create a button
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), box);
+    gtk_box_pack_start(GTK_BOX(widget), button, FALSE, FALSE, 0);
+}

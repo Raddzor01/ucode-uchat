@@ -83,9 +83,12 @@ void build_login();
 void sign_up_menu(GtkWidget *widget);
 void build_signup();
 GtkWidget *get_widget_by_name_r(GtkWidget *container, char *name);
-void build_chat_window();
+void build_chat_window(GtkWidget *grid);
 void pop_up_window(char *text);
 void add_class(GtkWidget *widget, char *class_name);
+void file_select(GtkWidget *widget, gpointer data);
+void build_users(GtkWidget *grid);
+void user_box(GtkWidget *widget);
 
 // CSS part
 void load_css();

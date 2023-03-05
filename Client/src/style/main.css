@@ -32,19 +32,42 @@ entry {
 scrolledwindow text {
     color: @entry-color;
     background-color: @entry-bg-color;
-    background-image: url("Client/Ass/HOG.png");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
 }
 
 scrolledwindow {
     background-color: @entry-bg-color;
-    border-width: 2px;
     border-color: @main-bg-color;
     padding: 10px;
     padding-bottom: 0px;
-    margin: 10px;
+    margin: 0px;
+}
+
+grid box{
+    margin: 0px;
+    padding: 1px;
+}
+
+.user-box{
+    padding: 0px;
+    margin: -9px;
+}
+.user-box button{
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: @main-bg-color;
+    color: @fill-color;
+    padding: 10px;
+margin: -6px;
+    border-radius: 0px;
+}
+
+.user-box button:hover{
+    background-color: @fill-hbg-color;
+}
+
+.user-box button:active{
+    background-color: @fill-bg-color;
 }
 
 button {
