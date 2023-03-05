@@ -40,9 +40,10 @@ typedef struct s_account {
 typedef enum e_req_type {
     REQ_USER_SIGNUP,
     REQ_USER_LOGIN,
+    REQ_SEND_MSG,
     REQ_UNKNOWN,
     REQ_LOGOUT,
-    REQ_EXIT
+    REQ_EXIT,
 } t_req_type;
 
 typedef enum e_error_type {
@@ -60,7 +61,11 @@ extern t_account *account;
 // Interaction with the server
 int send_sign_up_to_server(const char* username, const char* password);
 int send_login_to_server(const char* username, const char* password);
+int send_message_to_server(const char* str);
+char* send_from_server();
+int check_account_exists();
 bool check_account_from_server();
+
 
 // Conection to the server
 void init_ssl(SSL_CTX **ctx);

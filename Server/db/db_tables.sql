@@ -14,6 +14,15 @@ CREATE TABLE messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     chat_id INTEGER NOT NULL,
-    message TEXT NOT NULL,
+    message TEXT,
     time INTEGER NOT NULL
+);
+
+CREATE TABLE files (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  filename VARCHAR(255) ,
+  file_type VARCHAR(50),
+  file_size INT,
+  file_path VARCHAR(255),
+  uploaded_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

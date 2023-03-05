@@ -34,14 +34,19 @@ void signup_clicked(GtkWidget *widget) {
         return;
     }
 
-    // if (send_login_to_server(username, password) == 1) {
-    //     // Login successful
-    //     // chat_window(info);
-    //     pop_up_window("This user already exists!");
-    // } else {
-    //     // Login failed
-        send_sign_up_to_server(username, password);
-    // }
+    int output = send_sign_up_to_server(username, password);
+    if (output == 0) {
+        pop_up_window("Sign up successful");
+        log_menu(main_window);
+    } else if (output == 1) {
+        pop_up_window("Error in server cJSON");
+    } else if (output == 2) {
+        pop_up_window("Invalid password");
+    } else if (output == 3) {
+        pop_up_window("This user already exists");
+    } else if (output == -1) {
+        pop_up_window("Error in client cJSON");
+    }
 }
 
 void build_login() {
