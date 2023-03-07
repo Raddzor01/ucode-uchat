@@ -45,7 +45,7 @@ int send_message_to_server(const char *str) {
   cJSON_AddNumberToObject(json, "chat_id", 0); // zaglushka
   cJSON_AddStringToObject(json, "message", str);
   cJSON_AddStringToObject(json, "username", account->username);
-  cJSON_AddNumberToObject(json, "time", 0); // zaglushka
+  cJSON_AddNumberToObject(json, "time", time(NULL));
 
   char *json_str = cJSON_PrintUnformatted(json);
   SSL_write(info->ssl, json_str, mx_strlen(json_str));
