@@ -3,16 +3,31 @@
 GtkWidget *password_entry;
 GtkWidget *username_entry;
 
+bool chech_fields(const gchar *username, const gchar *password) {
+
+    if (mx_strlen(username) <= 0 || mx_strlen(password) <= 0) {
+        pop_up_window("Fields must store at least one character");
+        return false;
+    }
+
+    if (mx_strlen(username) > 16 || mx_strlen(password) > 16) {
+        pop_up_window("Too big password or login");
+        return false;
+    }
+    
+    return true;
+}
+
 void login_clicked(GtkWidget *widget) {
-    if(info){}
+
+    if (info){}
         (void)widget;
+    
     const gchar *username = gtk_entry_get_text(GTK_ENTRY(username_entry));
     const gchar *password = gtk_entry_get_text(GTK_ENTRY(password_entry));
 
-    if ((mx_strlen(username) || mx_strlen(password)) <= 0) {
-        pop_up_window("Fields must store at least one character");
+    if (chech_fields(username, password) == false)
         return;
-    }
 
     if (send_login_to_server(username, password) == 1) {
         // Login successful
@@ -24,17 +39,18 @@ void login_clicked(GtkWidget *widget) {
 }
 
 void signup_clicked(GtkWidget *widget) {
-    if(info){}
+
+    if (info){}
         (void)widget;
+    
     const gchar *username = gtk_entry_get_text(GTK_ENTRY(username_entry));
     const gchar *password = gtk_entry_get_text(GTK_ENTRY(password_entry));
 
-    if ((mx_strlen(username) || mx_strlen(password)) <= 0) {
-        pop_up_window("Fields must store at least one character");
+    if (chech_fields(username, password) == false)
         return;
-    }
 
     int output = send_sign_up_to_server(username, password);
+
     if (output == 0) {
         pop_up_window("Sign up successful");
         log_menu(main_window);
@@ -50,6 +66,7 @@ void signup_clicked(GtkWidget *widget) {
 }
 
 void build_login() {
+
     GtkWidget *box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 10);
     gtk_container_add (GTK_CONTAINER (main_window), box);
 
@@ -79,6 +96,7 @@ void build_login() {
 }
 
 void build_signup() {
+
     GtkWidget *box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 10);
     gtk_container_add (GTK_CONTAINER (main_window), box);
 
@@ -183,25 +201,30 @@ void build_users(GtkWidget *grid) {
     box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_container_add(GTK_CONTAINER(scrolled_window), box);
 
-    user_box(box);
-    user_box(box);
-    user_box(box);
-    user_box(box);
-    user_box(box);
-    user_box(box);
-    user_box(box);
-    user_box(box);    
-    user_box(box);
-    user_box(box);
-    user_box(box);
-    user_box(box);
-    user_box(box);
-    user_box(box);
-    user_box(box);
-    user_box(box);
+    for (int i = 0; i < 16; i++) {
+        user_box(box);
+    }
+
+    // user_box(box);
+    // user_box(box);
+    // user_box(box);
+    // user_box(box);
+    // user_box(box);
+    // user_box(box);
+    // user_box(box);
+    // user_box(box);    
+    // user_box(box);
+    // user_box(box);
+    // user_box(box);
+    // user_box(box);
+    // user_box(box);
+    // user_box(box);
+    // user_box(box);
+    // user_box(box);
 }
 
 void pop_up_window(char *text) {
+
     GtkWidget *popup = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_position(GTK_WINDOW(popup), GTK_WIN_POS_CENTER);
     gtk_window_set_default_size(GTK_WINDOW(popup), 200, 40);
@@ -220,16 +243,19 @@ void pop_up_window(char *text) {
 static GtkWidget *popup_window = NULL;
 
 static gboolean close_popup_window(gpointer data) {
+
     if(data){}
+
     gtk_widget_destroy(popup_window);
     popup_window = NULL;
+
     return G_SOURCE_REMOVE;
 }
 
 void hog() {
-    if (popup_window != NULL) {
+
+    if (popup_window != NULL)
         return;
-    }
 
     // Create a new window
     popup_window = gtk_window_new(GTK_WINDOW_POPUP);

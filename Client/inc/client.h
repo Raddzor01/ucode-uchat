@@ -89,6 +89,7 @@ void add_class(GtkWidget *widget, char *class_name);
 void file_select(GtkWidget *widget, gpointer data);
 void build_users(GtkWidget *grid);
 void user_box(GtkWidget *widget);
+bool chech_fields(const gchar *username, const gchar *password);
 
 // CSS part
 void load_css();
