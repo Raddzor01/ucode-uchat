@@ -56,3 +56,4 @@ dkms.conf
 /uchat_server
 info/
 obj/
+.vscode/

@@ -24,7 +24,6 @@ t_req_type handle_request(t_client_info *client_info, char *request)
         return REQ_UNKNOWN;
     }
 
-    //
     t_map_entry *entery = &request_map[type];
     entery->handler(json, client_info);
 

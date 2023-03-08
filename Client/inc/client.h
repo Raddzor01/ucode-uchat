@@ -37,23 +37,29 @@ typedef struct s_account {
     char* username;
 }   t_account;
 
-typedef enum e_req_type {
+typedef enum e_req_type
+{
     REQ_USER_SIGNUP,
     REQ_USER_LOGIN,
     REQ_SEND_MSG,
+    REQ_SEND_FILE,
+    REQ_CREATE_CHAT,
     REQ_UNKNOWN,
     REQ_LOGOUT,
     REQ_EXIT,
 } t_req_type;
 
-typedef enum e_error_type {
+typedef enum e_error_type
+{
     ERR_SUCCESS,
     ERR_JSON,
     ERR_INVALID_PASSWORD,
     ERR_USER_EXISTS,
-    ERR_USER_NONEXIST
+    ERR_USER_NONEXIST,
+    ERR_CHAT_EXIST
 } t_error_type;
 
+int send_file_to_server(char *filedir);
 extern GtkWidget *main_window;
 extern t_info *info;
 extern t_account *account;

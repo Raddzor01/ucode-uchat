@@ -7,7 +7,15 @@ CREATE TABLE users (
 CREATE TABLE chats (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name INTEGER NOT NULL,
+    type INTEGER NOT NULL,
     date INTEGER NOT NULL
+);
+
+CREATE TABLE members (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    chat_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    privilege INTEGER NOT NULL
 );
 
 CREATE TABLE messages (
@@ -18,11 +26,11 @@ CREATE TABLE messages (
     time INTEGER NOT NULL
 );
 
-CREATE TABLE files (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  filename VARCHAR(255) ,
-  file_type VARCHAR(50),
-  file_size INT,
-  file_path VARCHAR(255),
-  uploaded_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+-- CREATE TABLE files (
+--   id INTEGER PRIMARY KEY AUTOINCREMENT,
+--   filename VARCHAR(255) ,
+--   file_type VARCHAR(50),
+--   file_size INT,
+--   file_path VARCHAR(255),
+--   uploaded_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- );

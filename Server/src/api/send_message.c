@@ -10,7 +10,6 @@ void send_message(cJSON *json, t_client_info *client_info) {
     int user_id = cJSON_GetObjectItem(json, "user_id")->valueint;
     int chat_id = cJSON_GetObjectItem(json, "chat_id")->valueint;
     char *message = cJSON_GetObjectItemCaseSensitive(json, "message")->valuestring;
-    char *username = cJSON_GetObjectItemCaseSensitive(json, "username")->valuestring;
     unsigned long time = cJSON_GetObjectItemCaseSensitive(json, "time")->valueint;
 
     // if (!cJSON_IsNumber(user_id) || !cJSON_IsNumber(chat_id) || !cJSON_IsString(message) || !cJSON_IsNumber(date)) {
@@ -38,8 +37,6 @@ void send_message(cJSON *json, t_client_info *client_info) {
     char* json_str = cJSON_PrintUnformatted(responde_json);
 
     SSL_write(client_info->ssl, json_str, mx_strlen(json_str));
-
-    mx_logs(json_str, INFO_LOG);
 
     mx_strdel(&json_str);
     cJSON_Delete(responde_json);

@@ -46,6 +46,5 @@ void user_login(cJSON *json, t_client_info *client_info) {
     sprintf(result_to_log, "Logged in id: %d, name: %s", 
             client_info->user->id,
             client_info->user->username);
-    mx_logs(result_to_log, INFO_LOG);
 
 }

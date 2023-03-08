@@ -88,6 +88,8 @@ void file_select(GtkWidget *widget, gpointer data) {
         char *filename;
         GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
         filename = gtk_file_chooser_get_filename(chooser);
+
+        // send_file_to_server(filename);
         
         // Do something with the selected file...
         g_free(filename);
