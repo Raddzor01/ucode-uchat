@@ -11,19 +11,16 @@ void add_class(GtkWidget *widget, char *class_name) {
 	gtk_style_context_add_class(context, class_name);
 }
 
-void clear_window(GtkWidget *window)
-{
+void clear_window(GtkWidget *window) {
     // Get the container widget of the window
     GtkWidget *container = gtk_bin_get_child(GTK_BIN(window));
 
     // Remove any existing widget from the container
-    if (GTK_IS_WIDGET(container))
-    {
+    if (GTK_IS_WIDGET(container)) 
         gtk_container_remove(GTK_CONTAINER(window), container);
-    }
 }
 
-void create_new_window(char *title, int width, int height, bool resizable)
+void create_new_window(char *title, int width, int height, bool resizable) 
 {
     if (!main_window) {
         main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -37,36 +34,30 @@ void create_new_window(char *title, int width, int height, bool resizable)
     gtk_window_set_resizable(GTK_WINDOW(main_window), resizable);
 }
 
-GtkWidget *get_widget_by_name_r(GtkWidget *container, char *name)
-{
+GtkWidget *get_widget_by_name_r(GtkWidget *container, char *name) {
     GtkWidget *result = NULL; 
     GList *children = NULL;
 
-    if (GTK_IS_CONTAINER(container))
-    {
+    if (GTK_IS_CONTAINER(container)) {
         children = gtk_container_get_children(GTK_CONTAINER(container));
-    }
-    else
-    {
+    } else {
         return NULL;
     }
 
-    while (children)
-    {
-        if (!mx_strcmp(gtk_widget_get_name(GTK_WIDGET(children->data)), name))
-        {
+    while (children) {
+        if (!mx_strcmp(gtk_widget_get_name(GTK_WIDGET(children->data)), name)) {
             result = GTK_WIDGET(children->data);
             break;
-        }
-        else if(GTK_IS_CONTAINER(children->data))
-        {
+        } else if (GTK_IS_CONTAINER(children->data)) {
             result = get_widget_by_name_r(children->data, name);
+
             if (result != NULL)
                 break;
         }
 
         children = children->next;   
     }
+
     g_list_free(g_steal_pointer(&children)); // g_list_free(children_c); //
 
     return result;
@@ -109,9 +100,8 @@ void user_box(GtkWidget *widget) {
 
     // Load the image from a file
     pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", &error);
-    if (error != NULL) {
+    if (error != NULL)
         g_error("Error loading image: %s", error->message);
-    }
 
     // Scale the image to a new size
     pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);

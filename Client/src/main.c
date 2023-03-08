@@ -29,8 +29,6 @@ int main(int argc, char **argv) {
 
     // gtk part
 
-    // GtkTextBuffer *buffer;
-
     gtk_init(&argc, &argv);
 
     load_css();
