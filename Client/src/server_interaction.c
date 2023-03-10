@@ -42,7 +42,7 @@ int send_message_to_server(const char *str) {
 
   cJSON_AddNumberToObject(json, "type", REQ_SEND_MSG);
   cJSON_AddNumberToObject(json, "user_id", account->id);
-  cJSON_AddNumberToObject(json, "chat_id", 0); // zaglushka
+  cJSON_AddNumberToObject(json, "chat_id", account->chat_id);
   cJSON_AddStringToObject(json, "message", str);
   cJSON_AddStringToObject(json, "username", account->username);
   cJSON_AddNumberToObject(json, "time", time(NULL));
