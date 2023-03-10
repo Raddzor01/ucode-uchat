@@ -68,6 +68,7 @@ int send_sign_up_to_server(const char *username, const char *password);
 int send_login_to_server(const char *username, const char *password);
 int send_message_to_server(const char *str);
 char *send_from_server();
+int create_chat_in_server(const char *chat_name, int chat_type);
 int check_account_exists();
 bool check_account_from_server();
 

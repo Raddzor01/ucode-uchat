@@ -70,6 +70,26 @@ char *send_from_server() {
   return NULL;
 }
 
+int create_chat_in_server(const char *chat_name, int chat_type) {
+  // printf("%d\t%s\n", account->id, account->username);
+
+  cJSON *json = cJSON_CreateObject();
+
+  cJSON_AddNumberToObject(json, "type", REQ_CREATE_CHAT);
+  cJSON_AddStringToObject(json, "name", chat_name);
+  cJSON_AddNumberToObject(json, "user_id", account->id);
+  cJSON_AddNumberToObject(json, "chat_type", chat_type);
+  cJSON_AddNumberToObject(json, "time", time(NULL));
+
+  char *json_str = cJSON_PrintUnformatted(json);
+  SSL_write(info->ssl, json_str, mx_strlen(json_str));
+
+  cJSON_Delete(json);
+  free(json_str);
+
+  return 0;
+}
+
 int check_account_exists() {
 
   char *str = send_from_server();
@@ -121,4 +141,19 @@ bool check_account_from_server() {
 
   // ???
   return 1;
+}
+
+int check_chat_id_from_server() {
+
+  char *str = send_from_server();
+  cJSON *json = cJSON_Parse(str);
+
+  if (json == NULL) {
+    mx_printerr("cJSON is NULL\n");
+    return -1;
+  }
+
+  int chat_id = cJSON_GetObjectItem(json, "chat_id")->valueint;
+
+  return chat_id;
 }
