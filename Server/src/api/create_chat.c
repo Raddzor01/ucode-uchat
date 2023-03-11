@@ -21,13 +21,11 @@ void create_chat(cJSON *json, t_client_info *client_info) {
     int chat_id = -1;
     
     if (sqlite3_step(stmt) == SQLITE_ROW) {
-
         chat_id = sqlite3_column_int64(stmt, 0);
-        mx_logs(mx_itoa(chat_id), INFO_LOG);
     }
 
     if(chat_id != -1) {
-        send_responde(client_info, REQ_CREATE_CHAT, ERR_CHAT_EXIST);
+        send_responde(client_info->ssl, REQ_CREATE_CHAT, ERR_CHAT_EXIST);
     }
 
     sqlite3_reset(stmt);
