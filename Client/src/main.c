@@ -19,6 +19,7 @@ int main(int argc, char **argv) {
 
     info = malloc(sizeof(*info));
     account = malloc(sizeof(*account));
+    account->chat_id = 0;
 	int server_socket = 0;
 	SSL_CTX *ctx = NULL;
     SSL *ssl = NULL;
