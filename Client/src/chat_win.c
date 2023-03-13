@@ -40,11 +40,6 @@ void chat_window() {
     GtkWidget *grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(main_window), grid);
 
-    // gtk_widget_set_hexpand(grid, TRUE);
-    // gtk_widget_set_vexpand(grid, TRUE);
-    // gtk_widget_set_halign(grid, GTK_ALIGN_FILL);
-    // gtk_widget_set_valign(grid, GTK_ALIGN_FILL);
-
     build_users(grid);
 
     build_chat_window(grid);

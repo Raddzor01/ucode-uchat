@@ -89,14 +89,17 @@ void file_select(GtkWidget *widget, gpointer data) {
     gtk_widget_destroy(dialog);
 }
 
-void user_box(GtkWidget *widget) {
+void user_box(GtkWidget *widget, gpointer data) {
     GtkWidget *button;
     GtkWidget *image;
     GtkWidget *label;
     GtkWidget *box;
+    GtkWidget *out_box = GTK_WIDGET(data);
 
     GdkPixbuf *pixbuf;
     GError *error = NULL;
+
+    (void)widget;
 
     // Load the image from a file
     pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", &error);
@@ -120,5 +123,6 @@ void user_box(GtkWidget *widget) {
     // create a button
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), box);
-    gtk_box_pack_start(GTK_BOX(widget), button, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(out_box), button, FALSE, FALSE, 0);
+    gtk_widget_show_all(out_box);
 }

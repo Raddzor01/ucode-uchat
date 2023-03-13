@@ -49,8 +49,9 @@ grid box{
 
 .user-box{
     padding: 0px;
-    margin: -9px;
+    margin: 0px; /*-9*/
 }
+
 .user-box button{
     font-family: Arial;
     font-size: 14px;

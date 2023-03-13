@@ -172,8 +172,8 @@ void build_chat_window(GtkWidget *grid) {
     g_signal_connect(entry, "activate", G_CALLBACK(send_message), info);
 
     file_selection = gtk_button_new_with_label("...");
-    g_signal_connect(file_selection, "clicked", G_CALLBACK(file_select), NULL);
     gtk_box_pack_start(GTK_BOX(input_box), file_selection, FALSE, FALSE, 0);
+    g_signal_connect(file_selection, "clicked", G_CALLBACK(file_select), NULL);
 
     send_button = gtk_button_new_with_label("Send");
     gtk_widget_set_size_request (send_button, 100, -1);
@@ -189,11 +189,19 @@ void build_users(GtkWidget *grid) {
     GtkWidget *users_box;
     GtkWidget *scrolled_window;
     GtkWidget *box;
+    GtkWidget *search_box;
 
     users_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     add_class(users_box, "user-box");
-    gtk_widget_set_size_request (users_box, 200, -1);
+    gtk_widget_set_size_request (users_box, 200, 400);
     gtk_grid_attach(GTK_GRID(grid), users_box, 0, 0, 1, 1);
+
+    search_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_pack_start(GTK_BOX(users_box), search_box, FALSE, FALSE, 0);
+
+    GtkWidget *entry = gtk_entry_new();
+    gtk_box_pack_start(GTK_BOX(search_box), entry, TRUE, TRUE, 0);
+    // g_signal_connect(entry, "changed", G_CALLBACK(.........), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_box_pack_start(GTK_BOX(users_box), scrolled_window, TRUE, TRUE, 0);
@@ -201,26 +209,9 @@ void build_users(GtkWidget *grid) {
     box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_container_add(GTK_CONTAINER(scrolled_window), box);
 
-    for (int i = 0; i < 16; i++) {
-        user_box(box);
-    }
-
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);    
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
+    // for (int i = 0; i < 16; i++) {
+    //     user_box(box);
+    // }
 }
 
 void pop_up_window(char *text) {

@@ -93,7 +93,7 @@ void pop_up_window(char *text);
 void add_class(GtkWidget *widget, char *class_name);
 void file_select(GtkWidget *widget, gpointer data);
 void build_users(GtkWidget *grid);
-void user_box(GtkWidget *widget);
+void user_box(GtkWidget *widget, gpointer data);
 bool chech_fields(const gchar *username, const gchar *password);
 
 // CSS part
