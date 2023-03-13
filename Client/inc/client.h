@@ -44,6 +44,7 @@ typedef enum e_req_type {
   REQ_SEND_MSG,
   REQ_SEND_FILE,
   REQ_CREATE_CHAT,
+  REQ_GET_CHATS,
   REQ_UNKNOWN,
   REQ_LOGOUT,
   REQ_EXIT,

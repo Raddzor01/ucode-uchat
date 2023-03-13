@@ -33,7 +33,7 @@
 
 #define DATA_DIR "Server/db/data/"
 
-#define TABLE_SIZE 1000
+#define TABLE_SIZE 100
 
 // max size 8 mb
 #define MAX_FILE_SIZE 8388608
@@ -62,6 +62,7 @@ typedef enum e_req_type
     REQ_SEND_MSG,
     REQ_SEND_FILE,
     REQ_CREATE_CHAT,
+    REQ_GET_CHATS,
     REQ_UNKNOWN,
     REQ_LOGOUT,
     REQ_EXIT,
@@ -104,6 +105,7 @@ void user_login(cJSON *json, t_client_info *client_info);
 void send_message(cJSON *json, t_client_info *client_info);
 void send_file(cJSON *json, t_client_info *client_info);
 void create_chat(cJSON *json, t_client_info *client_info);
+void get_chats(cJSON *chat_info, t_client_info *client_info);
 
 sqlite3 *db_open();
 int db_init();
@@ -121,13 +123,14 @@ typedef struct
     request_handler handler;
 } t_map_entry;
 
-#define MAP_SIZE 5
+#define MAP_SIZE 6
 static t_map_entry request_map[MAP_SIZE] = {
     {REQ_USER_SIGNUP, user_signup},
     {REQ_USER_LOGIN, user_login},
     {REQ_SEND_MSG, send_message},
     {REQ_SEND_FILE, send_file},
-    {REQ_CREATE_CHAT, create_chat}
+    {REQ_CREATE_CHAT, create_chat},
+    {REQ_GET_CHATS, get_chats}
 };
 
 void add_client(t_client_info *client);

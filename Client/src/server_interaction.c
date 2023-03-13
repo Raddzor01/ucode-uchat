@@ -61,8 +61,6 @@ char *send_from_server() {
   char buffer[1024];
   int bytes = SSL_read(info->ssl, buffer, sizeof(buffer));
 
-  mx_logs(buffer, INFO_LOG);
-
   if (bytes > 0) {
     buffer[bytes] = 0;
     return mx_strdup(buffer);
