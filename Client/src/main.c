@@ -38,6 +38,8 @@ int main(int argc, char **argv) {
 
     gtk_main();
 
+    send_exit_from_server();
+
     free(account);
     free(info);
 

@@ -32,6 +32,9 @@ void chat_window() {
 
     hog();
 
+    get_user_chats();
+    send_from_server();
+
     if (main_window)
         clear_window(main_window);
     

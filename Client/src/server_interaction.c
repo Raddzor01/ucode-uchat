@@ -70,6 +70,35 @@ char *send_from_server() {
   return NULL;
 }
 
+int send_exit_from_server() {
+
+  cJSON *json = cJSON_CreateObject();
+
+  cJSON_AddNumberToObject(json, "type", REQ_EXIT);
+
+  char *json_str = cJSON_PrintUnformatted(json);
+  SSL_write(info->ssl, json_str, mx_strlen(json_str));
+
+  cJSON_Delete(json);
+  free(json_str);
+
+  return 0;
+}
+
+int get_user_chats() {
+
+  cJSON *json = cJSON_CreateObject();
+  cJSON_AddNumberToObject(json, "type", REQ_GET_CHATS);
+
+  char *json_str = cJSON_PrintUnformatted(json);
+  SSL_write(info->ssl, json_str, mx_strlen(json_str));
+
+  cJSON_Delete(json);
+  free(json_str);
+
+  return 0;
+}
+
 int create_chat_in_server(const char *chat_name, int chat_type) {
   // printf("%d\t%s\n", account->id, account->username);
 
