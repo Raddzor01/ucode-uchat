@@ -11,15 +11,18 @@ t_info* info;
 t_account* account;
 
 int main(int argc, char **argv) {
-    
-    // server part
+
+    // announcement part
 
     (void)argc;
 	srand(time(NULL));
 
     info = malloc(sizeof(*info));
     account = malloc(sizeof(*account));
-    account->chat_id = 0;
+    account->chat_id = 1;
+
+    // server part
+
 	int server_socket = 0;
 	SSL_CTX *ctx = NULL;
     SSL *ssl = NULL;

@@ -64,6 +64,11 @@ typedef enum e_chat_type {
     CHAT_PRIVATE
 }   t_chat_type;
 
+typedef enum e_user_type {
+    USERTYPE_NORMAL,
+    USERTYPE_ADMIN
+}   t_user_type;
+
 int send_file_to_server(char *filedir);
 extern GtkWidget *main_window;
 extern t_info *info;

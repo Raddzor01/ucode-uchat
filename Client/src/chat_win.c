@@ -9,8 +9,8 @@ void send_message(GtkButton *button) {
     buffer = gtk_text_view_get_buffer (info->text_view);
     text = gtk_entry_get_text (GTK_ENTRY (info->entry));
 
-    // send_message_to_server(text);
-    create_chat_in_server(text, CHAT_NORMAL);
+    send_message_to_server(text);
+    // create_chat_in_server(text, CHAT_NORMAL);
 
     gtk_text_buffer_get_end_iter (buffer, &iter);
     gtk_text_buffer_insert (buffer, &iter, text, -1);
