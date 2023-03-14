@@ -59,6 +59,11 @@ typedef enum e_error_type {
   ERR_CHAT_EXIST
 } t_error_type;
 
+typedef enum e_chat_type {
+    CHAT_NORMAL,
+    CHAT_PRIVATE
+}   t_chat_type;
+
 int send_file_to_server(char *filedir);
 extern GtkWidget *main_window;
 extern t_info *info;
