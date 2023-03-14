@@ -1,6 +1,6 @@
 #include "../../inc/server.h"
 
-sqlite3_stmt *get_chats_stmt(sqlite3 *db, int64_t user_id);
+sqlite3_stmt *get_chats_stmt(sqlite3 *db, int user_id);
 cJSON *get_chats_json(sqlite3 *db, int user_id);
 cJSON *get_chat_json(sqlite3_stmt *stmt);
 void send_chats_json_to_client(cJSON *json, t_client_info *client_info);
@@ -36,7 +36,7 @@ cJSON *get_chats_json(sqlite3 *db, int user_id) {
 
 }
 
-sqlite3_stmt *get_chats_stmt(sqlite3 *db, int64_t user_id) {
+sqlite3_stmt *get_chats_stmt(sqlite3 *db, int user_id) {
 
     sqlite3_stmt *stmt;
     sqlite3_prepare_v2(db, "SELECT chats.id, chats.name, chats.type, members.privilege FROM chats "
