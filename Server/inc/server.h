@@ -108,7 +108,7 @@ void send_message(cJSON *json, t_client_info *client_info);
 void send_file(cJSON *json, t_client_info *client_info);
 void create_chat(cJSON *json, t_client_info *client_info);
 void get_chats(cJSON *chat_info, t_client_info *client_info);
-oid search_chats(cJSON *client_json, t_client_info *client_info);
+void search_chats(cJSON *client_json, t_client_info *client_info);
 void edit_message(cJSON *client_json, t_client_info *client_info);
 
 sqlite3 *db_open();

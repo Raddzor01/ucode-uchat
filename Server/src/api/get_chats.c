@@ -2,7 +2,7 @@
 
 sqlite3_stmt *get_chats_stmt(sqlite3 *db, int user_id);
 cJSON *get_chats_json(sqlite3 *db, int user_id);
-cJSON *get_chat_json(sqlite3_stmt *stmt);
+static cJSON *get_chat_json(sqlite3_stmt *stmt);
 void send_chats_json_to_client(cJSON *json, t_client_info *client_info);
 
 void get_chats(cJSON *chat_info, t_client_info *client_info) {
@@ -51,7 +51,7 @@ sqlite3_stmt *get_chats_stmt(sqlite3 *db, int user_id) {
 
 }
 
-cJSON *get_chat_json(sqlite3_stmt *stmt) {
+static cJSON *get_chat_json(sqlite3_stmt *stmt) {
 
     cJSON *json = cJSON_CreateObject();
     cJSON_AddNumberToObject(json, "chat_id", sqlite3_column_int64(stmt, 0));
