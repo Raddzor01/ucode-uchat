@@ -61,7 +61,7 @@ char *send_from_server() {
   char buffer[1024];
   int bytes = SSL_read(info->ssl, buffer, sizeof(buffer));
 
-  mx_logs(buffer, INFO_LOG);
+  // mx_logs(buffer, INFO_LOG);
 
   if (bytes > 0) {
     buffer[bytes] = 0;
@@ -93,7 +93,26 @@ int get_user_chats() {
   char *json_str = cJSON_PrintUnformatted(json);
   SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
+  // cJSON_Delete(json);
+
+  char *str = send_from_server();
+  json = cJSON_Parse(str);
+
+  cJSON *json_arr = cJSON_GetObjectItemCaseSensitive(json, "chats");
+  printf("\n%s\n", cJSON_PrintUnformatted(json_arr));
+  printf("\n%s\n", cJSON_PrintUnformatted(json_arr->child));
+  printf("\n%s\n", cJSON_PrintUnformatted(json_arr->child->next));
+
+  cJSON *temp_json = json_arr->child;
+
+  for (int i = 0; i < cJSON_GetArraySize(json_arr); i++) {
+    printf("\n%s\n", cJSON_PrintUnformatted(temp_json));
+    temp_json = temp_json->next;
+  }
+
+  cJSON_Delete(temp_json);
   cJSON_Delete(json);
+  cJSON_Delete(json_arr);
   free(json_str);
 
   return 0;

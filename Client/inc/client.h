@@ -24,6 +24,9 @@
 // local host
 #define IP_ADDRESS "127.0.0.1"
 
+#define MIN_NUMBER_OF_CHARACTERS 1
+#define MAX_NUMBER_OF_CHARACTERS 16
+
 // struct for sending to server
 typedef struct s_info {
   GtkWidget *entry;

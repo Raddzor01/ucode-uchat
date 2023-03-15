@@ -5,13 +5,13 @@ GtkWidget *username_entry;
 
 bool chech_fields(const gchar *username, const gchar *password) {
 
-    if (mx_strlen(username) <= 0 || mx_strlen(password) <= 0) {
+    if (mx_strlen(username) < MIN_NUMBER_OF_CHARACTERS || mx_strlen(password) < MIN_NUMBER_OF_CHARACTERS) {
         pop_up_window("Fields must store at least one character");
         return false;
     }
 
-    if (mx_strlen(username) > 16 || mx_strlen(password) > 16) {
-        pop_up_window("Too big password or login");
+    if (mx_strlen(username) > MAX_NUMBER_OF_CHARACTERS || mx_strlen(password) > MAX_NUMBER_OF_CHARACTERS) {
+        pop_up_window("Password or login has more than 16 characters");
         return false;
     }
     

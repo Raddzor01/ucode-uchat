@@ -12,6 +12,9 @@ void send_message(GtkButton *button) {
     send_message_to_server(text);
     // create_chat_in_server(text, CHAT_NORMAL);
 
+    // if (strcmp(text, "e") == 0)
+    //     account->chat_id = 2;
+
     gtk_text_buffer_get_end_iter (buffer, &iter);
     gtk_text_buffer_insert (buffer, &iter, text, -1);
     gtk_text_buffer_insert (buffer, &iter, "\n", -1);
@@ -34,7 +37,7 @@ void chat_window() {
     hog();
 
     get_user_chats();
-    send_from_server();
+    // send_from_server();
 
     if (main_window)
         clear_window(main_window);
