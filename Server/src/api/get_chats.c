@@ -7,9 +7,11 @@ void send_chats_json_to_client(cJSON *json, t_client_info *client_info);
 
 void get_chats(cJSON *chat_info, t_client_info *client_info) {
 
-    sqlite3 *db = db_open();
-
-    cJSON *json = get_chats_json(db, client_info->user->id);
+    sqlite3 *db;
+    cJSON *json;
+    
+    db = db_open();
+    json = get_chats_json(db, client_info->user->id);
     send_chats_json_to_client(json, client_info);
 
     sqlite3_close(db);
@@ -18,14 +20,18 @@ void get_chats(cJSON *chat_info, t_client_info *client_info) {
 
 cJSON *get_chats_json(sqlite3 *db, int user_id) {
 
-    sqlite3_stmt *stmt = get_chats_stmt(db, user_id);
+    sqlite3_stmt *stmt;
+    cJSON *chats_array;
+    cJSON *json;
+    
+    stmt = get_chats_stmt(db, user_id);
 
-    cJSON *chats_array = cJSON_CreateArray();
+    chats_array = cJSON_CreateArray();
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         cJSON_AddItemToArray(chats_array, get_chat_json(stmt));
     }
 
-    cJSON *json = cJSON_CreateObject();
+    json = cJSON_CreateObject();
     cJSON_AddItemReferenceToObject(json, "chats", chats_array);
     cJSON_AddNumberToObject(json, "type", REQ_GET_CHATS);
     cJSON_AddNumberToObject(json, "error_code", ERR_SUCCESS);
@@ -65,11 +71,13 @@ static cJSON *get_chat_json(sqlite3_stmt *stmt) {
 
 void send_chats_json_to_client(cJSON *json, t_client_info *client_info) {
 
-    char *json_str = cJSON_PrintUnformatted(json);
+    char *json_str;
+    
+    json_str = cJSON_PrintUnformatted(json);
 
     SSL_write(client_info->ssl, json_str, mx_strlen(json_str));
 
-    free(json_str);
+    mx_strdel(&json_str);
     cJSON_Delete(json);
 
 }

@@ -75,13 +75,13 @@ int db_init()
     return 0;
 }
 
-int db_execute_request(char *request)
+int db_execute_query(const char *sql_query)
 {
 
     sqlite3 *db = db_open();
 
     char *error;
-    if (sqlite3_exec(db, request, NULL, NULL, &error) != SQLITE_OK)
+    if (sqlite3_exec(db, sql_query, NULL, NULL, &error) != SQLITE_OK)
     {
         mx_logs(error, ERROR_LOG);
         return 1;
@@ -89,6 +89,16 @@ int db_execute_request(char *request)
 
     sqlite3_close(db);
     return 0;
+}
+
+sqlite3_stmt *db_execute_query_and_return_stmt(const char *sql_query, sqlite3 *db) {
+
+    sqlite3_stmt* stmt;
+
+    sqlite3_prepare_v2(db, sql_query, -1, &stmt, NULL);
+    sqlite3_step(stmt);
+    
+    return stmt;
 }
 
 int db_check_user_exists(char *username)
@@ -122,7 +132,7 @@ int db_get_id_by_username(char *username)
     int user_id = -1;
     if (sqlite3_step(stmt) == SQLITE_ROW)
     {
-        user_id = sqlite3_column_int64(stmt, 0);
+        user_id = sqlite3_column_int(stmt, 0);
     }
 
     sqlite3_finalize(stmt);

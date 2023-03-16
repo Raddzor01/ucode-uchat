@@ -4,6 +4,8 @@
 void connect_new_client(SSL *ssl, int client_socket)
 {
 
+    int flags;
+    t_client_info *client_info;
     pthread_t thread;
 
     if (SSL_accept(ssl) == -1)
@@ -13,10 +15,10 @@ void connect_new_client(SSL *ssl, int client_socket)
     }
 
     // Set the client socket to non-blocking mode
-    int flags = fcntl(client_socket, F_GETFL, 0);
+    flags = fcntl(client_socket, F_GETFL, 0);
     fcntl(client_socket, F_SETFL, flags | O_NONBLOCK);
 
-    t_client_info *client_info = (t_client_info *)malloc(sizeof(*client_info));
+    client_info = (t_client_info *)malloc(sizeof(*client_info));
     client_info->socket_info = client_socket;
     client_info->ssl = ssl;
     client_info->user = NULL;
@@ -29,8 +31,9 @@ char *read_client_data(SSL *ssl)
 {
 
     char buffer[MAX_BUF_SIZE];
-    int n_bytes = SSL_read(ssl, &buffer, sizeof(buffer));
+    int n_bytes;
 
+    n_bytes = SSL_read(ssl, &buffer, sizeof(buffer));
     if (n_bytes > 0)
     {
         buffer[n_bytes] = 0;

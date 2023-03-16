@@ -7,25 +7,35 @@ void send_login_response(SSL *ssl, t_user_info *user_info);
 
 void user_login(cJSON *json, t_client_info *client_info) {
 
+    sqlite3 *db;
+    char *username;
+    char *password;
+    t_user_info *user_info;
+
     db_init();
 
-    sqlite3 *db;
+    username = cJSON_GetObjectItemCaseSensitive(json, "username")->valuestring;
+    password = cJSON_GetObjectItemCaseSensitive(json, "password")->valuestring;
+
     db = db_open();
 
-    char *username = cJSON_GetObjectItemCaseSensitive(json, "username")->valuestring;
-    char *password = cJSON_GetObjectItemCaseSensitive(json, "password")->valuestring;
-
-    t_user_info *user_info = get_user_info(db, username);
-
+    user_info = get_user_info(db, username);
     if(user_info == NULL) {
+
         send_responde(client_info->ssl, REQ_USER_LOGIN, ERR_USER_EXISTS);
+
         sqlite3_close(db);
+
         return;
+
     }
 
     if(mx_strcmp(user_info->password, password) != 0) {
+
         send_responde(client_info->ssl, REQ_USER_LOGIN, ERR_INVALID_PASSWORD);
+
         sqlite3_close(db);
+
         return;
     }
 
@@ -39,6 +49,7 @@ t_user_info *get_user_info(sqlite3 *db, char *username) {
 
     sqlite3_stmt *stmt;
     t_user_info *user_info = NULL;
+
     sqlite3_prepare_v2(db, "SELECT id, username, password FROM users WHERE username = ?", -1, &stmt, NULL);
     sqlite3_bind_text(stmt, 1, username, -1, NULL);
 
@@ -55,17 +66,20 @@ t_user_info *get_user_info(sqlite3 *db, char *username) {
 
 void send_login_response(SSL *ssl, t_user_info *user_info) {
 
-    cJSON *json = cJSON_CreateObject();
+    cJSON *json;
+    char *json_str;
+
+    json = cJSON_CreateObject();
     cJSON_AddStringToObject(json, "username", user_info->username);
     cJSON_AddNumberToObject(json, "type", REQ_USER_LOGIN);
     cJSON_AddNumberToObject(json, "id", user_info->id);
     cJSON_AddNumberToObject(json, "error_code", ERR_SUCCESS);
-    char *user_info_str = cJSON_PrintUnformatted(json);
+    json_str = cJSON_PrintUnformatted(json);
 
-    SSL_write(ssl, user_info_str, mx_strlen(user_info_str));
+    SSL_write(ssl, json_str, mx_strlen(json_str));
 
+    mx_strdel(&json_str);
     cJSON_Delete(json);
-    mx_strdel(&user_info_str);
 
 }
 
