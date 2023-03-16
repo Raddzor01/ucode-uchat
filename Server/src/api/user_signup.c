@@ -1,16 +1,15 @@
 #include "../../inc/server.h"
 
-static int check_signup_errors(char *username) {
-
+static int check_signup_errors(char *username)
+{
     if (db_check_user_exists(username))
         return ERR_USER_EXISTS;
 
     return 0;
-
 }
 
-void user_signup(cJSON *json, t_client_info *client_info) {
-
+void user_signup(cJSON *json, t_client_info *client_info)
+{
     char *username;
     char *password;
     int error_type;
@@ -34,6 +33,5 @@ void user_signup(cJSON *json, t_client_info *client_info) {
 
     send_responde(client_info->ssl, REQ_USER_SIGNUP, ERR_SUCCESS);
 
-    sqlite3_free(query);    
-
+    sqlite3_free(query);
 }

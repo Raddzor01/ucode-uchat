@@ -18,12 +18,11 @@ int generate_id()
 
 void add_client(t_client_info *client)
 {
-
     t_client_info *new_client;
     t_client_info *current_client;
     t_user_info *user;
     int index;
-    
+
     index = hash(client->user->id);
 
     user = (t_user_info *)malloc(sizeof(t_user_info));

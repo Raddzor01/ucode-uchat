@@ -3,7 +3,6 @@
 //  Function connects a new client to the server by accepting the SSL connection and sets the client's socket to non-blocking mode. It then creates a new thread for the client using the thread_control function, passing the client information including socket number and SSL information as an argument.
 void connect_new_client(SSL *ssl, int client_socket)
 {
-
     int flags;
     t_client_info *client_info;
     pthread_t thread;
@@ -29,7 +28,6 @@ void connect_new_client(SSL *ssl, int client_socket)
 // read the information received from the client and write it as a string
 char *read_client_data(SSL *ssl)
 {
-
     char buffer[MAX_BUF_SIZE];
     int n_bytes;
 

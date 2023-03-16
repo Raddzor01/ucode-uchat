@@ -2,14 +2,12 @@
 
 int main(int argc, char *argv[])
 {
-
     struct sockaddr_in client_address;
     socklen_t addr_size;
-    int client_socket;    
+    int client_socket;
     int server_socket;
     SSL *ssl;
     SSL_CTX *ctx;
-
 
     usage_error_check(argc);
 
@@ -20,7 +18,6 @@ int main(int argc, char *argv[])
 
     while (true)
     {
-
         client_socket = accept(server_socket, (struct sockaddr *)&client_address, &addr_size);
         if (client_socket == -1)
         {

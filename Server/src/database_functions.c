@@ -2,7 +2,6 @@
 
 int db_check_exist()
 {
-
     struct stat info;
 
     if (stat(DB_NAME, &info) == 0)
@@ -15,7 +14,6 @@ int db_check_exist()
 
 sqlite3 *db_open()
 {
-
     sqlite3 *db;
 
     if (sqlite3_open(DB_NAME, &db) != SQLITE_OK)
@@ -29,7 +27,6 @@ sqlite3 *db_open()
 
 int db_init()
 {
-
     FILE *fp;
     char *error = 0;
     char ch;
@@ -77,7 +74,6 @@ int db_init()
 
 int db_execute_query(const char *sql_query)
 {
-
     sqlite3 *db = db_open();
 
     char *error;
@@ -91,19 +87,18 @@ int db_execute_query(const char *sql_query)
     return 0;
 }
 
-sqlite3_stmt *db_execute_query_and_return_stmt(const char *sql_query, sqlite3 *db) {
-
-    sqlite3_stmt* stmt;
+sqlite3_stmt *db_execute_query_and_return_stmt(const char *sql_query, sqlite3 *db)
+{
+    sqlite3_stmt *stmt;
 
     sqlite3_prepare_v2(db, sql_query, -1, &stmt, NULL);
     sqlite3_step(stmt);
-    
+
     return stmt;
 }
 
 int db_check_user_exists(char *username)
 {
-
     char buff[MAX_BUF_SIZE];
     sprintf(buff, "SELECT EXISTS (SELECT id FROM users WHERE username = '%s')", username);
 
@@ -122,7 +117,6 @@ int db_check_user_exists(char *username)
 
 int db_get_id_by_username(char *username)
 {
-
     sqlite3 *db = db_open();
     sqlite3_stmt *stmt;
 
@@ -139,5 +133,4 @@ int db_get_id_by_username(char *username)
     sqlite3_close(db);
 
     return user_id;
-
 }

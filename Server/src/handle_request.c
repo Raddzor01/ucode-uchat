@@ -1,7 +1,7 @@
 #include "../inc/server.h"
 
-t_req_type handle_request(t_client_info *client_info, char *request) {
-
+t_req_type handle_request(t_client_info *client_info, char *request)
+{
     cJSON *json;
     t_req_type type;
     t_map_entry *entery;
@@ -15,7 +15,7 @@ t_req_type handle_request(t_client_info *client_info, char *request) {
     }
 
     type = cJSON_GetObjectItem(json, "type")->valueint;
-   
+
     if (type == REQ_EXIT || type == REQ_LOGOUT)
     {
         cJSON_Delete(json);

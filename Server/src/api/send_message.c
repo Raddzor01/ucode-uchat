@@ -3,8 +3,8 @@
 void insert_message_into_db(cJSON *json);
 int get_last_message_id(int user_id, int chat_id);
 
-void send_message(cJSON *json, t_client_info *client_info) {
-
+void send_message(cJSON *json, t_client_info *client_info)
+{
     int user_id;
     int chat_id;
     int message_id;
@@ -28,11 +28,10 @@ void send_message(cJSON *json, t_client_info *client_info) {
 
     mx_strdel(&json_str);
     cJSON_Delete(responde_json);
-
 }
 
-void insert_message_into_db(cJSON *json) {
-
+void insert_message_into_db(cJSON *json)
+{
     int user_id;
     int chat_id;
     char *message;
@@ -49,11 +48,10 @@ void insert_message_into_db(cJSON *json) {
     db_execute_query(query);
 
     sqlite3_free(query);
-
 }
 
-int get_last_message_id(int user_id, int chat_id) {
-
+int get_last_message_id(int user_id, int chat_id)
+{
     sqlite3 *db;
     sqlite3_stmt *stmt;
     char *query;
@@ -72,5 +70,4 @@ int get_last_message_id(int user_id, int chat_id) {
     sqlite3_finalize(stmt);
 
     return message_id;
-
 }

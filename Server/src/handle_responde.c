@@ -1,7 +1,7 @@
 #include "../inc/server.h"
 
-void send_responde(SSL *ssl, t_req_type req_type, t_error_type err_code) {
-
+void send_responde(SSL *ssl, t_req_type req_type, t_error_type err_code)
+{
     cJSON *json;
     char *json_str;
 
@@ -14,5 +14,4 @@ void send_responde(SSL *ssl, t_req_type req_type, t_error_type err_code) {
 
     mx_strdel(&json_str);
     cJSON_Delete(json);
-
 }

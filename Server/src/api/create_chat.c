@@ -1,7 +1,7 @@
 #include "../../inc/server.h"
 
-void create_chat(cJSON *json, t_client_info *client_info) {
-
+void create_chat(cJSON *json, t_client_info *client_info)
+{
     sqlite3 *db;
     sqlite3_stmt *stmt;
     char *chat_name;
@@ -15,12 +15,13 @@ void create_chat(cJSON *json, t_client_info *client_info) {
     date = cJSON_GetObjectItem(json, "time")->valueint;
 
     db = db_open();
-    query = sqlite3_mprintf("SELECT id FROM chats WHERE name = '%s'",chat_name);
+    query = sqlite3_mprintf("SELECT id FROM chats WHERE name = '%s'",
+                            chat_name);
     stmt = db_execute_query_and_return_stmt(query, db);
     chat_id = sqlite3_column_int(stmt, 0);
 
-    if(chat_id != 0) {
-
+    if (chat_id != 0)
+    {
         send_responde(client_info->ssl, REQ_CREATE_CHAT, ERR_CHAT_EXIST);
 
         sqlite3_free(query);
@@ -28,7 +29,6 @@ void create_chat(cJSON *json, t_client_info *client_info) {
         sqlite3_close(db);
 
         return;
-
     }
 
     sqlite3_free(query);
@@ -39,7 +39,7 @@ void create_chat(cJSON *json, t_client_info *client_info) {
     db_execute_query(query);
 
     sqlite3_free(query);
- 
+
     query = sqlite3_mprintf("SELECT id FROM chats WHERE name = '%s'",
                             chat_name);
     stmt = db_execute_query_and_return_stmt(query, db);
@@ -55,5 +55,4 @@ void create_chat(cJSON *json, t_client_info *client_info) {
     sqlite3_free(query);
     sqlite3_finalize(stmt);
     sqlite3_close(db);
-    
 }
