@@ -100,19 +100,18 @@ int get_user_chats() {
 
   cJSON *json_arr = cJSON_GetObjectItemCaseSensitive(json, "chats");
   printf("\n%s\n", cJSON_PrintUnformatted(json_arr));
-  printf("\n%s\n", cJSON_PrintUnformatted(json_arr->child));
-  printf("\n%s\n", cJSON_PrintUnformatted(json_arr->child->next));
 
   cJSON *temp_json = json_arr->child;
 
   for (int i = 0; i < cJSON_GetArraySize(json_arr); i++) {
     printf("\n%s\n", cJSON_PrintUnformatted(temp_json));
+    printf("\n%s\n", cJSON_GetObjectItemCaseSensitive(temp_json, "chat_name")->valuestring);
     temp_json = temp_json->next;
   }
 
   cJSON_Delete(temp_json);
   cJSON_Delete(json);
-  cJSON_Delete(json_arr);
+  // cJSON_Delete(json_arr);
   free(json_str);
 
   return 0;
@@ -181,7 +180,7 @@ bool check_account_from_server() {
   }
 
   account->id = cJSON_GetObjectItem(json, "id")->valueint;
-  account->username = cJSON_GetObjectItem(json, "username")->valuestring;
+  account->username = cJSON_GetObjectItemCaseSensitive(json, "username")->valuestring;
   // char *password = cJSON_GetObjectItem(json, "password")->valuestring;
   // printf("%d\t%s\n", account->id, account->username);
   cJSON_Delete(json);
