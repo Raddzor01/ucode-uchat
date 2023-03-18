@@ -10,6 +10,8 @@ GtkWidget *main_window;
 t_info* info;
 t_account* account;
 
+void freeing_memory();
+
 int main(int argc, char **argv) {
 
     // announcement part
@@ -43,9 +45,15 @@ int main(int argc, char **argv) {
 
     send_exit_from_server();
 
-    free(account);
-    free(info);
+    freeing_memory();
 
     return 0;
 }
 
+void freeing_memory() {
+    for (int i = 0; i < account->chat_count; i++) 
+        free(account->chat_list[i]);
+
+    free(account);
+    free(info);
+}

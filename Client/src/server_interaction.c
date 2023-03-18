@@ -93,32 +93,35 @@ int get_user_chats() {
   char *json_str = cJSON_PrintUnformatted(json);
   SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
-  // cJSON_Delete(json);
+  cJSON_Delete(json);
+  free(json_str);
 
   char *str = send_from_server();
-  json = cJSON_Parse(str);
+  cJSON *json_2 = cJSON_Parse(str);
 
-  cJSON *json_arr = cJSON_GetObjectItemCaseSensitive(json, "chats");
-  printf("\n%s\n", cJSON_PrintUnformatted(json_arr));
+  // account->chat_count = cJSON_GetArraySize(json_arr);
+  account->chat_count = cJSON_GetArraySize(json_2->child);
+  account->chat_list = (char **)malloc(account->chat_count * sizeof(char *));
+  account->chat_id_list = (int *)malloc(account->chat_count * sizeof(int));
 
-  cJSON *temp_json = json_arr->child;
+  // printf("\n%s\n", cJSON_PrintUnformatted(json_2->child));
 
-  for (int i = 0; i < cJSON_GetArraySize(json_arr); i++) {
-    printf("\n%s\n", cJSON_PrintUnformatted(temp_json));
-    printf("\n%s\n", cJSON_GetObjectItemCaseSensitive(temp_json, "chat_name")->valuestring);
-    temp_json = temp_json->next;
+  cJSON *js = NULL;
+
+  for (int i = 0; i < account->chat_count; i++) {
+    js = cJSON_GetArrayItem(json_2->child, i);
+    account->chat_list[i] = mx_strdup(cJSON_GetObjectItemCaseSensitive(js, "chat_name")->valuestring);
+    account->chat_id_list[i] = cJSON_GetObjectItem(js, "chat_id")->valueint;
   }
 
-  cJSON_Delete(temp_json);
-  cJSON_Delete(json);
-  // cJSON_Delete(json_arr);
-  free(json_str);
+  cJSON_Delete(json_2);
+  // free(js);
+  free(str);
 
   return 0;
 }
 
 int create_chat_in_server(const char *chat_name, int chat_type) {
-  // printf("%d\t%s\n", account->id, account->username);
 
   cJSON *json = cJSON_CreateObject();
 

@@ -188,7 +188,7 @@ void build_users(GtkWidget *grid) {
 
     GtkWidget *users_box;
     GtkWidget *scrolled_window;
-    GtkWidget *box;
+    GtkWidget *box_for_users;
     GtkWidget *search_box;
 
     users_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -206,12 +206,13 @@ void build_users(GtkWidget *grid) {
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_box_pack_start(GTK_BOX(users_box), scrolled_window, TRUE, TRUE, 0);
 
-    box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-    gtk_container_add(GTK_CONTAINER(scrolled_window), box);
+    box_for_users = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), box_for_users);
+    gtk_widget_set_name(box_for_users, "box_for_users");
 
-    // for (int i = 0; i < 16; i++) {
-    //     user_box(box);
-    // }
+    for (int i = account->chat_count - 1; i >= 0; i--) {
+        user_box(i);
+    }
 }
 
 void pop_up_window(char *text) {

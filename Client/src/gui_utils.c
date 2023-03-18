@@ -1,5 +1,7 @@
 #include "../inc/client.h"
 
+void change_chat_id(GtkWidget *widget, int *new_id);
+
 void load_css () {
 	GtkCssProvider *styles = gtk_css_provider_new();
     gtk_css_provider_load_from_path(styles, "Client/src/style/main.css", NULL);
@@ -89,17 +91,19 @@ void file_select(GtkWidget *widget, gpointer data) {
     gtk_widget_destroy(dialog);
 }
 
-void user_box(GtkWidget *widget, gpointer data) {
+void user_box(int number) {
     GtkWidget *button;
     GtkWidget *image;
     GtkWidget *label;
     GtkWidget *box;
-    GtkWidget *out_box = GTK_WIDGET(data);
+    GtkWidget *out_box = get_widget_by_name_r(main_window, "box_for_users");
+
+    // int *id_link = &account->chat_id_list[number];
 
     GdkPixbuf *pixbuf;
     GError *error = NULL;
 
-    (void)widget;
+    // printf("\n%s %d\n", account->chat_list[number], account->chat_id_list[number]);
 
     // Load the image from a file
     pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", &error);
@@ -113,7 +117,7 @@ void user_box(GtkWidget *widget, gpointer data) {
     image = gtk_image_new_from_pixbuf(pixbuf);
 
     // create a label
-    label = gtk_label_new("User Hog");
+    label = gtk_label_new(account->chat_list[number]);
 
     // create a box to hold the image and label
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -125,4 +129,14 @@ void user_box(GtkWidget *widget, gpointer data) {
     gtk_container_add(GTK_CONTAINER(button), box);
     gtk_box_pack_start(GTK_BOX(out_box), button, FALSE, FALSE, 0);
     gtk_widget_show_all(out_box);
+    g_signal_connect(button, "clicked", G_CALLBACK(change_chat_id), &account->chat_id_list[number]);
+}
+
+void change_chat_id(GtkWidget *widget, int *new_id) {
+
+    (void)widget;
+
+    account->chat_id = *new_id;
+
+    printf("\ncurrent chat: %d\n", account->chat_id);
 }

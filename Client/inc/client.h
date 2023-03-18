@@ -39,6 +39,9 @@ typedef struct s_account {
   int id;
   char *username;
   int chat_id;
+  char **chat_list;
+  int chat_count;
+  int *chat_id_list;
 } t_account;
 
 typedef enum e_req_type {
@@ -109,7 +112,7 @@ void pop_up_window(char *text);
 void add_class(GtkWidget *widget, char *class_name);
 void file_select(GtkWidget *widget, gpointer data);
 void build_users(GtkWidget *grid);
-void user_box(GtkWidget *widget, gpointer data);
+void user_box(int number);
 bool chech_fields(const gchar *username, const gchar *password);
 
 // CSS part
