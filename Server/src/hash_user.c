@@ -16,17 +16,21 @@ int generate_id()
     return id;
 }
 
-
 void add_client(t_client_info *client)
 {
-    int index = hash(client->user->id);
+    t_client_info *new_client;
+    t_client_info *current_client;
+    t_user_info *user;
+    int index;
 
-    t_user_info *user = (t_user_info *) malloc(sizeof(t_user_info));
+    index = hash(client->user->id);
+
+    user = (t_user_info *)malloc(sizeof(t_user_info));
     user->id = client->user->id;
     user->username = client->user->username;
     user->password = client->user->password;
 
-    t_client_info *new_client = (t_client_info *)malloc(sizeof(t_client_info));
+    new_client = (t_client_info *)malloc(sizeof(t_client_info));
     new_client->hash_id = index;
     new_client->socket_info = client->socket_info;
     new_client->ssl = client->ssl;
@@ -34,7 +38,7 @@ void add_client(t_client_info *client)
     new_client->next = NULL;
 
     // Поиск последнего элемента списка
-    t_client_info *current_client = hash_table[index];
+    current_client = hash_table[index];
     if (current_client == NULL)
     {
         hash_table[index] = new_client;

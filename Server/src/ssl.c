@@ -3,7 +3,6 @@
 // function initializes the SSL context and returns a pointer to the created context.
 SSL_CTX *ssl_ctx_init()
 {
-
     SSL_library_init();
     OpenSSL_add_all_algorithms();
     SSL_load_error_strings();

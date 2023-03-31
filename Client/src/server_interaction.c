@@ -32,6 +32,11 @@ int send_login_to_server(const char *username, const char *password) {
   cJSON_Delete(json);
   free(json_str);
 
+  json = cJSON_CreateObject();
+  cJSON_AddNumberToObject(json, "type", REQ_GET_CHATS);
+  json_str = cJSON_PrintUnformatted(json);
+  SSL_write(info->ssl, json_str, mx_strlen(json_str));
+
   return check_account_from_server();
 }
 

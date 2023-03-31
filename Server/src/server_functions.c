@@ -3,7 +3,6 @@
 // initialize the server with the specified port number
 int server_init(char *port)
 {
-
     struct sockaddr_in server_address;
     int server_socket;
 
@@ -37,10 +36,10 @@ int server_init(char *port)
 // make current process a daemon
 void daemon()
 {
-
     pid_t sid;
-    pid_t pid = fork();
+    pid_t pid;
 
+    pid = fork();
     if (pid < 0)
     {
         perror("Failed to fork");
@@ -61,12 +60,14 @@ void daemon()
         perror("Failed to set session id");
         exit(EXIT_FAILURE);
     }
+
     signal(SIGTERM, SIG_DFL);
 }
 
 // usage check
 void usage_error_check(int argc)
 {
+
     if (argc != 2)
     {
         mx_printerr("usage: ./uchat_server [port]\n");
@@ -77,11 +78,12 @@ void usage_error_check(int argc)
 // logging client connection
 void log_client_conection(struct in_addr sa)
 {
-
     char client_ip[INET_ADDRSTRLEN];
+    char *log_massage;
+
     inet_ntop(AF_INET, &sa, client_ip, INET_ADDRSTRLEN);
 
-    char *log_massage = mx_strjoin("Trying to connect client: ", client_ip);
+    log_massage = mx_strjoin("Trying to connect client: ", client_ip);
     mx_logs(log_massage, INFO_LOG);
 
     mx_strdel(&log_massage);

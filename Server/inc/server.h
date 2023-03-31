@@ -63,6 +63,9 @@ typedef enum e_req_type
     REQ_SEND_FILE,
     REQ_CREATE_CHAT,
     REQ_GET_CHATS,
+    REQ_SEARCH_CHATS,
+    REQ_EDIT_MESSAGE,
+    REQ_JOIN_CHAT,
     REQ_UNKNOWN,
     REQ_LOGOUT,
     REQ_EXIT,
@@ -75,7 +78,9 @@ typedef enum e_error_type
     ERR_INVALID_PASSWORD,
     ERR_USER_EXISTS,
     ERR_USER_NONEXIST,
-    ERR_CHAT_EXIST
+    ERR_CHAT_EXIST,
+    ERR_CHAT_NONEXIST,
+    ERR_USER_IN_CHAT
 } t_error_type;
 
 typedef enum e_chat_type {
@@ -106,10 +111,14 @@ void send_message(cJSON *json, t_client_info *client_info);
 void send_file(cJSON *json, t_client_info *client_info);
 void create_chat(cJSON *json, t_client_info *client_info);
 void get_chats(cJSON *chat_info, t_client_info *client_info);
+void search_chats(cJSON *client_json, t_client_info *client_info);
+void edit_message(cJSON *client_json, t_client_info *client_info);
+void join_chat(cJSON *chat_info, t_client_info *client_info);
 
 sqlite3 *db_open();
 int db_init();
-int db_execute_request(char *request);
+int db_execute_query(const char *sql_query);
+sqlite3_stmt *db_execute_query_and_return_stmt(const char *sql_query, sqlite3 *db);
 int db_check_user_exists(char *username);
 int db_get_id_by_username(char *username);
 
@@ -123,14 +132,16 @@ typedef struct
     request_handler handler;
 } t_map_entry;
 
-#define MAP_SIZE 6
+#define MAP_SIZE 8
 static t_map_entry request_map[MAP_SIZE] = {
     {REQ_USER_SIGNUP, user_signup},
     {REQ_USER_LOGIN, user_login},
     {REQ_SEND_MSG, send_message},
     {REQ_SEND_FILE, send_file},
     {REQ_CREATE_CHAT, create_chat},
-    {REQ_GET_CHATS, get_chats}
+    {REQ_GET_CHATS, get_chats},
+    {REQ_SEARCH_CHATS, edit_message},
+    {REQ_JOIN_CHAT, join_chat}
 };
 
 void add_client(t_client_info *client);
