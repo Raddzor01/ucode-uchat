@@ -128,14 +128,15 @@ void build_chat_window(GtkWidget *grid) {
     GtkWidget *chat_box;
     GtkWidget *input_box;
     GtkWidget *entry;
-    GtkWidget *text_view;
     GtkWidget *send_button;
     GtkWidget *scrolled_window;
     GtkWidget *file_selection;
+    GtkWidget *box_container;
 
     chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_widget_set_size_request (chat_box, 500, 400);
     gtk_grid_attach(GTK_GRID(grid), chat_box, 1, 0, 1, 1);
+    gtk_widget_set_name(chat_box, "chat_box");
 
     input_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_grid_attach(GTK_GRID(grid), input_box, 1, 1, 1, 1);
@@ -150,15 +151,13 @@ void build_chat_window(GtkWidget *grid) {
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_box_pack_start(GTK_BOX(chat_box), scrolled_window, TRUE, TRUE, 0);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
     add_class(scrolled_window, "scrl-win");
-
-    text_view = gtk_text_view_new();
-    add_class(text_view, "text_view");
-
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
-    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), FALSE);
-    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
-    gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+    gtk_widget_set_name(scrolled_window, "scroll");
+    
+    box_container = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), box_container);
+    gtk_widget_set_name(box_container, "box_holder");
 
     entry = gtk_entry_new();
     gtk_widget_set_size_request (entry, 400, -1);
@@ -167,8 +166,6 @@ void build_chat_window(GtkWidget *grid) {
     gtk_box_pack_start(GTK_BOX(input_box), entry, TRUE, TRUE, 0);
 
     gtk_box_pack_start(GTK_BOX(input_box), entry, FALSE, FALSE, 0);
-    g_object_set_data(G_OBJECT(entry), "text_view", text_view);
-    info->text_view = GTK_TEXT_VIEW(text_view);
     g_signal_connect(entry, "activate", G_CALLBACK(send_message), info);
 
     file_selection = gtk_button_new_with_label("...");

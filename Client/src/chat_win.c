@@ -2,12 +2,11 @@
 
 void send_message(GtkButton *button) {
 
-    GtkTextBuffer *buffer;
-    GtkTextIter iter;
     const char *text;
 
-    buffer = gtk_text_view_get_buffer (info->text_view);
     text = gtk_entry_get_text (GTK_ENTRY (info->entry));
+
+    text_bubble(text);
 
     send_message_to_server(text);
     // create_chat_in_server(text, CHAT_NORMAL);
@@ -15,11 +14,7 @@ void send_message(GtkButton *button) {
     // if (strcmp(text, "e") == 0)
     //     account->chat_id = 2;
 
-    gtk_text_buffer_get_end_iter (buffer, &iter);
-    gtk_text_buffer_insert (buffer, &iter, text, -1);
-    gtk_text_buffer_insert (buffer, &iter, "\n", -1);
     gtk_entry_set_text (GTK_ENTRY (info->entry), "");
-    gtk_text_view_scroll_to_iter (info->text_view, &iter, 0.0, FALSE, 0.0, 0.0);
 
     if(info){}
         (void)button;
@@ -46,7 +41,6 @@ void chat_window() {
 
     GtkWidget *grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(main_window), grid);
-
     build_users(grid);
 
     build_chat_window(grid);

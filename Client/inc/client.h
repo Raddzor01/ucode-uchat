@@ -114,6 +114,11 @@ void file_select(GtkWidget *widget, gpointer data);
 void build_users(GtkWidget *grid);
 void user_box(int number);
 bool chech_fields(const gchar *username, const gchar *password);
+void text_bubble(const char *text);
+void delete_msg(GtkButton *button, gpointer data);
+void edit_msg(GtkButton *button, gpointer data);
+void edit_accept(GtkButton *button, gpointer data);
+
 
 // CSS part
 void load_css();

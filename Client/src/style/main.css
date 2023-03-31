@@ -59,7 +59,7 @@ grid box{
     background-color: @main-bg-color;
     color: @fill-color;
     padding: 10px;
-margin: -6px;
+    margin: -6px;
     border-radius: 0px;
 }
 
@@ -87,4 +87,14 @@ button {
 
 button:hover {
     background-color: @fill-hbg-color;
+}
+
+.bubble text{
+    color: @fill-color;
+    background-color: @fill-bg-color;;
+    border-radius: 10px;
+    margin: 2px;
+}
+.bubble {
+    padding: 3px;
 }
