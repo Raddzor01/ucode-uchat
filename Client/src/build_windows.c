@@ -164,9 +164,11 @@ void build_chat_window(GtkWidget *grid) {
     gtk_widget_set_hexpand(entry, TRUE);
     gtk_widget_set_halign(entry, GTK_ALIGN_FILL);
     gtk_box_pack_start(GTK_BOX(input_box), entry, TRUE, TRUE, 0);
+    gtk_widget_set_name(entry, "chat_text_entry");
 
     gtk_box_pack_start(GTK_BOX(input_box), entry, FALSE, FALSE, 0);
-    g_signal_connect(entry, "activate", G_CALLBACK(send_message), info);
+
+    g_signal_connect(entry, "activate", G_CALLBACK(send_message), NULL);
 
     file_selection = gtk_button_new_with_label("...");
     gtk_box_pack_start(GTK_BOX(input_box), file_selection, FALSE, FALSE, 0);
@@ -175,8 +177,10 @@ void build_chat_window(GtkWidget *grid) {
     send_button = gtk_button_new_with_label("Send");
     gtk_widget_set_size_request (send_button, 100, -1);
     gtk_box_pack_start(GTK_BOX(input_box), send_button, FALSE, FALSE, 0);
+    gtk_widget_set_name(send_button, "send_button");
     info->entry = entry;
-    g_signal_connect(send_button, "clicked", G_CALLBACK(send_button_clicked), NULL);
+
+    g_signal_connect(send_button, "clicked", G_CALLBACK(send_message), NULL);
 
     g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 }

@@ -98,7 +98,6 @@ void connect_to_server(const char *ip_address, int port, int *server_fd, SSL_CTX
 
 // GTK part
 void send_message(GtkButton *button);
-void send_button_clicked(GtkButton *button);
 void chat_window();
 void create_new_window(char *title, int width, int height, bool resizable);
 void log_menu(GtkWidget *widget);
@@ -118,6 +117,7 @@ void text_bubble(const char *text);
 void delete_msg(GtkButton *button, gpointer data);
 void edit_msg(GtkButton *button, gpointer data);
 void edit_accept(GtkButton *button, gpointer data);
+void cancel_edit(GtkButton *button, gpointer data);
 
 
 // CSS part

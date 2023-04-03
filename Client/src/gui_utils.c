@@ -150,29 +150,48 @@ void text_bubble(const char *text) {
     GtkWidget *text_view;
     GtkTextBuffer *buffer;
 
+    int size_limit = gtk_widget_get_allocated_width(box_container) - 200;
+
     //text part
     gtk_widget_set_hexpand(box_container, FALSE);
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
+    gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
     gtk_widget_set_halign(box, GTK_ALIGN_END);
     gtk_widget_set_size_request(box, -1, 30);
     add_class(box, "bubble");
-    gtk_widget_set_hexpand(box, FALSE);
+    gtk_widget_set_hexpand(box, TRUE);
+    gtk_widget_set_vexpand(box,FALSE);
 
     text_view = gtk_text_view_new();
-    // gtk_widget_set_valign(text_view, GTK_ALIGN_CENTER);
-    gtk_widget_set_hexpand(box, FALSE);
-    gtk_widget_set_size_request(text_view, -1, -1);
+
+    gtk_widget_set_valign(text_view, GTK_ALIGN_CENTER);
+    // gtk_widget_set_size_request(text_view, -1, -1);
 
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), FALSE);
-    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
+    // gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
     gtk_box_pack_start(GTK_BOX(box), text_view, FALSE, TRUE, 0);
 
-    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
-    gtk_text_buffer_set_text(buffer, text, -1);
+    PangoLayout *layout = gtk_widget_create_pango_layout(text_view, text);
+    int width, height;
+    pango_layout_get_pixel_size(layout, &width, &height);
 
-    gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
+    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_NONE);
+
+    if (width > size_limit) {
+        gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
+        gtk_widget_set_size_request(text_view, size_limit, -1);
+        gtk_widget_set_hexpand(text_view, TRUE);
+        gtk_widget_set_halign(text_view, GTK_ALIGN_FILL);
+        gtk_widget_set_hexpand(box, TRUE);
+        gtk_widget_set_halign(box, GTK_ALIGN_FILL);
+    }
+
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+    gtk_text_buffer_set_text(buffer, text, strlen(text));
+
+    // gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
 
     //redact button
     GtkWidget *edit_button;
@@ -183,6 +202,7 @@ void text_bubble(const char *text) {
     pixbuf = gdk_pixbuf_scale_simple(pixbuf, 12, 12, GDK_INTERP_BILINEAR);
 
     image = gtk_image_new_from_pixbuf(pixbuf);
+    g_object_unref(pixbuf);
 
     edit_button = gtk_button_new();
     gtk_button_set_image(GTK_BUTTON(edit_button), image);
@@ -207,14 +227,29 @@ void text_bubble(const char *text) {
 
     g_object_unref(pixbuf);
 
-
     GtkAdjustment *vadjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
     gtk_adjustment_set_value(vadjustment, gtk_adjustment_get_upper(vadjustment) - gtk_adjustment_get_page_size(vadjustment));
+    
     gtk_widget_show_all(box_container);
-
+    gtk_widget_queue_draw(main_window);
 }
 
 void delete_msg(GtkButton *button, gpointer data){
+    GtkWidget *box = (GtkWidget*) data;
+    gtk_widget_destroy(box);
+
+    if(button){}
+}
+
+void cancel_edit(GtkButton *button, gpointer data){
+
+    GtkWidget *send_button = get_widget_by_name_r(main_window, "send_button");
+
+    g_signal_handlers_disconnect_by_func(send_button, (gpointer)cancel_edit, NULL);
+    g_signal_handlers_disconnect_by_func(send_button, (gpointer)edit_accept, NULL);
+    g_signal_connect(send_button, "clicked", G_CALLBACK(send_message), NULL);
+    gtk_entry_set_text (GTK_ENTRY (info->entry), "");
+
     GtkWidget *box = (GtkWidget*) data;
     gtk_widget_destroy(box);
 
@@ -226,9 +261,9 @@ void edit_msg(GtkButton *button, gpointer data){
     GtkTextView *text_view = GTK_TEXT_VIEW(data);
     GtkWidget *chat_box = get_widget_by_name_r(main_window, "chat_box");
     GtkWidget *box;
-    GtkWidget *entry;
-    GtkWidget *edit_button;
     GtkWidget *cancel_button;
+    GtkWidget *edit_text;
+    GtkWidget *send_button = get_widget_by_name_r(main_window, "send_button");
 
     //take text from bubble (to set it to entry)
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
@@ -243,17 +278,16 @@ void edit_msg(GtkButton *button, gpointer data){
     gtk_widget_set_halign(box, GTK_ALIGN_FILL);
     gtk_box_pack_start(GTK_BOX(chat_box), box, FALSE, FALSE, 0);
 
-    entry = gtk_entry_new();
-    gtk_widget_set_size_request (entry, 400, -1);
-    gtk_entry_set_text(GTK_ENTRY(entry), text);
-    gtk_box_pack_start(GTK_BOX(box), entry, TRUE, TRUE, 0);
-    info->entry = entry;
+    //edited text
+    edit_text = gtk_text_view_new();
+    gtk_widget_set_size_request(edit_text, -1, -1);
+    gtk_widget_set_hexpand(edit_text, TRUE);
+    gtk_widget_set_halign(edit_text, GTK_ALIGN_FILL);
+    gtk_widget_set_valign(edit_text, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(box), edit_text, FALSE, FALSE, 0);
 
-    edit_button = gtk_button_new_with_label("edit");
-    gtk_widget_set_size_request (edit_button, 100, -1);
-    gtk_box_pack_start(GTK_BOX(box), edit_button, FALSE, FALSE, 0);
-
-    g_signal_connect(edit_button, "clicked", G_CALLBACK(edit_accept), text_view);
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(edit_text));
+    gtk_text_buffer_set_text(buffer, text, strlen(text));
 
     //close edit tab
     GdkPixbuf *pixbuf;
@@ -265,10 +299,17 @@ void edit_msg(GtkButton *button, gpointer data){
     image = gtk_image_new_from_pixbuf(pixbuf);
 
     cancel_button = gtk_button_new();
+    gtk_widget_set_hexpand(cancel_button, TRUE);
+    gtk_widget_set_halign(cancel_button, GTK_ALIGN_END);
     gtk_button_set_image(GTK_BUTTON(cancel_button), image);
     gtk_box_pack_start(GTK_BOX(box), cancel_button, FALSE, FALSE, 0);
 
-    g_signal_connect(G_OBJECT(cancel_button), "clicked", G_CALLBACK(delete_msg), box);
+    g_signal_handlers_disconnect_by_func(send_button, (gpointer)send_message, NULL);
+    g_signal_connect(G_OBJECT(send_button), "clicked", G_CALLBACK(edit_accept), text_view);
+    g_signal_connect(G_OBJECT(send_button), "clicked", G_CALLBACK(cancel_edit), box);
+
+
+    g_signal_connect(G_OBJECT(cancel_button), "clicked", G_CALLBACK(cancel_edit), box);
 
     gtk_widget_show_all(chat_box);
     if(button){}
@@ -278,8 +319,9 @@ void edit_accept(GtkButton *button, gpointer data) {
 
     GtkTextView *text_view = GTK_TEXT_VIEW(data);
 
-
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
     const gchar *text = gtk_entry_get_text (GTK_ENTRY (info->entry));
     gtk_text_buffer_set_text(buffer, text, strlen(text));
+
+    if(button){}
 }

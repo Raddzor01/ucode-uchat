@@ -20,13 +20,6 @@ void send_message(GtkButton *button) {
         (void)button;
 }
 
-void send_button_clicked(GtkButton *button) {
-
-    info->text_view  = g_object_get_data(G_OBJECT(info->entry), "text_view");
-
-    send_message(button);
-}
-
 void chat_window() {
 
     hog();
