@@ -1,5 +1,8 @@
 #include "../inc/client.h"
 
+guint cancel_handler_id;
+guint accept_handler_id;
+
 void change_chat_id(GtkWidget *widget, int *new_id);
 
 void load_css () {
@@ -245,8 +248,8 @@ void cancel_edit(GtkButton *button, gpointer data){
 
     GtkWidget *send_button = get_widget_by_name_r(main_window, "send_button");
 
-    g_signal_handlers_disconnect_by_func(send_button, (gpointer)cancel_edit, NULL);
-    g_signal_handlers_disconnect_by_func(send_button, (gpointer)edit_accept, NULL);
+    g_signal_handler_disconnect(G_OBJECT(send_button), cancel_handler_id);
+    g_signal_handler_disconnect(G_OBJECT(send_button), accept_handler_id);
     g_signal_connect(send_button, "clicked", G_CALLBACK(send_message), NULL);
     gtk_entry_set_text (GTK_ENTRY (info->entry), "");
 
@@ -305,8 +308,8 @@ void edit_msg(GtkButton *button, gpointer data){
     gtk_box_pack_start(GTK_BOX(box), cancel_button, FALSE, FALSE, 0);
 
     g_signal_handlers_disconnect_by_func(send_button, (gpointer)send_message, NULL);
-    g_signal_connect(G_OBJECT(send_button), "clicked", G_CALLBACK(edit_accept), text_view);
-    g_signal_connect(G_OBJECT(send_button), "clicked", G_CALLBACK(cancel_edit), box);
+    accept_handler_id = g_signal_connect(G_OBJECT(send_button), "clicked", G_CALLBACK(edit_accept), text_view);
+    cancel_handler_id = g_signal_connect(G_OBJECT(send_button), "clicked", G_CALLBACK(cancel_edit), box);
 
 
     g_signal_connect(G_OBJECT(cancel_button), "clicked", G_CALLBACK(cancel_edit), box);
