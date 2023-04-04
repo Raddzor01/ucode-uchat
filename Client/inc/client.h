@@ -51,6 +51,9 @@ typedef enum e_req_type {
   REQ_SEND_FILE,
   REQ_CREATE_CHAT,
   REQ_GET_CHATS,
+  REQ_SEARCH_CHATS,
+  REQ_EDIT_MESSAGE,
+  REQ_JOIN_CHAT,
   REQ_UNKNOWN,
   REQ_LOGOUT,
   REQ_EXIT,
@@ -62,18 +65,14 @@ typedef enum e_error_type {
   ERR_INVALID_PASSWORD,
   ERR_USER_EXISTS,
   ERR_USER_NONEXIST,
-  ERR_CHAT_EXIST
+  ERR_CHAT_EXIST,
+  ERR_CHAT_NONEXIST,
+  ERR_USER_IN_CHAT
 } t_error_type;
 
-typedef enum e_chat_type {
-    CHAT_NORMAL,
-    CHAT_PRIVATE
-}   t_chat_type;
+typedef enum e_chat_type { CHAT_NORMAL, CHAT_PRIVATE } t_chat_type;
 
-typedef enum e_user_type {
-    USERTYPE_NORMAL,
-    USERTYPE_ADMIN
-}   t_user_type;
+typedef enum e_user_type { USERTYPE_NORMAL, USERTYPE_ADMIN } t_user_type;
 
 int send_file_to_server(char *filedir);
 extern GtkWidget *main_window;
@@ -84,9 +83,11 @@ extern t_account *account;
 int send_sign_up_to_server(const char *username, const char *password);
 int send_login_to_server(const char *username, const char *password);
 int send_message_to_server(const char *str);
-char *send_from_server();
 int send_exit_from_server();
+char *read_from_server();
+void read_found_chats();
 int get_user_chats();
+int find_chats_from_server(const char *str);
 int create_chat_in_server(const char *chat_name, int chat_type);
 int check_account_exists();
 bool check_account_from_server();
@@ -94,10 +95,12 @@ bool check_account_from_server();
 // Conection to the server
 void init_ssl(SSL_CTX **ctx);
 void connect_ssl(SSL **ssl, int *server_fd, SSL_CTX **ctx);
-void connect_to_server(const char *ip_address, int port, int *server_fd, SSL_CTX **ctx, SSL **ssl);
+void connect_to_server(const char *ip_address, int port, int *server_fd,
+                       SSL_CTX **ctx, SSL **ssl);
 
 // GTK part
 void send_message(GtkButton *button);
+void find_chats(GtkWidget *entry);
 void chat_window();
 void create_new_window(char *title, int width, int height, bool resizable);
 void log_menu(GtkWidget *widget);
@@ -118,7 +121,6 @@ void delete_msg(GtkButton *button, gpointer data);
 void edit_msg(GtkButton *button, gpointer data);
 void edit_accept(GtkButton *button, gpointer data);
 void cancel_edit(GtkButton *button, gpointer data);
-
 
 // CSS part
 void load_css();

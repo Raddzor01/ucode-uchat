@@ -56,20 +56,6 @@ int send_message_to_server(const char *str) {
   return 0;
 }
 
-char *send_from_server() {
-
-  char buffer[1024];
-  int bytes = SSL_read(info->ssl, buffer, sizeof(buffer));
-
-  // mx_logs(buffer, INFO_LOG);
-
-  if (bytes > 0) {
-    buffer[bytes] = 0;
-    return mx_strdup(buffer);
-  }
-  return NULL;
-}
-
 int send_exit_from_server() {
 
   cJSON *json = cJSON_CreateObject();
@@ -85,6 +71,27 @@ int send_exit_from_server() {
   return 0;
 }
 
+char *read_from_server() {
+
+  char buffer[1024];
+  int bytes = SSL_read(info->ssl, buffer, sizeof(buffer));
+
+  // mx_logs(buffer, INFO_LOG);
+
+  if (bytes > 0) {
+    buffer[bytes] = 0;
+    return mx_strdup(buffer);
+  }
+  return NULL;
+}
+
+void read_found_chats() {
+
+  char* str = read_from_server();
+
+  mx_logs(str, INFO_LOG);
+}
+
 int get_user_chats() {
 
   cJSON *json = cJSON_CreateObject();
@@ -96,15 +103,12 @@ int get_user_chats() {
   cJSON_Delete(json);
   free(json_str);
 
-  char *str = send_from_server();
+  char *str = read_from_server();
   cJSON *json_2 = cJSON_Parse(str);
 
-  // account->chat_count = cJSON_GetArraySize(json_arr);
   account->chat_count = cJSON_GetArraySize(json_2->child);
   account->chat_list = (char **)malloc(account->chat_count * sizeof(char *));
   account->chat_id_list = (int *)malloc(account->chat_count * sizeof(int));
-
-  // printf("\n%s\n", cJSON_PrintUnformatted(json_2->child));
 
   cJSON *js = NULL;
 
@@ -115,8 +119,23 @@ int get_user_chats() {
   }
 
   cJSON_Delete(json_2);
-  // free(js);
   free(str);
+
+  return 0;
+}
+
+int find_chats_from_server(const char *str) {
+
+  cJSON *json = cJSON_CreateObject();
+
+  cJSON_AddNumberToObject(json, "type", REQ_SEARCH_CHATS);
+  cJSON_AddStringToObject(json, "search_pattern", str);
+
+  char *json_str = cJSON_PrintUnformatted(json);
+  SSL_write(info->ssl, json_str, mx_strlen(json_str));
+
+  cJSON_Delete(json);
+  free(json_str);
 
   return 0;
 }
@@ -142,7 +161,7 @@ int create_chat_in_server(const char *chat_name, int chat_type) {
 
 int check_account_exists() {
 
-  char *str = send_from_server();
+  char *str = read_from_server();
   cJSON *json = cJSON_Parse(str);
 
   if (json == NULL) {
@@ -165,7 +184,7 @@ int check_account_exists() {
 
 bool check_account_from_server() {
 
-  char *str = send_from_server();
+  char *str = read_from_server();
   cJSON *json = cJSON_Parse(str);
 
   if (json == NULL) {
@@ -195,7 +214,7 @@ bool check_account_from_server() {
 
 int check_chat_id_from_server() {
 
-  char *str = send_from_server();
+  char *str = read_from_server();
   cJSON *json = cJSON_Parse(str);
 
   if (json == NULL) {

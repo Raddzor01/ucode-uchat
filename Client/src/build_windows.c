@@ -202,7 +202,7 @@ void build_users(GtkWidget *grid) {
 
     GtkWidget *entry = gtk_entry_new();
     gtk_box_pack_start(GTK_BOX(search_box), entry, TRUE, TRUE, 0);
-    // g_signal_connect(entry, "changed", G_CALLBACK(.........), NULL);
+    g_signal_connect(entry, "changed", G_CALLBACK(find_chats), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_box_pack_start(GTK_BOX(users_box), scrolled_window, TRUE, TRUE, 0);

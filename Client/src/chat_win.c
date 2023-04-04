@@ -14,10 +14,21 @@ void send_message(GtkButton *button) {
     // if (strcmp(text, "e") == 0)
     //     account->chat_id = 2;
 
-    gtk_entry_set_text (GTK_ENTRY (info->entry), "");
+    gtk_entry_set_text(GTK_ENTRY(info->entry), "");
 
     if(info){}
         (void)button;
+}
+
+void find_chats(GtkWidget *entry) {
+
+    const char *text = gtk_entry_get_text(GTK_ENTRY(entry));
+
+    find_chats_from_server(text);
+
+    // gtk_entry_set_text(GTK_ENTRY(entry), "");
+
+    read_found_chats();
 }
 
 void chat_window() {

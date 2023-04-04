@@ -106,8 +106,6 @@ void user_box(int number) {
     GdkPixbuf *pixbuf;
     GError *error = NULL;
 
-    // printf("\n%s %d\n", account->chat_list[number], account->chat_id_list[number]);
-
     // Load the image from a file
     pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", &error);
     if (error != NULL)
