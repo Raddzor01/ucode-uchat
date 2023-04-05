@@ -1,5 +1,6 @@
 #pragma once
 
+#include "uchat.h"
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
