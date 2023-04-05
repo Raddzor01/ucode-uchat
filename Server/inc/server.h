@@ -99,17 +99,19 @@ typedef struct
     request_handler handler;
 } t_map_entry;
 
-#define MAP_SIZE 10
-static t_map_entry request_map[MAP_SIZE] = {
+#define MAP_SIZE 11
+static t_map_entry request_map[MAP_SIZE] = 
+{
     {REQ_USER_SIGNUP, user_signup},
     {REQ_USER_LOGIN, user_login},
     {REQ_SEND_MSG, send_message},
     {REQ_SEND_FILE, send_file},
     {REQ_CREATE_CHAT, create_chat},
-    {REQ_DEL_MESSAGE, delete_message},
     {REQ_GET_CHATS, get_chats},
     {REQ_GET_CHAT_MESSAGES, get_chat_messages},
-    {REQ_SEARCH_CHATS, edit_message},
+    {REQ_SEARCH_CHATS, search_chats},
+    {REQ_EDIT_MESSAGE, edit_message},
+    {REQ_DEL_MESSAGE, delete_message},
     {REQ_JOIN_CHAT, join_chat}
 };
 
