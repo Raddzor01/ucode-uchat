@@ -73,6 +73,7 @@ void send_message(cJSON *json, t_client_info *client_info);
 void send_file(cJSON *json, t_client_info *client_info);
 void create_chat(cJSON *json, t_client_info *client_info);
 void get_chats(cJSON *chat_info, t_client_info *client_info);
+void get_chat_messages(cJSON *json, t_client_info *client_info);
 void search_chats(cJSON *client_json, t_client_info *client_info);
 void edit_message(cJSON *client_json, t_client_info *client_info);
 void delete_message(cJSON *json, t_client_info *client_info);
@@ -98,7 +99,7 @@ typedef struct
     request_handler handler;
 } t_map_entry;
 
-#define MAP_SIZE 9
+#define MAP_SIZE 10
 static t_map_entry request_map[MAP_SIZE] = {
     {REQ_USER_SIGNUP, user_signup},
     {REQ_USER_LOGIN, user_login},
@@ -107,6 +108,7 @@ static t_map_entry request_map[MAP_SIZE] = {
     {REQ_CREATE_CHAT, create_chat},
     {REQ_DEL_MESSAGE, delete_message},
     {REQ_GET_CHATS, get_chats},
+    {REQ_GET_CHAT_MESSAGES, get_chat_messages},
     {REQ_SEARCH_CHATS, edit_message},
     {REQ_JOIN_CHAT, join_chat}
 };
