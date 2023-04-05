@@ -11,7 +11,7 @@
 @define-color entry-color #F5F5F5;
 
 window {
-    font-family: Arial;
+    font-family: Gill Sans;
     font-size: 16px;
     font-weight: bold;
     color: @main-color;
@@ -22,6 +22,10 @@ entry {
     color: @entry-color;
     background-color: @entry-bg-color;
     border-radius: 10px;
+}
+
+textview {
+	padding-right:1px;
 }
 
 .pop {
@@ -47,18 +51,26 @@ grid box{
     padding: 1px;
 }
 
+.chat_text_entry {
+    color: @entry-color;
+    background-color: #221E2A;
+    border-radius: 0px;
+    border:0px;
+}
+
 .user-box{
     padding: 0px;
-    margin: -9px;
+    margin: 0px; /*-9*/
 }
+
 .user-box button{
-    font-family: Arial;
-    font-size: 14px;
+    font-family: Gill Sans;
+    font-size: 10px;
     font-weight: bold;
     background-color: @main-bg-color;
     color: @fill-color;
     padding: 10px;
-margin: -6px;
+    margin: -6px;
     border-radius: 0px;
 }
 
@@ -71,7 +83,7 @@ margin: -6px;
 }
 
 button {
-    font-family: Arial;
+    font-family: Gill Sans;
     font-size: 14px;
     font-weight: bold;
     background-color: @fill-bg-color;
@@ -86,4 +98,31 @@ button {
 
 button:hover {
     background-color: @fill-hbg-color;
+}
+
+.bubble text{
+    color: @fill-color;
+    background-color: @fill-bg-color;
+} 
+
+.bubble textview{
+    font-family: Gill Sans;
+    font-size: 12px;
+    font-weight: bold;
+} 
+
+.bubble {
+    padding: 3px;
+    color: @fill-color;
+    background-color: @fill-bg-color;
+    border-radius: 10px;
+    margin: 2px;
+    padding: 2px;
+}
+
+.bubble button {
+    padding:0px;
+    border-radius: 20px;
+    /* border-color: @fill-bg-color; */
+    border: 0px;
 }

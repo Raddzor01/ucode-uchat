@@ -1,5 +1,5 @@
 #include "../inc/client.h"
-    
+
 // static void create_text_view(GtkWidget *container) {
 //     GtkWidget *text_view = gtk_text_view_new();
 //     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
@@ -7,40 +7,59 @@
 // }
 
 GtkWidget *main_window;
-t_info* info;
-t_account* account;
+t_info *info;
+t_account *account;
+
+void freeing_memory();
 
 int main(int argc, char **argv) {
-    
-    // server part
 
-    (void)argc;
-	srand(time(NULL));
+  // announcement part
 
-    info = malloc(sizeof(*info));
-    account = malloc(sizeof(*account));
-    account->chat_id = 0;
-	int server_socket = 0;
-	SSL_CTX *ctx = NULL;
-    SSL *ssl = NULL;
+  (void)argc;
+  srand(time(NULL));
 
-	connect_to_server(argv[1], atoi(argv[2]), &server_socket, &ctx, &ssl);
+  info = malloc(sizeof(*info));
+  account = malloc(sizeof(*account));
+  account->chat_id = 1;
 
-    info->ssl = ssl;
+  // server part
 
-    // gtk part
+  int server_socket = 0;
+  SSL_CTX *ctx = NULL;
+  SSL *ssl = NULL;
 
-    gtk_init(&argc, &argv);
+  connect_to_server(argv[1], atoi(argv[2]), &server_socket, &ctx, &ssl);
 
-    load_css();
+  info->ssl = ssl;
 
-    log_menu(main_window);
+  // gtk part
 
-    gtk_main();
+  gtk_init(&argc, &argv);
 
-    free(account);
-    free(info);
+  load_css();
 
-    return 0;
+  log_menu(main_window);
+
+  gtk_main();
+
+  send_exit_from_server();
+
+  freeing_memory();
+
+  return 0;
 }
 
+void freeing_memory() {
+  for (int i = 0; i < account->chat_count; i++)
+    free(account->chat_list[i]);
+
+  free(account->username);
+  free(account->chat_id_list);
+
+  free(account);
+
+  free(info->ssl);
+
+  free(info);
+}

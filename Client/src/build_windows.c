@@ -5,13 +5,13 @@ GtkWidget *username_entry;
 
 bool chech_fields(const gchar *username, const gchar *password) {
 
-    if (mx_strlen(username) <= 0 || mx_strlen(password) <= 0) {
+    if (mx_strlen(username) < MIN_NUMBER_OF_CHARACTERS || mx_strlen(password) < MIN_NUMBER_OF_CHARACTERS) {
         pop_up_window("Fields must store at least one character");
         return false;
     }
 
-    if (mx_strlen(username) > 16 || mx_strlen(password) > 16) {
-        pop_up_window("Too big password or login");
+    if (mx_strlen(username) > MAX_NUMBER_OF_CHARACTERS || mx_strlen(password) > MAX_NUMBER_OF_CHARACTERS) {
+        pop_up_window("Password or login has more than 16 characters");
         return false;
     }
     
@@ -31,7 +31,7 @@ void login_clicked(GtkWidget *widget) {
 
     if (send_login_to_server(username, password) == 1) {
         // Login successful
-        chat_window(info);
+        chat_window();
     } else {
         // Login failed
         pop_up_window("Wrong password or login!");
@@ -128,14 +128,15 @@ void build_chat_window(GtkWidget *grid) {
     GtkWidget *chat_box;
     GtkWidget *input_box;
     GtkWidget *entry;
-    GtkWidget *text_view;
     GtkWidget *send_button;
     GtkWidget *scrolled_window;
     GtkWidget *file_selection;
+    GtkWidget *box_container;
 
     chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_widget_set_size_request (chat_box, 500, 400);
     gtk_grid_attach(GTK_GRID(grid), chat_box, 1, 0, 1, 1);
+    gtk_widget_set_name(chat_box, "chat_box");
 
     input_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_grid_attach(GTK_GRID(grid), input_box, 1, 1, 1, 1);
@@ -150,36 +151,36 @@ void build_chat_window(GtkWidget *grid) {
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_box_pack_start(GTK_BOX(chat_box), scrolled_window, TRUE, TRUE, 0);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
     add_class(scrolled_window, "scrl-win");
-
-    text_view = gtk_text_view_new();
-    add_class(text_view, "text_view");
-
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
-    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), FALSE);
-    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
-    gtk_container_add(GTK_CONTAINER(scrolled_window), text_view);
+    gtk_widget_set_name(scrolled_window, "scroll");
+    
+    box_container = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), box_container);
+    gtk_widget_set_name(box_container, "box_holder");
 
     entry = gtk_entry_new();
     gtk_widget_set_size_request (entry, 400, -1);
     gtk_widget_set_hexpand(entry, TRUE);
     gtk_widget_set_halign(entry, GTK_ALIGN_FILL);
     gtk_box_pack_start(GTK_BOX(input_box), entry, TRUE, TRUE, 0);
+    add_class(entry, "chat_text_entry");
 
     gtk_box_pack_start(GTK_BOX(input_box), entry, FALSE, FALSE, 0);
-    g_object_set_data(G_OBJECT(entry), "text_view", text_view);
-    info->text_view = GTK_TEXT_VIEW(text_view);
-    g_signal_connect(entry, "activate", G_CALLBACK(send_message), info);
+
+    g_signal_connect(entry, "activate", G_CALLBACK(send_message), NULL);
 
     file_selection = gtk_button_new_with_label("...");
-    g_signal_connect(file_selection, "clicked", G_CALLBACK(file_select), NULL);
     gtk_box_pack_start(GTK_BOX(input_box), file_selection, FALSE, FALSE, 0);
+    g_signal_connect(file_selection, "clicked", G_CALLBACK(file_select), NULL);
 
     send_button = gtk_button_new_with_label("Send");
     gtk_widget_set_size_request (send_button, 100, -1);
     gtk_box_pack_start(GTK_BOX(input_box), send_button, FALSE, FALSE, 0);
+    gtk_widget_set_name(send_button, "send_button");
     info->entry = entry;
-    g_signal_connect(send_button, "clicked", G_CALLBACK(send_button_clicked), NULL);
+
+    g_signal_connect(send_button, "clicked", G_CALLBACK(send_message), NULL);
 
     g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 }
@@ -188,39 +189,31 @@ void build_users(GtkWidget *grid) {
 
     GtkWidget *users_box;
     GtkWidget *scrolled_window;
-    GtkWidget *box;
+    GtkWidget *box_for_users;
+    GtkWidget *search_box;
 
     users_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     add_class(users_box, "user-box");
-    gtk_widget_set_size_request (users_box, 200, -1);
+    gtk_widget_set_size_request (users_box, 200, 400);
     gtk_grid_attach(GTK_GRID(grid), users_box, 0, 0, 1, 1);
+
+    search_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_pack_start(GTK_BOX(users_box), search_box, FALSE, FALSE, 0);
+
+    GtkWidget *entry = gtk_entry_new();
+    gtk_box_pack_start(GTK_BOX(search_box), entry, TRUE, TRUE, 0);
+    g_signal_connect(entry, "changed", G_CALLBACK(find_chats), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_box_pack_start(GTK_BOX(users_box), scrolled_window, TRUE, TRUE, 0);
 
-    box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-    gtk_container_add(GTK_CONTAINER(scrolled_window), box);
+    box_for_users = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), box_for_users);
+    gtk_widget_set_name(box_for_users, "box_for_users");
 
-    for (int i = 0; i < 16; i++) {
-        user_box(box);
+    for (int i = account->chat_count - 1; i >= 0; i--) {
+        user_box(i);
     }
-
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);    
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
-    // user_box(box);
 }
 
 void pop_up_window(char *text) {
