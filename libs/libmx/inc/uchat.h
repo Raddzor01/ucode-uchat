@@ -6,6 +6,7 @@ typedef enum e_req_type
     REQ_SEND_FILE,
     REQ_CREATE_CHAT,
     REQ_GET_CHATS,
+    REQ_GET_CHAT_MESSAGES,
     REQ_SEARCH_CHATS,
     REQ_EDIT_MESSAGE,
     REQ_DEL_MESSAGE,
@@ -13,7 +14,7 @@ typedef enum e_req_type
     REQ_UNKNOWN,
     REQ_LOGOUT,
     REQ_EXIT,
-} t_req_type;
+}   t_req_type;
 
 typedef enum e_error_type
 {
