@@ -31,7 +31,7 @@ void login_clicked(GtkWidget *widget) {
 
     if (send_login_to_server(username, password) == 1) {
         // Login successful
-        chat_window(info);
+        chat_window();
     } else {
         // Login failed
         pop_up_window("Wrong password or login!");

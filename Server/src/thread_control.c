@@ -3,7 +3,6 @@
 // Function implements the main logic of processing incoming requests from a client.
 void *thread_control(void *arg)
 {
-
     t_client_info *client_info = (t_client_info *)arg;
     char *request = NULL;
 
@@ -21,10 +20,8 @@ void *thread_control(void *arg)
         }
 
         mx_strdel(&request);
-
     }
 
     pthread_detach(pthread_self());
     return NULL;
-
 }

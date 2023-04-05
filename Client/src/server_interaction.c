@@ -109,7 +109,6 @@ int get_user_chats() {
   account->chat_count = cJSON_GetArraySize(json_2->child);
   account->chat_list = (char **)malloc(account->chat_count * sizeof(char *));
   account->chat_id_list = (int *)malloc(account->chat_count * sizeof(int));
-
   cJSON *js = NULL;
 
   for (int i = 0; i < account->chat_count; i++) {

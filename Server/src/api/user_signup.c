@@ -1,12 +1,8 @@
 #include "../../inc/server.h"
 
-int check_signup_errors(cJSON *username, cJSON *password)
+static int check_signup_errors(char *username)
 {
-
-    if (!cJSON_IsString(username) || !cJSON_IsString(password))
-        return ERR_JSON;
-
-    if (db_check_user_exists(username->valuestring))
+    if (db_check_user_exists(username))
         return ERR_USER_EXISTS;
 
     return 0;
@@ -14,23 +10,28 @@ int check_signup_errors(cJSON *username, cJSON *password)
 
 void user_signup(cJSON *json, t_client_info *client_info)
 {
+    char *username;
+    char *password;
+    int error_type;
+    char *query;
 
     db_init();
 
-    cJSON *username = cJSON_GetObjectItemCaseSensitive(json, "username");
-    cJSON *password = cJSON_GetObjectItemCaseSensitive(json, "password");
+    username = cJSON_GetObjectItemCaseSensitive(json, "username")->valuestring;
+    password = cJSON_GetObjectItemCaseSensitive(json, "password")->valuestring;
 
-    int error_type = 0;
-    if ((error_type = check_signup_errors(username, password)) != 0)
+    error_type = check_signup_errors(username);
+    if (error_type != 0)
     {
         send_responde(client_info->ssl, REQ_USER_SIGNUP, error_type);
         return;
     }
 
-    char *request = sqlite3_mprintf("INSERT INTO users (username, password) VALUES('%s', '%s')", username->valuestring, password->valuestring);
-    db_execute_request(request);
-    sqlite3_free(request);
+    query = sqlite3_mprintf("INSERT INTO users (username, password) VALUES('%s', '%s')",
+                            username, password);
+    db_execute_query(query);
 
     send_responde(client_info->ssl, REQ_USER_SIGNUP, ERR_SUCCESS);
-    
+
+    sqlite3_free(query);
 }

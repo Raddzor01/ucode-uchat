@@ -24,6 +24,9 @@ void find_chats(GtkWidget *entry) {
 
     const char *text = gtk_entry_get_text(GTK_ENTRY(entry));
 
+    if (mx_strlen(text) <= 0) 
+        return;
+
     find_chats_from_server(text);
 
     // gtk_entry_set_text(GTK_ENTRY(entry), "");
