@@ -87,6 +87,7 @@ void pop_up_window(char *text);
 void add_class(GtkWidget *widget, char *class_name);
 void file_select(GtkWidget *widget, gpointer data);
 void build_users(GtkWidget *grid);
+void build_profile(GtkWidget *grid);
 void user_box(int number);
 bool chech_fields(const gchar *username, const gchar *password);
 void text_bubble(const char *text, int *msg_id);

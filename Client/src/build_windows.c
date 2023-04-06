@@ -216,6 +216,31 @@ void build_users(GtkWidget *grid) {
     }
 }
 
+void build_profile(GtkWidget *grid) {
+    GError *error = NULL;
+    GdkPixbuf *pixbuf;
+
+    GtkWidget *user_info_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_grid_attach(GTK_GRID(grid), user_info_box, 0, 1, 1, 1);
+    gtk_widget_set_halign(user_info_box, GTK_ALIGN_START);
+    gtk_widget_set_valign(user_info_box, GTK_ALIGN_END);
+
+    pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", &error);
+    if (error != NULL)
+        g_error("Error loading image: %s", error->message);
+
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
+
+    GtkWidget *avatar = gtk_image_new_from_pixbuf(pixbuf);
+    gtk_image_set_pixel_size(GTK_IMAGE(avatar), 64);
+    gtk_widget_set_size_request(avatar, 64, 64);
+    gtk_box_pack_start(GTK_BOX(user_info_box), avatar, FALSE, FALSE, 0);
+
+    GtkWidget *name_label = gtk_label_new(account->username);
+    gtk_box_pack_start(GTK_BOX(user_info_box), name_label, FALSE, FALSE, 10);
+
+}
+
 void pop_up_window(char *text) {
 
     GtkWidget *popup = gtk_window_new(GTK_WINDOW_TOPLEVEL);
