@@ -3,13 +3,17 @@
 void send_message(GtkButton *button) {
 
     const char *text;
+    int msg_id;
 
     text = gtk_entry_get_text (GTK_ENTRY (info->entry));
 
-    text_bubble(text);
 
     send_message_to_server(text);
     // create_chat_in_server(text, CHAT_NORMAL);
+
+    msg_id = get_msg_id();
+
+    text_bubble(text, &msg_id);
 
     // if (strcmp(text, "e") == 0)
     //     account->chat_id = 2;

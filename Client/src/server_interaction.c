@@ -87,7 +87,7 @@ char *read_from_server() {
 
 void read_found_chats() {
 
-  char* str = read_from_server();
+  char *str = read_from_server();
 
   mx_logs(str, INFO_LOG);
 }
@@ -113,7 +113,8 @@ int get_user_chats() {
 
   for (int i = 0; i < account->chat_count; i++) {
     js = cJSON_GetArrayItem(json_2->child, i);
-    account->chat_list[i] = mx_strdup(cJSON_GetObjectItemCaseSensitive(js, "chat_name")->valuestring);
+    account->chat_list[i] = mx_strdup(
+        cJSON_GetObjectItemCaseSensitive(js, "chat_name")->valuestring);
     account->chat_id_list[i] = cJSON_GetObjectItem(js, "chat_id")->valueint;
   }
 
@@ -121,6 +122,27 @@ int get_user_chats() {
   free(str);
 
   return 0;
+}
+
+int get_msg_id() {
+
+  char *str = read_from_server();
+  cJSON *json = cJSON_Parse(str);
+  int msg_id;
+
+  if (json == NULL) {
+    mx_printerr("cJSON is NULL\n");
+    cJSON_Delete(json);
+    free(str);
+    return -1;
+  }
+
+  msg_id = cJSON_GetObjectItem(json, "message_id")->valueint;
+
+  cJSON_Delete(json);
+  free(str);
+
+  return msg_id;
 }
 
 int find_chats_from_server(const char *str) {
@@ -165,6 +187,8 @@ int check_account_exists() {
 
   if (json == NULL) {
     mx_printerr("cJSON is NULL\n");
+    cJSON_Delete(json);
+    free(str);
     return -1;
   }
 
@@ -188,6 +212,8 @@ bool check_account_from_server() {
 
   if (json == NULL) {
     mx_printerr("cJSON is NULL\n");
+    cJSON_Delete(json);
+    free(str);
     return 0;
   }
 
@@ -197,11 +223,14 @@ bool check_account_from_server() {
   // add error checks
   if (error != 0) {
     mx_printerr("Error in account cJSON\n");
+    cJSON_Delete(json);
+    free(str);
     return 0;
   }
 
   account->id = cJSON_GetObjectItem(json, "id")->valueint;
-  account->username = cJSON_GetObjectItemCaseSensitive(json, "username")->valuestring;
+  account->username = mx_strdup(
+      cJSON_GetObjectItemCaseSensitive(json, "username")->valuestring);
   // char *password = cJSON_GetObjectItem(json, "password")->valuestring;
   // printf("%d\t%s\n", account->id, account->username);
   cJSON_Delete(json);
@@ -218,10 +247,32 @@ int check_chat_id_from_server() {
 
   if (json == NULL) {
     mx_printerr("cJSON is NULL\n");
+    cJSON_Delete(json);
+    free(str);
     return -1;
   }
 
   int chat_id = cJSON_GetObjectItem(json, "chat_id")->valueint;
 
+  cJSON_Delete(json);
+  free(str);
+
   return chat_id;
+}
+
+int delete_msg_in_server(int msg_id) {
+
+  cJSON *json = cJSON_CreateObject();
+
+  cJSON_AddNumberToObject(json, "type", REQ_DEL_MESSAGE);
+  cJSON_AddNumberToObject(json, "chat_id", account->chat_id);
+  cJSON_AddNumberToObject(json, "message_id", msg_id);
+
+  char *json_str = cJSON_PrintUnformatted(json);
+  SSL_write(info->ssl, json_str, mx_strlen(json_str));
+
+  cJSON_Delete(json);
+  free(json_str);
+
+  return 0;
 }

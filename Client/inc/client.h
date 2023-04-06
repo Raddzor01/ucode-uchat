@@ -58,10 +58,12 @@ int send_exit_from_server();
 char *read_from_server();
 void read_found_chats();
 int get_user_chats();
+int get_msg_id();
 int find_chats_from_server(const char *str);
 int create_chat_in_server(const char *chat_name, int chat_type);
 int check_account_exists();
 bool check_account_from_server();
+int delete_msg_in_server(int msg_id);
 
 // Conection to the server
 void init_ssl(SSL_CTX **ctx);
@@ -87,8 +89,9 @@ void file_select(GtkWidget *widget, gpointer data);
 void build_users(GtkWidget *grid);
 void user_box(int number);
 bool chech_fields(const gchar *username, const gchar *password);
-void text_bubble(const char *text);
+void text_bubble(const char *text, int *msg_id);
 void delete_msg(GtkButton *button, gpointer data);
+void delete_msg_id(GtkButton *button, int *msg_id);
 void edit_msg(GtkButton *button, gpointer data);
 void edit_accept(GtkButton *button, gpointer data);
 void cancel_edit(GtkButton *button, gpointer data);
