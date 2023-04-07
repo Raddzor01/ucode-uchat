@@ -11,6 +11,8 @@ typedef enum e_req_type
     REQ_EDIT_MESSAGE,
     REQ_DEL_MESSAGE,
     REQ_JOIN_CHAT,
+    REQ_EDIT_USERNAME,
+    REQ_EDIT_PASSWORD,
     REQ_UNKNOWN,
     REQ_LOGOUT,
     REQ_EXIT,

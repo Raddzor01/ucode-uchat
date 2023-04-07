@@ -50,6 +50,14 @@ int send_message_to_server(const char *str) {
   char *json_str = cJSON_PrintUnformatted(json);
   SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
+  cJSON *json1 = cJSON_CreateObject();
+
+  cJSON_AddNumberToObject(json1, "type", REQ_CREATE_CHAT);
+  cJSON_AddNumberToObject(json1, "chat_type", 0);
+  cJSON_AddStringToObject(json1, "name", str);
+  cJSON_AddNumberToObject(json1, "time", 1230405);
+    char *json_str1 = cJSON_PrintUnformatted(json1);
+  SSL_write(info->ssl, json_str1, mx_strlen(json_str1));
   cJSON_Delete(json);
   free(json_str);
 
