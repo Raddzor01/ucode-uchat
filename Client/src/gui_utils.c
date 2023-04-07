@@ -144,7 +144,7 @@ void change_chat_id(GtkWidget *widget, int *new_id) {
     printf("\ncurrent chat: %d\n", account->chat_id);
 }
 
-void text_bubble(const char *text, int *msg_id) {
+void text_bubble(const char *text, int msg_id) {
     GtkWidget *box_container = get_widget_by_name_r(main_window, "box_holder");
     GtkWidget *scrolled_window = get_widget_by_name_r(main_window, "scroll");
     GtkWidget *box;
@@ -224,7 +224,7 @@ void text_bubble(const char *text, int *msg_id) {
     gtk_button_set_image(GTK_BUTTON(delete_button), image2);
     gtk_box_pack_start(GTK_BOX(box), delete_button, FALSE, FALSE, 0);
 
-    g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg_id), msg_id);
+    g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg_id), GINT_TO_POINTER(msg_id));
     g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg), box);
 
     g_object_unref(pixbuf);
@@ -243,14 +243,11 @@ void delete_msg(GtkButton *button, gpointer data){
     if(button){}
 }
 
-void delete_msg_id(GtkButton *button, int *msg_id) {
+void delete_msg_id(GtkButton *button, gpointer msg_id) {
+
+    delete_msg_in_server(GPOINTER_TO_INT(msg_id));
 
     if(button){}
-
-    printf("msg id: %d\n", *msg_id);
-
-    // delete_msg_in_server(*msg_id);
-    delete_msg_in_server(*msg_id);
 }
 
 void cancel_edit(GtkButton *button, gpointer data){

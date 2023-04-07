@@ -260,6 +260,24 @@ int check_chat_id_from_server() {
   return chat_id;
 }
 
+int edit_msg_in_server(int msg_id, const char *new_text) {
+
+  cJSON *json = cJSON_CreateObject();
+
+  cJSON_AddNumberToObject(json, "type", REQ_EDIT_MESSAGE);
+  cJSON_AddNumberToObject(json, "id", msg_id);
+  cJSON_AddNumberToObject(json, "chat_id", account->chat_id);
+  cJSON_AddStringToObject(json, "text", new_text);
+
+  char *json_str = cJSON_PrintUnformatted(json);
+  SSL_write(info->ssl, json_str, mx_strlen(json_str));
+
+  cJSON_Delete(json);
+  free(json_str);
+
+  return 0;
+}
+
 int delete_msg_in_server(int msg_id) {
 
   cJSON *json = cJSON_CreateObject();
