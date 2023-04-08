@@ -209,6 +209,7 @@ void text_bubble(const char *text, int msg_id) {
     gtk_button_set_image(GTK_BUTTON(edit_button), image);
     gtk_box_pack_start(GTK_BOX(box), edit_button, FALSE, FALSE, 0);
 
+    g_signal_connect(G_OBJECT(edit_button), "clicked", G_CALLBACK(change_msg_id_for_edit), GINT_TO_POINTER(msg_id));
     g_signal_connect(G_OBJECT(edit_button), "clicked", G_CALLBACK(edit_msg), text_view);
 
     //delete button
@@ -236,7 +237,8 @@ void text_bubble(const char *text, int msg_id) {
     gtk_widget_queue_draw(main_window);
 }
 
-void delete_msg(GtkButton *button, gpointer data){
+void delete_msg(GtkButton *button, gpointer data) {
+
     GtkWidget *box = (GtkWidget*) data;
     gtk_widget_destroy(box);
 
@@ -250,7 +252,7 @@ void delete_msg_id(GtkButton *button, gpointer msg_id) {
     if(button){}
 }
 
-void cancel_edit(GtkButton *button, gpointer data){
+void cancel_edit(GtkButton *button, gpointer data) {
 
     GtkWidget *send_button = get_widget_by_name_r(main_window, "send_button");
 
@@ -265,7 +267,7 @@ void cancel_edit(GtkButton *button, gpointer data){
     if(button){}
 }
 
-void edit_msg(GtkButton *button, gpointer data){
+void edit_msg(GtkButton *button, gpointer data) {
 
     GtkTextView *text_view = GTK_TEXT_VIEW(data);
     GtkWidget *chat_box = get_widget_by_name_r(main_window, "chat_box");
@@ -333,6 +335,14 @@ void edit_accept(GtkButton *button, gpointer data) {
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
     const gchar *text = gtk_entry_get_text (GTK_ENTRY (info->entry));
     gtk_text_buffer_set_text(buffer, text, strlen(text));
+    edit_msg_in_server(info->msg_id_for_edit, text);
+
+    if(button){}
+}
+
+void change_msg_id_for_edit(GtkButton *button, gpointer msg_id) {
+
+    info->msg_id_for_edit = GPOINTER_TO_INT(msg_id);
 
     if(button){}
 }

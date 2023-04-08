@@ -46,6 +46,7 @@ void create_chat(cJSON *json, t_client_info *client_info)
 
     chat_id = sqlite3_column_int(stmt, 0);
 
+    sqlite3_finalize(stmt);
     sqlite3_free(query);
 
     query = sqlite3_mprintf("INSERT INTO members (chat_id, user_id, privilege) VALUES('%d', '%d', '%d')",
@@ -53,6 +54,5 @@ void create_chat(cJSON *json, t_client_info *client_info)
     db_execute_query(query);
 
     sqlite3_free(query);
-    sqlite3_finalize(stmt);
     sqlite3_close(db);
 }

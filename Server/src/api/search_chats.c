@@ -42,9 +42,10 @@ void search_chats(cJSON *client_json, t_client_info *client_info)
 
     int result = sqlite3_prepare_v2(db, sql_query, -1, &stmt, NULL);
 
-    // if (result != SQLITE_OK) {
-    //     // проверку ошибки огромной хуйни сверху надо реализовать
-    // }
+    if (result != SQLITE_OK) {
+        mx_logs(strerror(errno), ERROR_LOG);
+        return;
+    }
 
     sqlite3_bind_int64(stmt, 1, client_info->user->id);
     sqlite3_bind_text(stmt, 2, search_str, -1, NULL);

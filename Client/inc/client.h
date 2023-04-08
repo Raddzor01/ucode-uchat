@@ -33,6 +33,7 @@ typedef struct s_info {
   GtkWidget *entry;
   GtkTextView *text_view;
   SSL *ssl;
+  int msg_id_for_edit;
 } t_info;
 
 // user data structure
@@ -97,6 +98,7 @@ void delete_msg_id(GtkButton *button, gpointer msg_id);
 void edit_msg(GtkButton *button, gpointer data);
 void edit_accept(GtkButton *button, gpointer data);
 void cancel_edit(GtkButton *button, gpointer data);
+void change_msg_id_for_edit(GtkButton *button, gpointer msg_id);
 
 // CSS part
 void load_css();

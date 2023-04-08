@@ -78,6 +78,8 @@ void search_chats(cJSON *client_json, t_client_info *client_info);
 void edit_message(cJSON *client_json, t_client_info *client_info);
 void delete_message(cJSON *json, t_client_info *client_info);
 void join_chat(cJSON *chat_info, t_client_info *client_info);
+void edit_username(cJSON *json, t_client_info *client_info);
+void edit_password(cJSON *json, t_client_info *client_info);
 
 sqlite3 *db_open();
 int db_init();
@@ -99,7 +101,7 @@ typedef struct
     request_handler handler;
 } t_map_entry;
 
-#define MAP_SIZE 11
+#define MAP_SIZE 13
 static t_map_entry request_map[MAP_SIZE] = 
 {
     {REQ_USER_SIGNUP, user_signup},
@@ -112,7 +114,9 @@ static t_map_entry request_map[MAP_SIZE] =
     {REQ_SEARCH_CHATS, search_chats},
     {REQ_EDIT_MESSAGE, edit_message},
     {REQ_DEL_MESSAGE, delete_message},
-    {REQ_JOIN_CHAT, join_chat}
+    {REQ_JOIN_CHAT, join_chat},
+    {REQ_EDIT_USERNAME, edit_username},
+    {REQ_EDIT_PASSWORD, edit_password}
 };
 
 void add_client(t_client_info *client);
