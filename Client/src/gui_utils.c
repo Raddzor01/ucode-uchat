@@ -144,7 +144,7 @@ void change_chat_id(GtkWidget *widget, int *new_id) {
     printf("\ncurrent chat: %d\n", account->chat_id);
 }
 
-void text_bubble(const char *text) {
+void text_bubble(const char *text, int msg_id) {
     GtkWidget *box_container = get_widget_by_name_r(main_window, "box_holder");
     GtkWidget *scrolled_window = get_widget_by_name_r(main_window, "scroll");
     GtkWidget *box;
@@ -209,6 +209,7 @@ void text_bubble(const char *text) {
     gtk_button_set_image(GTK_BUTTON(edit_button), image);
     gtk_box_pack_start(GTK_BOX(box), edit_button, FALSE, FALSE, 0);
 
+    g_signal_connect(G_OBJECT(edit_button), "clicked", G_CALLBACK(change_msg_id_for_edit), GINT_TO_POINTER(msg_id));
     g_signal_connect(G_OBJECT(edit_button), "clicked", G_CALLBACK(edit_msg), text_view);
 
     //delete button
@@ -224,6 +225,7 @@ void text_bubble(const char *text) {
     gtk_button_set_image(GTK_BUTTON(delete_button), image2);
     gtk_box_pack_start(GTK_BOX(box), delete_button, FALSE, FALSE, 0);
 
+    g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg_id), GINT_TO_POINTER(msg_id));
     g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg), box);
 
     g_object_unref(pixbuf);
@@ -235,14 +237,22 @@ void text_bubble(const char *text) {
     gtk_widget_queue_draw(main_window);
 }
 
-void delete_msg(GtkButton *button, gpointer data){
+void delete_msg(GtkButton *button, gpointer data) {
+
     GtkWidget *box = (GtkWidget*) data;
     gtk_widget_destroy(box);
 
     if(button){}
 }
 
-void cancel_edit(GtkButton *button, gpointer data){
+void delete_msg_id(GtkButton *button, gpointer msg_id) {
+
+    delete_msg_in_server(GPOINTER_TO_INT(msg_id));
+
+    if(button){}
+}
+
+void cancel_edit(GtkButton *button, gpointer data) {
 
     GtkWidget *send_button = get_widget_by_name_r(main_window, "send_button");
 
@@ -257,7 +267,7 @@ void cancel_edit(GtkButton *button, gpointer data){
     if(button){}
 }
 
-void edit_msg(GtkButton *button, gpointer data){
+void edit_msg(GtkButton *button, gpointer data) {
 
     GtkTextView *text_view = GTK_TEXT_VIEW(data);
     GtkWidget *chat_box = get_widget_by_name_r(main_window, "chat_box");
@@ -281,6 +291,8 @@ void edit_msg(GtkButton *button, gpointer data){
 
     //edited text
     edit_text = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(edit_text), FALSE);
+    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(edit_text), FALSE);
     gtk_widget_set_size_request(edit_text, -1, -1);
     gtk_widget_set_hexpand(edit_text, TRUE);
     gtk_widget_set_halign(edit_text, GTK_ALIGN_FILL);
@@ -323,6 +335,14 @@ void edit_accept(GtkButton *button, gpointer data) {
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
     const gchar *text = gtk_entry_get_text (GTK_ENTRY (info->entry));
     gtk_text_buffer_set_text(buffer, text, strlen(text));
+    edit_msg_in_server(info->msg_id_for_edit, text);
+
+    if(button){}
+}
+
+void change_msg_id_for_edit(GtkButton *button, gpointer msg_id) {
+
+    info->msg_id_for_edit = GPOINTER_TO_INT(msg_id);
 
     if(button){}
 }

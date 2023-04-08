@@ -4,12 +4,12 @@ void send_message(GtkButton *button) {
 
     const char *text;
 
-    text = gtk_entry_get_text (GTK_ENTRY (info->entry));
-
-    text_bubble(text);
+    text = gtk_entry_get_text(GTK_ENTRY(info->entry));
 
     send_message_to_server(text);
     // create_chat_in_server(text, CHAT_NORMAL);
+
+    text_bubble(text, get_msg_id());
 
     // if (strcmp(text, "e") == 0)
     //     account->chat_id = 2;
@@ -48,6 +48,7 @@ void chat_window() {
 
     GtkWidget *grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(main_window), grid);
+    build_profile(grid);
     build_users(grid);
 
     build_chat_window(grid);
