@@ -65,6 +65,5 @@ void get_chat_messages(cJSON *json, t_client_info *client_info)
     SSL_write(client_info->ssl, json_str, mx_strlen(json_str));
 
     mx_strdel(&json_str);
-    cJSON_Delete(messages);
     cJSON_Delete(json);
 }
