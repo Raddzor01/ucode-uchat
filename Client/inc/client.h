@@ -33,15 +33,16 @@ typedef struct s_info {
   GtkWidget *entry;
   GtkTextView *text_view;
   SSL *ssl;
+  int msg_id_for_edit;
 } t_info;
 
 // user data structure
 typedef struct s_account {
-  int id;
   char *username;
+  int id;
   int chat_id;
-  char **chat_list;
   int chat_count;
+  char **chat_list;
   int *chat_id_list;
 } t_account;
 
@@ -58,10 +59,13 @@ int send_exit_from_server();
 char *read_from_server();
 void read_found_chats();
 int get_user_chats();
+int get_msg_id();
 int find_chats_from_server(const char *str);
 int create_chat_in_server(const char *chat_name, int chat_type);
 int check_account_exists();
 bool check_account_from_server();
+int edit_msg_in_server(int msg_id, const char *new_text);
+int delete_msg_in_server(int msg_id);
 
 // Conection to the server
 void init_ssl(SSL_CTX **ctx);
@@ -85,13 +89,16 @@ void pop_up_window(char *text);
 void add_class(GtkWidget *widget, char *class_name);
 void file_select(GtkWidget *widget, gpointer data);
 void build_users(GtkWidget *grid);
+void build_profile(GtkWidget *grid);
 void user_box(int number);
 bool chech_fields(const gchar *username, const gchar *password);
-void text_bubble(const char *text);
+void text_bubble(const char *text, int msg_id);
 void delete_msg(GtkButton *button, gpointer data);
+void delete_msg_id(GtkButton *button, gpointer msg_id);
 void edit_msg(GtkButton *button, gpointer data);
 void edit_accept(GtkButton *button, gpointer data);
 void cancel_edit(GtkButton *button, gpointer data);
+void change_msg_id_for_edit(GtkButton *button, gpointer msg_id);
 
 // CSS part
 void load_css();
