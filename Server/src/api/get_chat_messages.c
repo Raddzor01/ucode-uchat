@@ -7,7 +7,7 @@ static cJSON* get_message(sqlite3_stmt *stmt) {
     cJSON_AddNumberToObject(json, "user_id", sqlite3_column_int(stmt, 1));
     cJSON_AddNumberToObject(json, "chat_id", sqlite3_column_int(stmt, 2));
     cJSON_AddStringToObject(json, "username", (const char*)sqlite3_column_text(stmt, 3));
-    cJSON_AddStringToObject(json, "text", (const char*)sqlite3_column_text(stmt, 4));
+    cJSON_AddStringToObject(json, "message", (const char*)sqlite3_column_text(stmt, 4));
     cJSON_AddNumberToObject(json, "date", sqlite3_column_int64(stmt, 5));
     return json;
 
@@ -23,7 +23,7 @@ static cJSON *get_messages_array(int chat_id)
     cJSON *messages_array = cJSON_CreateArray();
 
     db = db_open();
-    query = sqlite3_mprintf("SELECT messages.id, messages.user_id, messages.chat_id, users.username, messages.text, messages.date "
+    query = sqlite3_mprintf("SELECT messages.id, messages.user_id, messages.chat_id, users.username, messages.message, messages.date "
                             "FROM messages INNER JOIN users ON users.id = messages.user_id "
                             "WHERE messages.chat_id = '%d'",
                             chat_id);
