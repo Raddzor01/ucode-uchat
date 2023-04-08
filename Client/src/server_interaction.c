@@ -85,11 +85,13 @@ char *read_from_server() {
   return NULL;
 }
 
-void read_found_chats() {
+void read_from_server_to_logs() {
 
   char *str = read_from_server();
 
   mx_logs(str, INFO_LOG);
+
+  free(str);
 }
 
 int get_user_chats() {
@@ -120,6 +122,24 @@ int get_user_chats() {
 
   cJSON_Delete(json_2);
   free(str);
+
+  return 0;
+}
+
+int get_chat_messages_from_server(int chat_id) {
+
+  cJSON *json = cJSON_CreateObject();
+
+  cJSON_AddNumberToObject(json, "type", REQ_GET_CHAT_MESSAGES);
+  cJSON_AddNumberToObject(json, "chat_id", chat_id);
+
+  char *json_str = cJSON_PrintUnformatted(json);
+  SSL_write(info->ssl, json_str, mx_strlen(json_str));
+
+  cJSON_Delete(json);
+  free(json_str);
+
+  read_from_server_to_logs();
 
   return 0;
 }
