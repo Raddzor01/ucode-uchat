@@ -289,6 +289,8 @@ void edit_msg(GtkButton *button, gpointer data){
 
     //edited text
     edit_text = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(edit_text), FALSE);
+    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(edit_text), FALSE);
     gtk_widget_set_size_request(edit_text, -1, -1);
     gtk_widget_set_hexpand(edit_text, TRUE);
     gtk_widget_set_halign(edit_text, GTK_ALIGN_FILL);
