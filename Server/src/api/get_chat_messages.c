@@ -3,7 +3,7 @@
 static cJSON* get_message(sqlite3_stmt *stmt) {
 
     cJSON* json = cJSON_CreateObject();
-    cJSON_AddNumberToObject(json, "msg_id", sqlite3_column_int(stmt, 0));
+    cJSON_AddNumberToObject(json, "message_id", sqlite3_column_int(stmt, 0));
     cJSON_AddNumberToObject(json, "user_id", sqlite3_column_int(stmt, 1));
     cJSON_AddNumberToObject(json, "chat_id", sqlite3_column_int(stmt, 2));
     cJSON_AddStringToObject(json, "username", (const char*)sqlite3_column_text(stmt, 3));
@@ -23,12 +23,12 @@ static cJSON *get_messages_array(int chat_id)
     cJSON *messages_array = cJSON_CreateArray();
 
     db = db_open();
-    query = sqlite3_mprintf("SELECT messages.id, messages.user_id, messages.chat_id, users.username, messages.message, messages.date "
-                            "FROM messages INNER JOIN users ON users.id = messages.user_id "
-                            "WHERE messages.chat_id = '%d'",
+    query = sqlite3_mprintf("SELECT messages.id, messages.user_id, messages.chat_id, users.username, messages.message, messages.time FROM messages "
+                            "INNER JOIN users ON users.id = messages.user_id "
+                            "WHERE messages.chat_id = %d ",
                             chat_id);
     sqlite3_prepare_v2(db, query, -1, &stmt, NULL);
-    
+
     while (sqlite3_step(stmt) == SQLITE_ROW)
         cJSON_AddItemToArray(messages_array, get_message(stmt));
     
@@ -45,13 +45,13 @@ void get_chat_messages(cJSON *json, t_client_info *client_info)
 
     if(!db_check_chat_exists(chat_id))
     {
-        send_responde(client_info->ssl, REQ_DEL_MESSAGE, ERR_CHAT_NONEXIST);
+        send_responde(client_info->ssl, REQ_GET_CHAT_MESSAGES, ERR_CHAT_NONEXIST);
         return;
     }
 
     if(!db_check_chat_membership(chat_id, client_info->user->id))
     {
-        send_responde(client_info->ssl, REQ_DEL_MESSAGE, ERR_CHAT_NONEXIST);
+        send_responde(client_info->ssl, REQ_GET_CHAT_MESSAGES, ERR_USER_NOT_IN_CHAT);
         return;
     }
 
@@ -60,10 +60,10 @@ void get_chat_messages(cJSON *json, t_client_info *client_info)
     cJSON_AddNumberToObject(client_json, "type", REQ_GET_CHAT_MESSAGES);
     cJSON_AddNumberToObject(client_json, "error_code", ERR_SUCCESS);
     cJSON_AddItemReferenceToObject(client_json, "messages", messages);
-    char* json_str = cJSON_PrintUnformatted(json);
+    char* json_str = cJSON_PrintUnformatted(client_json);
 
     SSL_write(client_info->ssl, json_str, mx_strlen(json_str));
 
     mx_strdel(&json_str);
-    cJSON_Delete(json);
+    cJSON_Delete(client_json);
 }
