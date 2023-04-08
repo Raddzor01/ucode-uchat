@@ -46,6 +46,12 @@ typedef struct s_account {
   int *chat_id_list;
 } t_account;
 
+typedef struct s_msg {
+  int msg_id;
+  char *text;
+  // int time;
+} t_msg;
+
 int send_file_to_server(char *filedir);
 extern GtkWidget *main_window;
 extern t_info *info;
@@ -59,7 +65,7 @@ int send_exit_from_server();
 char *read_from_server();
 void read_from_server_to_logs();
 int get_user_chats();
-int get_chat_messages_from_server(int chat_id);
+t_msg **get_chat_messages_from_server(int chat_id);
 int get_msg_id();
 int find_chats_from_server(const char *str);
 int create_chat_in_server(const char *chat_name, int chat_type);

@@ -142,6 +142,13 @@ void change_chat_id(GtkWidget *widget, int *new_id) {
     account->chat_id = *new_id;
 
     printf("\ncurrent chat: %d\n", account->chat_id);
+
+    t_msg **msg = get_chat_messages_from_server(account->chat_id);
+
+    // printf("\ncurrent chat: %d\n", account->chat_id);
+
+    for (int i = 0; msg[i] != NULL; i++)
+        text_bubble(msg[i]->text, msg[i]->msg_id);
 }
 
 void text_bubble(const char *text, int msg_id) {

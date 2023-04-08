@@ -40,7 +40,7 @@ void chat_window() {
 
     get_user_chats();
     // send_from_server();
-    get_chat_messages_from_server(4);
+    // get_chat_messages_from_server(4);
 
     if (main_window)
         clear_window(main_window);

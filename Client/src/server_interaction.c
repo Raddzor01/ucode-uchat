@@ -111,13 +111,13 @@ int get_user_chats() {
   account->chat_count = cJSON_GetArraySize(json_2->child);
   account->chat_list = (char **)malloc(account->chat_count * sizeof(char *));
   account->chat_id_list = (int *)malloc(account->chat_count * sizeof(int));
-  cJSON *js = NULL;
+  cJSON *json_temp = NULL;
 
   for (int i = 0; i < account->chat_count; i++) {
-    js = cJSON_GetArrayItem(json_2->child, i);
+    json_temp = cJSON_GetArrayItem(json_2->child, i);
     account->chat_list[i] = mx_strdup(
-        cJSON_GetObjectItemCaseSensitive(js, "chat_name")->valuestring);
-    account->chat_id_list[i] = cJSON_GetObjectItem(js, "chat_id")->valueint;
+        cJSON_GetObjectItemCaseSensitive(json_temp, "chat_name")->valuestring);
+    account->chat_id_list[i] = cJSON_GetObjectItem(json_temp, "chat_id")->valueint;
   }
 
   cJSON_Delete(json_2);
@@ -126,7 +126,7 @@ int get_user_chats() {
   return 0;
 }
 
-int get_chat_messages_from_server(int chat_id) {
+t_msg **get_chat_messages_from_server(int chat_id) {
 
   cJSON *json = cJSON_CreateObject();
 
@@ -139,9 +139,34 @@ int get_chat_messages_from_server(int chat_id) {
   cJSON_Delete(json);
   free(json_str);
 
-  read_from_server_to_logs();
+  // read_from_server_to_logs();
 
-  return 0;
+  char *str = read_from_server();
+  cJSON *json_2 = cJSON_Parse(str);
+
+  // printf("%s\n", cJSON_PrintUnformatted(cJSON_GetObjectItemCaseSensitive(json_2, "messages")));
+
+  cJSON *json_2_arr = cJSON_GetObjectItemCaseSensitive(json_2, "messages");
+  int arr_size = cJSON_GetArraySize(json_2_arr);
+  t_msg **msg = (t_msg **)malloc((arr_size) * sizeof(t_msg *));
+  cJSON *json_temp;
+
+  for (int i = 0; i < arr_size; i++) {
+    msg[i] = (t_msg *)malloc(sizeof(t_msg));
+    json_temp = cJSON_GetArrayItem(json_2_arr, i);
+    // printf("%s\n", cJSON_PrintUnformatted(json_temp));
+    msg[i]->text = mx_strdup(
+        cJSON_GetObjectItemCaseSensitive(json_temp, "message")->valuestring);
+    msg[i]->msg_id = cJSON_GetObjectItem(json_temp, "message_id")->valueint;
+    // printf("%d\n", msg[i]->msg_id);
+  }
+
+  msg[arr_size] = NULL;
+
+  cJSON_Delete(json_2);
+  free(str);
+
+  return msg;
 }
 
 int get_msg_id() {
