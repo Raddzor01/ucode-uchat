@@ -68,7 +68,7 @@ int send_exit_from_server() {
 
   cJSON *json = cJSON_CreateObject();
 
-  cJSON_AddNumberToObject(json, "type", REQ_EXIT);
+  cJSON_AddNumberToObject(json, "type", REQ_CLIENT_EXIT);
 
   char *json_str = cJSON_PrintUnformatted(json);
   SSL_write(info->ssl, json_str, mx_strlen(json_str));

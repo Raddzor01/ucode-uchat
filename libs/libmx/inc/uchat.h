@@ -13,9 +13,9 @@ typedef enum e_req_type
     REQ_JOIN_CHAT,
     REQ_EDIT_USERNAME,
     REQ_EDIT_PASSWORD,
-    REQ_UNKNOWN,
-    REQ_LOGOUT,
-    REQ_EXIT,
+    REQ_USER_LOGOUT,
+    REQ_CLIENT_EXIT,
+    REQ_UNKNOWN
 }   t_req_type;
 
 typedef enum e_error_type
