@@ -17,6 +17,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+ #include <strings.h>
 // #include <sqlite3.h>
 #include <time.h>
 
@@ -33,6 +34,7 @@ typedef struct s_info {
   GtkWidget *entry;
   GtkTextView *text_view;
   SSL *ssl;
+  int server_socket;
   int msg_id_for_edit;
 } t_info;
 
@@ -45,6 +47,12 @@ typedef struct s_account {
   char **chat_list;
   int *chat_id_list;
 } t_account;
+
+typedef struct s_msg {
+  int msg_id;
+  char *text;
+  // int time;
+} t_msg;
 
 int send_file_to_server(char *filedir);
 extern GtkWidget *main_window;
@@ -66,6 +74,7 @@ int check_account_exists();
 bool check_account_from_server();
 int edit_msg_in_server(int msg_id, const char *new_text);
 int delete_msg_in_server(int msg_id);
+t_msg **get_chat_messages_from_server(int chat_id);
 
 // Conection to the server
 void init_ssl(SSL_CTX **ctx);
