@@ -13,7 +13,7 @@ void *thread_control(void *arg)
         if (!request)
             continue;
 
-        if (handle_request(client_info, request) == REQ_EXIT)
+        if (handle_request(client_info, request) == REQ_CLIENT_EXIT)
         {
             mx_strdel(&request);
             break;

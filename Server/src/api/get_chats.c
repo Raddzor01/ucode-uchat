@@ -5,14 +5,14 @@ cJSON *get_chats_json(sqlite3 *db, int user_id);
 static cJSON *get_chat_json(sqlite3_stmt *stmt);
 void send_chats_json_to_client(cJSON *json, t_client_info *client_info);
 
-void get_chats(cJSON *chat_info, t_client_info *client_info)
+void get_chats(cJSON *__attribute__((unused)) json, t_client_info *client_info)
 {
     sqlite3 *db;
-    cJSON *json;
+    cJSON *clinet_json;
 
     db = db_open();
-    json = get_chats_json(db, client_info->user->id);
-    send_chats_json_to_client(json, client_info);
+    clinet_json = get_chats_json(db, client_info->user->id);
+    send_chats_json_to_client(clinet_json, client_info);
 
     sqlite3_close(db);
 }
