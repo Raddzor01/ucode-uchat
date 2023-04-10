@@ -79,12 +79,12 @@ void usage_error_check(int argc)
 void log_client_conection(struct in_addr sa)
 {
     char client_ip[INET_ADDRSTRLEN];
-    char *log_massage;
+    char *log_message;
 
     inet_ntop(AF_INET, &sa, client_ip, INET_ADDRSTRLEN);
 
-    log_massage = mx_strjoin("Trying to connect client: ", client_ip);
-    mx_logs(log_massage, INFO_LOG);
+    log_message = mx_strjoin("Trying to connect client: ", client_ip);
+    mx_logs(log_message, INFO_LOG);
 
-    mx_strdel(&log_massage);
+    mx_strdel(&log_message);
 }

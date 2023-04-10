@@ -56,11 +56,29 @@ int send_message_to_server(const char *str) {
   return 0;
 }
 
-int send_exit_from_server() {
+int send_exit_to_server() {
+
+  if (account->username != NULL)
+    send_logout_to_server();
 
   cJSON *json = cJSON_CreateObject();
 
-  cJSON_AddNumberToObject(json, "type", REQ_EXIT);
+  cJSON_AddNumberToObject(json, "type", REQ_CLIENT_EXIT);
+
+  char *json_str = cJSON_PrintUnformatted(json);
+  SSL_write(info->ssl, json_str, mx_strlen(json_str));
+
+  cJSON_Delete(json);
+  free(json_str);
+
+  return 0;
+}
+
+int send_logout_to_server() {
+
+  cJSON *json = cJSON_CreateObject();
+
+  cJSON_AddNumberToObject(json, "type", REQ_USER_LOGOUT);
 
   char *json_str = cJSON_PrintUnformatted(json);
   SSL_write(info->ssl, json_str, mx_strlen(json_str));
@@ -176,7 +194,7 @@ int get_msg_id() {
   int msg_id;
 
   if (json == NULL) {
-    mx_printerr("cJSON is NULL\n");
+    mx_printerr("Error receiving id message\ncJSON is NULL\n");
     cJSON_Delete(json);
     free(str);
     return -1;
@@ -231,7 +249,7 @@ int check_account_exists() {
   cJSON *json = cJSON_Parse(str);
 
   if (json == NULL) {
-    mx_printerr("cJSON is NULL\n");
+    mx_printerr("Error getting user information for sign up\ncJSON is NULL\n");
     cJSON_Delete(json);
     free(str);
     return -1;
@@ -245,7 +263,8 @@ int check_account_exists() {
   // 	return NULL;
   // }
 
-  // printf("%d\n", error);
+  cJSON_Delete(json);
+  free(str);
 
   return error;
 }
@@ -256,7 +275,7 @@ bool check_account_from_server() {
   cJSON *json = cJSON_Parse(str);
 
   if (json == NULL) {
-    mx_printerr("cJSON is NULL\n");
+    mx_printerr("Error getting user information for login\ncJSON is NULL\n");
     cJSON_Delete(json);
     free(str);
     return 0;
@@ -267,7 +286,7 @@ bool check_account_from_server() {
 
   // add error checks
   if (error != 0) {
-    mx_printerr("Error in account cJSON\n");
+    mx_printerr("Error getting user information for login\nError in account cJSON\n");
     cJSON_Delete(json);
     free(str);
     return 0;

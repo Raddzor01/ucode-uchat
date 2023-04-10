@@ -31,7 +31,7 @@
 // struct for sending to server
 typedef struct s_info {
   GtkWidget *entry;
-  GtkTextView *text_view;
+  // GtkTextView *text_view;
   SSL *ssl;
   int msg_id_for_edit;
 } t_info;
@@ -61,7 +61,8 @@ extern t_account *account;
 int send_sign_up_to_server(const char *username, const char *password);
 int send_login_to_server(const char *username, const char *password);
 int send_message_to_server(const char *str);
-int send_exit_from_server();
+int send_exit_to_server();
+int send_logout_to_server();
 char *read_from_server();
 void read_from_server_to_logs();
 int get_user_chats();
