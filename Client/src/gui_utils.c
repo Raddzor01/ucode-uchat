@@ -39,6 +39,26 @@ void create_new_window(char *title, int width, int height, bool resizable)
     gtk_window_set_resizable(GTK_WINDOW(main_window), resizable);
 }
 
+GtkWidget* create_image_button(char* image_path, int width, int height) {
+    GdkPixbuf *pixbuf;
+    GtkWidget *button, *image;
+
+    // Load and scale the image
+    pixbuf = gdk_pixbuf_new_from_file(image_path, NULL);
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf, width, height, GDK_INTERP_BILINEAR);
+
+    // Create the image and button widgets
+    image = gtk_image_new_from_pixbuf(pixbuf);
+    button = gtk_button_new();
+    gtk_button_set_image(GTK_BUTTON(button), image);
+
+    // Free the pixbuf
+    g_object_unref(pixbuf);
+
+    // Return the button widget
+    return button;
+}
+
 GtkWidget *get_widget_by_name_r(GtkWidget *container, char *name) {
     GtkWidget *result = NULL; 
     GList *children = NULL;
@@ -207,17 +227,8 @@ void text_bubble(const char *text, int msg_id) {
 
     //redact button
     GtkWidget *edit_button;
-    GdkPixbuf *pixbuf;
-    GtkWidget *image;
 
-    pixbuf = gdk_pixbuf_new_from_file("Client/icons/pen.png", NULL);
-    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 12, 12, GDK_INTERP_BILINEAR);
-
-    image = gtk_image_new_from_pixbuf(pixbuf);
-    g_object_unref(pixbuf);
-
-    edit_button = gtk_button_new();
-    gtk_button_set_image(GTK_BUTTON(edit_button), image);
+    edit_button = create_image_button("Client/icons/pen.png", 12, 12);
     gtk_box_pack_start(GTK_BOX(box), edit_button, FALSE, FALSE, 0);
 
     g_signal_connect(G_OBJECT(edit_button), "clicked", G_CALLBACK(change_msg_id_for_edit), GINT_TO_POINTER(msg_id));
@@ -225,21 +236,12 @@ void text_bubble(const char *text, int msg_id) {
 
     //delete button
     GtkWidget *delete_button;
-    GtkWidget *image2;
 
-    pixbuf = gdk_pixbuf_new_from_file("Client/icons/trash.png", NULL);
-    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 12, 12, GDK_INTERP_BILINEAR);
-
-    image2 = gtk_image_new_from_pixbuf(pixbuf);
-
-    delete_button = gtk_button_new();
-    gtk_button_set_image(GTK_BUTTON(delete_button), image2);
+    delete_button = create_image_button("Client/icons/trash.png", 12, 12);
     gtk_box_pack_start(GTK_BOX(box), delete_button, FALSE, FALSE, 0);
 
     g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg_id), GINT_TO_POINTER(msg_id));
     g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg), box);
-
-    g_object_unref(pixbuf);
 
     GtkAdjustment *vadjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
     gtk_adjustment_set_value(vadjustment, gtk_adjustment_get_upper(vadjustment) - gtk_adjustment_get_page_size(vadjustment));
@@ -314,18 +316,10 @@ void edit_msg(GtkButton *button, gpointer data) {
     gtk_text_buffer_set_text(buffer, text, strlen(text));
 
     //close edit tab
-    GdkPixbuf *pixbuf;
-    GtkWidget *image;
 
-    pixbuf = gdk_pixbuf_new_from_file("Client/icons/cross.png", NULL);
-    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 14, 14, GDK_INTERP_BILINEAR);
-
-    image = gtk_image_new_from_pixbuf(pixbuf);
-
-    cancel_button = gtk_button_new();
+    cancel_button = create_image_button("Client/icons/cross.png", 14, 14);
     gtk_widget_set_hexpand(cancel_button, TRUE);
     gtk_widget_set_halign(cancel_button, GTK_ALIGN_END);
-    gtk_button_set_image(GTK_BUTTON(cancel_button), image);
     gtk_box_pack_start(GTK_BOX(box), cancel_button, FALSE, FALSE, 0);
 
     g_signal_handlers_disconnect_by_func(send_button, (gpointer)send_message, NULL);
