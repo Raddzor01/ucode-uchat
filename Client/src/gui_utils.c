@@ -2,6 +2,10 @@
 
 guint cancel_handler_id;
 guint accept_handler_id;
+guint cancel_entry_id;
+guint accept_entry_id;
+
+
 
 void change_chat_id(GtkWidget *widget, int *new_id);
 
@@ -268,10 +272,16 @@ void delete_msg_id(GtkButton *button, gpointer msg_id) {
 void cancel_edit(GtkButton *button, gpointer data) {
 
     GtkWidget *send_button = get_widget_by_name_r(main_window, "send_button");
+    GtkWidget *entry = get_widget_by_name_r(main_window, "chat_text_entry");
 
     g_signal_handler_disconnect(G_OBJECT(send_button), cancel_handler_id);
     g_signal_handler_disconnect(G_OBJECT(send_button), accept_handler_id);
     g_signal_connect(send_button, "clicked", G_CALLBACK(send_message), NULL);
+
+    g_signal_handler_disconnect(G_OBJECT(entry), cancel_entry_id);
+    g_signal_handler_disconnect(G_OBJECT(entry), accept_entry_id);
+    g_signal_connect(entry, "activate", G_CALLBACK(send_message), NULL);
+
     gtk_entry_set_text (GTK_ENTRY (info->entry), "");
 
     GtkWidget *box = (GtkWidget*) data;
@@ -287,6 +297,7 @@ void edit_msg(GtkButton *button, gpointer data) {
     GtkWidget *box;
     GtkWidget *cancel_button;
     GtkWidget *edit_text;
+    GtkWidget *entry = get_widget_by_name_r(main_window, "chat_text_entry");
     GtkWidget *send_button = get_widget_by_name_r(main_window, "send_button");
 
     //take text from bubble (to set it to entry)
@@ -326,6 +337,9 @@ void edit_msg(GtkButton *button, gpointer data) {
     accept_handler_id = g_signal_connect(G_OBJECT(send_button), "clicked", G_CALLBACK(edit_accept), text_view);
     cancel_handler_id = g_signal_connect(G_OBJECT(send_button), "clicked", G_CALLBACK(cancel_edit), box);
 
+    g_signal_handlers_disconnect_by_func(entry, (gpointer)send_message, NULL);
+    accept_entry_id = g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(edit_accept), text_view);
+    cancel_entry_id = g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(cancel_edit), box);
 
     g_signal_connect(G_OBJECT(cancel_button), "clicked", G_CALLBACK(cancel_edit), box);
 
