@@ -125,6 +125,7 @@ void build_signup() {
 
 void build_chat_window(GtkWidget *grid) {
 
+    GtkWidget *box;
     GtkWidget *chat_box;
     GtkWidget *input_box;
     GtkWidget *entry;
@@ -133,21 +134,28 @@ void build_chat_window(GtkWidget *grid) {
     GtkWidget *file_selection;
     GtkWidget *box_container;
 
-    chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    gtk_widget_set_size_request (chat_box, 500, 400);
-    gtk_grid_attach(GTK_GRID(grid), chat_box, 1, 0, 1, 1);
-    gtk_widget_set_name(chat_box, "chat_box");
+    box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_grid_attach(GTK_GRID(grid), box, 1, 0, 1, 1);
 
-    input_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_grid_attach(GTK_GRID(grid), input_box, 1, 1, 1, 1);
+    chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_widget_set_size_request (chat_box, 500, 450);
+    gtk_widget_set_name(chat_box, "chat_box");
+    gtk_box_pack_start(GTK_BOX(box), chat_box, TRUE, TRUE, 0);
 
     gtk_widget_set_hexpand(chat_box, TRUE);
     gtk_widget_set_vexpand(chat_box, TRUE);
     gtk_widget_set_halign(chat_box, GTK_ALIGN_FILL);
     gtk_widget_set_valign(chat_box, GTK_ALIGN_FILL);
 
+    input_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_pack_start(GTK_BOX(box), input_box, TRUE, TRUE, 0);
+    gtk_widget_set_size_request (input_box, -1, 100);
+
+    gtk_widget_set_size_request (input_box, -1, 20);
     gtk_widget_set_hexpand(input_box, TRUE);
     gtk_widget_set_halign(input_box, GTK_ALIGN_FILL);
+    gtk_widget_set_vexpand(input_box, FALSE);
+    gtk_widget_set_valign(input_box, GTK_ALIGN_START);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_box_pack_start(GTK_BOX(chat_box), scrolled_window, TRUE, TRUE, 0);
@@ -160,7 +168,7 @@ void build_chat_window(GtkWidget *grid) {
     gtk_widget_set_name(box_container, "box_holder");
 
     entry = gtk_entry_new();
-    gtk_widget_set_size_request (entry, 400, -1);
+    gtk_widget_set_size_request (entry, 400, 10);
     gtk_widget_set_hexpand(entry, TRUE);
     gtk_widget_set_halign(entry, GTK_ALIGN_FILL);
     gtk_box_pack_start(GTK_BOX(input_box), entry, TRUE, TRUE, 0);
@@ -194,7 +202,9 @@ void build_users(GtkWidget *grid) {
 
     users_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     add_class(users_box, "user-box");
-    gtk_widget_set_size_request (users_box, 200, 400);
+    gtk_widget_set_hexpand(users_box, FALSE);
+    gtk_widget_set_vexpand(users_box, TRUE);
+    gtk_widget_set_valign(users_box, GTK_ALIGN_FILL);
     gtk_grid_attach(GTK_GRID(grid), users_box, 0, 0, 1, 1);
 
     search_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
@@ -205,6 +215,9 @@ void build_users(GtkWidget *grid) {
     g_signal_connect(entry, "changed", G_CALLBACK(find_chats), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_widget_set_size_request (scrolled_window, 200, 400);
+    gtk_widget_set_vexpand(scrolled_window, TRUE);
+    gtk_widget_set_valign(scrolled_window, GTK_ALIGN_FILL);
     gtk_box_pack_start(GTK_BOX(users_box), scrolled_window, TRUE, TRUE, 0);
 
     box_for_users = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
@@ -214,16 +227,18 @@ void build_users(GtkWidget *grid) {
     for (int i = account->chat_count - 1; i >= 0; i--) {
         user_box(i);
     }
-}
 
-void build_profile(GtkWidget *grid) {
+    //chert moment
     GError *error = NULL;
     GdkPixbuf *pixbuf;
 
     GtkWidget *user_info_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_grid_attach(GTK_GRID(grid), user_info_box, 0, 1, 1, 1);
-    gtk_widget_set_halign(user_info_box, GTK_ALIGN_START);
-    gtk_widget_set_valign(user_info_box, GTK_ALIGN_END);
+    gtk_box_pack_start(GTK_BOX(users_box), user_info_box, TRUE, TRUE, 0);
+    gtk_widget_set_size_request (user_info_box, -1, 20);
+    gtk_widget_set_hexpand(user_info_box, TRUE);
+    gtk_widget_set_halign(user_info_box, GTK_ALIGN_FILL);
+    gtk_widget_set_vexpand(user_info_box, FALSE);
+    gtk_widget_set_valign(user_info_box, GTK_ALIGN_START);
 
     pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", &error);
     if (error != NULL)
@@ -237,8 +252,8 @@ void build_profile(GtkWidget *grid) {
     gtk_box_pack_start(GTK_BOX(user_info_box), avatar, FALSE, FALSE, 0);
 
     GtkWidget *name_label = gtk_label_new(account->username);
+    gtk_widget_set_size_request (user_info_box, -1, 10);
     gtk_box_pack_start(GTK_BOX(user_info_box), name_label, FALSE, FALSE, 10);
-
 }
 
 void pop_up_window(char *text) {
