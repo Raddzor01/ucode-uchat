@@ -176,6 +176,7 @@ t_msg **get_chat_messages_from_server(int chat_id) {
     msg[i]->text = mx_strdup(
         cJSON_GetObjectItemCaseSensitive(json_temp, "message")->valuestring);
     msg[i]->msg_id = cJSON_GetObjectItem(json_temp, "message_id")->valueint;
+    msg[i]->user_id = cJSON_GetObjectItem(json_temp, "user_id")->valueint;
     // printf("%d\n", msg[i]->msg_id);
   }
 

@@ -29,6 +29,17 @@ void clear_window(GtkWidget *window) {
         gtk_container_remove(GTK_CONTAINER(window), container);
 }
 
+void clear_box(GtkWidget *box) {
+
+    GList *children, *iter;
+
+    children = gtk_container_get_children(GTK_CONTAINER(box));
+    for (iter = children; iter != NULL; iter = g_list_next(iter)) {
+        gtk_container_remove(GTK_CONTAINER(box), GTK_WIDGET(iter->data));
+    }
+    g_list_free(children);
+}
+
 void create_new_window(char *title, int width, int height, bool resizable) 
 {
     if (!main_window) {
@@ -167,13 +178,18 @@ void change_chat_id(GtkWidget *widget, int *new_id) {
 
     printf("\ncurrent chat: %d\n", account->chat_id);
 
+    GtkWidget *chat = get_widget_by_name_r(main_window, "box_holder");
+    clear_box(chat);
+
     t_msg **msg = get_chat_messages_from_server(account->chat_id);
 
     // printf("\ncurrent chat: %d\n", account->chat_id);
 
     for (int i = 0; msg[i] != NULL; i++) {
-        text_bubble(msg[i]->text, msg[i]->msg_id);
-        free(msg[i]->text);
+        if (msg[i]->user_id == account->id) {
+            text_bubble(msg[i]->text, msg[i]->msg_id);
+            free(msg[i]->text);
+        }
     }
     
     free(msg);

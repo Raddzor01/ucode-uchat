@@ -123,7 +123,7 @@ void build_signup() {
     g_signal_connect (main_window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 }
 
-void build_chat_window(GtkWidget *grid) {
+void build_chat_window() {
 
     GtkWidget *box;
     GtkWidget *chat_box;
@@ -133,8 +133,10 @@ void build_chat_window(GtkWidget *grid) {
     GtkWidget *scrolled_window;
     GtkWidget *file_selection;
     GtkWidget *box_container;
+    GtkWidget *grid = get_widget_by_name_r(main_window, "chat_grid");
 
     box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_widget_set_name(box, "chat");
     gtk_grid_attach(GTK_GRID(grid), box, 1, 0, 1, 1);
 
     chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -149,7 +151,6 @@ void build_chat_window(GtkWidget *grid) {
 
     input_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(box), input_box, TRUE, TRUE, 0);
-    gtk_widget_set_size_request (input_box, -1, 100);
 
     gtk_widget_set_size_request (input_box, -1, 20);
     gtk_widget_set_hexpand(input_box, TRUE);
