@@ -41,37 +41,59 @@ int send_login_to_server(const char *username, const char *password)
 
 int send_message_to_server(const char *str)
 {
-	// printf("%d\t%s\n", account->id, account->username);
+	printf("%d\t%s\n", account->id, account->username);
 
-	// cJSON *json = cJSON_CreateObject();
-
-	// cJSON_AddNumberToObject(json, "type", REQ_SEND_MSG);
-	// cJSON_AddNumberToObject(json, "user_id", account->id);
-	// cJSON_AddNumberToObject(json, "chat_id", account->chat_id);
-	// cJSON_AddStringToObject(json, "message", str);
-	// cJSON_AddStringToObject(json, "username", account->username);
-	// cJSON_AddNumberToObject(json, "time", time(NULL));
-
-	// char *json_str = cJSON_PrintUnformatted(json);
-	// SSL_write(info->ssl, json_str, mx_strlen(json_str));
-
-	// cJSON_Delete(json);
-	// free(json_str);
 	cJSON *json = cJSON_CreateObject();
 
-	cJSON_AddNumberToObject(json, "type", REQ_SEND_FILE);
+	cJSON_AddNumberToObject(json, "type", REQ_SEND_MSG);
+	cJSON_AddNumberToObject(json, "user_id", account->id);
+	cJSON_AddNumberToObject(json, "chat_id", account->chat_id);
+	cJSON_AddStringToObject(json, "message", str);
+	cJSON_AddNumberToObject(json, "time", time(NULL));
+
 	char *json_str = cJSON_PrintUnformatted(json);
 	SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
-	FILE *picture = fopen("/home/raddzor/My_git/ucode-uchat/Client/Ass/HOG.png", "rb");
+	cJSON_Delete(json);
+	free(json_str);
+	return 0;
+}
+
+char *get_file_extension(char *url)
+{
+	char *file_name = strrchr(url, '/');
+	if (file_name == NULL)
+	{
+		file_name = url;
+	}
+	else
+	{
+		file_name++;
+	}
+	return strrchr(file_name, '.');
+}
+
+int send_file_to_server(char *str)
+{
+	cJSON *json = cJSON_CreateObject();
+	char *extension = get_file_extension(str);
+	FILE *picture = fopen(str, "rb");
+	
 	fseek(picture, 0, SEEK_END);
 	long size = ftell(picture);
 	rewind(picture);
-	if (send(info->server_socket, &size, sizeof(size), 0) < 0)
-	{
-		perror("Send size error 1");
-		exit(EXIT_FAILURE);
-	}
+
+	cJSON_AddNumberToObject(json, "type", REQ_SEND_FILE);
+	cJSON_AddStringToObject(json, "extension", extension);
+	cJSON_AddNumberToObject(json, "size", size);
+	cJSON_AddNumberToObject(json, "time", time(NULL));
+
+	char *json_str = cJSON_PrintUnformatted(json);
+	SSL_write(info->ssl, json_str, mx_strlen(json_str));
+
+	mx_strdel(&json_str);
+	cJSON_Delete(json);
+
 	char buffer[BUFSIZ];
 	size_t bytes_read;
 
@@ -355,46 +377,48 @@ int delete_msg_in_server(int msg_id)
 	return 0;
 }
 
-t_msg **get_chat_messages_from_server(int chat_id) {
+t_msg **get_chat_messages_from_server(int chat_id)
+{
 
-  cJSON *json = cJSON_CreateObject();
+	cJSON *json = cJSON_CreateObject();
 
-  cJSON_AddNumberToObject(json, "type", REQ_GET_CHAT_MESSAGES);
-  cJSON_AddNumberToObject(json, "chat_id", chat_id);
+	cJSON_AddNumberToObject(json, "type", REQ_GET_CHAT_MESSAGES);
+	cJSON_AddNumberToObject(json, "chat_id", chat_id);
 
-  char *json_str = cJSON_PrintUnformatted(json);
-  SSL_write(info->ssl, json_str, mx_strlen(json_str));
+	char *json_str = cJSON_PrintUnformatted(json);
+	SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
-  cJSON_Delete(json);
-  free(json_str);
+	cJSON_Delete(json);
+	free(json_str);
 
-  // read_from_server_to_logs();
+	// read_from_server_to_logs();
 
-  char *str = read_from_server();
-  mx_logs(str, INFO_LOG);
-  cJSON *json_2 = cJSON_Parse(str);
+	char *str = read_from_server();
+	mx_logs(str, INFO_LOG);
+	cJSON *json_2 = cJSON_Parse(str);
 
-  // printf("%s\n", cJSON_PrintUnformatted(cJSON_GetObjectItemCaseSensitive(json_2, "messages")));
+	// printf("%s\n", cJSON_PrintUnformatted(cJSON_GetObjectItemCaseSensitive(json_2, "messages")));
 
-  cJSON *json_2_arr = cJSON_GetObjectItemCaseSensitive(json_2, "messages");
-  int arr_size = cJSON_GetArraySize(json_2_arr);
-  t_msg **msg = (t_msg **)malloc((arr_size) * sizeof(t_msg *));
-  cJSON *json_temp;
+	cJSON *json_2_arr = cJSON_GetObjectItemCaseSensitive(json_2, "messages");
+	int arr_size = cJSON_GetArraySize(json_2_arr);
+	t_msg **msg = (t_msg **)malloc((arr_size) * sizeof(t_msg *));
+	cJSON *json_temp;
 
-  for (int i = 0; i < arr_size; i++) {
-    msg[i] = (t_msg *)malloc(sizeof(t_msg));
-    json_temp = cJSON_GetArrayItem(json_2_arr, i);
-    // printf("%s\n", cJSON_PrintUnformatted(json_temp));
-    msg[i]->text = mx_strdup(
-        cJSON_GetObjectItemCaseSensitive(json_temp, "message")->valuestring);
-    msg[i]->msg_id = cJSON_GetObjectItem(json_temp, "message_id")->valueint;
-    // printf("%d\n", msg[i]->msg_id);
-  }
+	for (int i = 0; i < arr_size; i++)
+	{
+		msg[i] = (t_msg *)malloc(sizeof(t_msg));
+		json_temp = cJSON_GetArrayItem(json_2_arr, i);
+		// printf("%s\n", cJSON_PrintUnformatted(json_temp));
+		msg[i]->text = mx_strdup(
+			cJSON_GetObjectItemCaseSensitive(json_temp, "message")->valuestring);
+		msg[i]->msg_id = cJSON_GetObjectItem(json_temp, "message_id")->valueint;
+		// printf("%d\n", msg[i]->msg_id);
+	}
 
-  msg[arr_size] = NULL;
+	msg[arr_size] = NULL;
 
-  cJSON_Delete(json_2);
-  free(str);
+	cJSON_Delete(json_2);
+	free(str);
 
-  return msg;
+	return msg;
 }
