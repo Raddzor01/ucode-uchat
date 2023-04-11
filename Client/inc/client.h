@@ -109,6 +109,7 @@ void edit_accept(GtkButton *button, gpointer data);
 void cancel_edit(GtkButton *button, gpointer data);
 void change_msg_id_for_edit(GtkButton *button, gpointer msg_id);
 GtkWidget* create_image_button(char* image_path, int width, int height);
+void receive_bubble(const char *text, const char *name);
 
 // CSS part
 void load_css();

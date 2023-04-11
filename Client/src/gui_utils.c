@@ -4,7 +4,7 @@ guint cancel_handler_id;
 guint accept_handler_id;
 guint cancel_entry_id;
 guint accept_entry_id;
-
+bool username_display;
 
 
 void change_chat_id(GtkWidget *widget, int *new_id);
@@ -189,13 +189,95 @@ void change_chat_id(GtkWidget *widget, int *new_id) {
         if (msg[i]->user_id == account->id) {
             text_bubble(msg[i]->text, msg[i]->msg_id);
             free(msg[i]->text);
+        } else {
+            // receive_bubble()
         }
     }
     
     free(msg);
 }
 
+void receive_bubble(const char *text, const char *name) {
+    GtkWidget *box_container = get_widget_by_name_r(main_window, "box_holder");
+    GtkWidget *scrolled_window = get_widget_by_name_r(main_window, "scroll");
+
+    GtkWidget *username_box;
+    GtkWidget *username;
+    GtkWidget *text_view;
+    GtkWidget *box;
+    GtkTextBuffer *buffer;
+
+    int size_limit = gtk_widget_get_allocated_width(box_container) - 200;
+
+    box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
+
+    //username
+    if (username_display) {
+        GdkPixbuf *pixbuf;
+        GtkWidget *image;
+
+        pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", NULL);
+        pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
+        image = gtk_image_new_from_pixbuf(pixbuf);
+        g_object_unref(pixbuf);
+
+        gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+    } else {
+        GtkWidget *blank_space = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+        gtk_widget_set_size_request(blank_space, 50, -1);
+        gtk_box_pack_start(GTK_BOX(box), blank_space, FALSE, FALSE, 0);
+    }
+
+    //text bubble
+    username_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    add_class(username_box, "receive");
+    if (username_display) {
+        username = gtk_label_new(name);
+        gtk_widget_set_halign(username, GTK_ALIGN_END);
+        gtk_widget_set_valign(username, GTK_ALIGN_START);
+        gtk_box_pack_start(GTK_BOX(username_box), username, FALSE, FALSE, 0);
+    }
+    gtk_widget_set_halign(username_box, GTK_ALIGN_START);
+    gtk_box_pack_start(GTK_BOX(box), username_box, FALSE, FALSE, 0);
+
+    //text
+    text_view = gtk_text_view_new();
+
+    gtk_widget_set_valign(text_view, GTK_ALIGN_CENTER);
+
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_box_pack_start(GTK_BOX(username_box), text_view, FALSE, TRUE, 0);
+
+    PangoLayout *layout = gtk_widget_create_pango_layout(text_view, text);
+    int width, height;
+    pango_layout_get_pixel_size(layout, &width, &height);
+
+    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_NONE);
+
+    if (width > size_limit) {
+        gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
+        gtk_widget_set_size_request(text_view, size_limit, -1);
+        gtk_widget_set_hexpand(text_view, TRUE);
+        gtk_widget_set_halign(text_view, GTK_ALIGN_FILL);
+        gtk_widget_set_hexpand(username_box, TRUE);
+        gtk_widget_set_halign(username_box, GTK_ALIGN_FILL);
+    }
+
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+    gtk_text_buffer_set_text(buffer, text, strlen(text));
+
+    GtkAdjustment *vadjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
+    gtk_adjustment_set_value(vadjustment, gtk_adjustment_get_upper(vadjustment) - gtk_adjustment_get_page_size(vadjustment));
+    
+    gtk_widget_show_all(box_container);
+    gtk_widget_queue_draw(main_window);
+    username_display = FALSE;
+}
+
 void text_bubble(const char *text, int msg_id) {
+    username_display = TRUE;
     GtkWidget *box_container = get_widget_by_name_r(main_window, "box_holder");
     GtkWidget *scrolled_window = get_widget_by_name_r(main_window, "scroll");
     GtkWidget *box;
@@ -218,11 +300,9 @@ void text_bubble(const char *text, int msg_id) {
     text_view = gtk_text_view_new();
 
     gtk_widget_set_valign(text_view, GTK_ALIGN_CENTER);
-    // gtk_widget_set_size_request(text_view, -1, -1);
 
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), FALSE);
-    // gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
     gtk_box_pack_start(GTK_BOX(box), text_view, FALSE, TRUE, 0);
 
     PangoLayout *layout = gtk_widget_create_pango_layout(text_view, text);

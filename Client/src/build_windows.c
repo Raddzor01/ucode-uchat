@@ -269,6 +269,10 @@ void pop_up_window(char *text) {
 
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_container_add(GTK_CONTAINER(vbox), label);
+    gtk_widget_set_hexpand(vbox, TRUE);
+    gtk_widget_set_halign(vbox, GTK_ALIGN_CENTER);
+    gtk_widget_set_vexpand(vbox, FALSE);
+    gtk_widget_set_valign(vbox, GTK_ALIGN_CENTER);
 
     gtk_container_add(GTK_CONTAINER(popup), vbox);
 
