@@ -27,7 +27,7 @@ void user_signup(cJSON *json, t_client_info *client_info)
         return;
     }
 
-    query = sqlite3_mprintf("INSERT INTO users (username, password) VALUES('%s', '%s')",
+    query = sqlite3_mprintf("INSERT INTO users (username, password, image_id) VALUES('%s', '%s', 1)",
                             username, password);
     db_execute_query(query);
 
