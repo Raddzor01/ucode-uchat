@@ -207,8 +207,6 @@ void receive_bubble(const char *text, const char *name) {
     GtkWidget *box;
     GtkTextBuffer *buffer;
 
-    int size_limit = gtk_widget_get_allocated_width(box_container) - 200;
-
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
     gtk_widget_set_halign(box, GTK_ALIGN_START);
@@ -257,13 +255,13 @@ void receive_bubble(const char *text, const char *name) {
 
     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_NONE);
 
-    if (width > size_limit) {
+    if (width > 400) {
         gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
-        gtk_widget_set_size_request(text_view, size_limit, -1);
+        gtk_widget_set_size_request(text_view, 400, -1);
         gtk_widget_set_hexpand(text_view, TRUE);
         gtk_widget_set_halign(text_view, GTK_ALIGN_FILL);
         gtk_widget_set_hexpand(username_box, TRUE);
-        gtk_widget_set_halign(username_box, GTK_ALIGN_FILL);
+        gtk_widget_set_halign(username_box, GTK_ALIGN_START);
     }
 
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
@@ -285,18 +283,17 @@ void text_bubble(const char *text, int msg_id) {
     GtkWidget *text_view;
     GtkTextBuffer *buffer;
 
-    int size_limit = gtk_widget_get_allocated_width(box_container) - 200;
-
     //text part
     gtk_widget_set_hexpand(box_container, FALSE);
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
-    gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
     gtk_widget_set_halign(box, GTK_ALIGN_END);
     gtk_widget_set_size_request(box, -1, 30);
     add_class(box, "bubble");
     gtk_widget_set_hexpand(box, TRUE);
     gtk_widget_set_vexpand(box,FALSE);
+
+    gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
 
     text_view = gtk_text_view_new();
 
@@ -304,7 +301,8 @@ void text_bubble(const char *text, int msg_id) {
 
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), FALSE);
-    gtk_box_pack_start(GTK_BOX(box), text_view, FALSE, TRUE, 0);
+    // gtk_box_pack_start(GTK_BOX(box), text_view, FALSE, TRUE, 0);
+    gtk_container_add(GTK_CONTAINER(box), text_view);
 
     PangoLayout *layout = gtk_widget_create_pango_layout(text_view, text);
     int width, height;
@@ -312,11 +310,12 @@ void text_bubble(const char *text, int msg_id) {
 
     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_NONE);
 
-    if (width > size_limit) {
+    if (width > 400) {
         gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
-        gtk_widget_set_size_request(text_view, size_limit, -1);
+        gtk_widget_set_size_request(text_view, 400, -1);
         gtk_widget_set_hexpand(text_view, TRUE);
-        gtk_widget_set_halign(text_view, GTK_ALIGN_FILL);
+        gtk_widget_set_halign(text_view, GTK_ALIGN_END);
+
         gtk_widget_set_hexpand(box, TRUE);
         gtk_widget_set_halign(box, GTK_ALIGN_END);
     }
