@@ -5,7 +5,7 @@
 void user_signup(cJSON *json, t_client_info *client_info);
 void user_login(cJSON *json, t_client_info *client_info);
 void send_message(cJSON *json, t_client_info *client_info);
-void get_user_file(cJSON *json, t_client_info *client_info);
+void update_user_photo(cJSON *json, t_client_info *client_info);
 void create_chat(cJSON *json, t_client_info *client_info);
 void get_chats(cJSON *__attribute__((unused)) json, t_client_info *client_info);
 void get_chat_messages(cJSON *json, t_client_info *client_info);
@@ -31,7 +31,7 @@ static t_map_entry request_map[MAP_SIZE] =
     {REQ_USER_SIGNUP, user_signup},
     {REQ_USER_LOGIN, user_login},
     {REQ_SEND_MSG, send_message},
-    {REQ_SEND_FILE, get_user_file},
+    {REQ_SEND_FILE, update_user_photo},
     {REQ_CREATE_CHAT, create_chat},
     {REQ_GET_CHATS, get_chats},
     {REQ_GET_CHAT_MESSAGES, get_chat_messages},

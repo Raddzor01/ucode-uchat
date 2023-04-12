@@ -31,7 +31,8 @@ void join_chat(cJSON *chat_info, t_client_info *client_info)
     sqlite3_finalize(stmt);
     sqlite3_free(query);
 
-    query = sqlite3_mprintf("SELECT EXISTS (SELECT id FROM members WHERE user_id = '%d' AND chat_id = '%d')", client_info->user->id, chat_id);
+    query = sqlite3_mprintf("SELECT EXISTS (SELECT id FROM members WHERE user_id = '%d' AND chat_id = '%d')",
+                            client_info->user->id, chat_id);
     stmt = db_execute_query_and_return_stmt(query, db);
 
     if (sqlite3_column_int(stmt, 0) == 1)
@@ -49,7 +50,8 @@ void join_chat(cJSON *chat_info, t_client_info *client_info)
     sqlite3_free(query);
     sqlite3_close(db);
 
-    query = sqlite3_mprintf("INSERT INTO members (user_id, chat_id, permissions) VALUES('%d', '%d', '%d')", client_info->user->id, chat_id, USERTYPE_NORMAL);
+    query = sqlite3_mprintf("INSERT INTO members (user_id, chat_id, permissions) VALUES('%d', '%d', '%d')",
+                            client_info->user->id, chat_id, USERTYPE_NORMAL);
     db_execute_query(query);
 
     sqlite3_free(query);
