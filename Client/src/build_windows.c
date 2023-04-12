@@ -139,6 +139,7 @@ void build_chat_window() {
     gtk_widget_set_name(box, "chat");
     gtk_grid_attach(GTK_GRID(grid), box, 1, 0, 1, 1);
 
+
     chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_widget_set_size_request (chat_box, 500, 450);
     gtk_widget_set_name(chat_box, "chat_box");

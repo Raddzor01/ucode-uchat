@@ -211,6 +211,7 @@ void receive_bubble(const char *text, const char *name) {
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
+    gtk_widget_set_halign(box, GTK_ALIGN_START);
 
     //username
     if (username_display) {
@@ -234,8 +235,8 @@ void receive_bubble(const char *text, const char *name) {
     add_class(username_box, "receive");
     if (username_display) {
         username = gtk_label_new(name);
-        gtk_widget_set_halign(username, GTK_ALIGN_END);
-        gtk_widget_set_valign(username, GTK_ALIGN_START);
+        gtk_widget_set_halign(username, GTK_ALIGN_START);
+        gtk_widget_set_valign(username, GTK_ALIGN_END);
         gtk_box_pack_start(GTK_BOX(username_box), username, FALSE, FALSE, 0);
     }
     gtk_widget_set_halign(username_box, GTK_ALIGN_START);
@@ -244,7 +245,7 @@ void receive_bubble(const char *text, const char *name) {
     //text
     text_view = gtk_text_view_new();
 
-    gtk_widget_set_valign(text_view, GTK_ALIGN_CENTER);
+    gtk_widget_set_valign(text_view, GTK_ALIGN_END);
 
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), FALSE);
@@ -317,7 +318,7 @@ void text_bubble(const char *text, int msg_id) {
         gtk_widget_set_hexpand(text_view, TRUE);
         gtk_widget_set_halign(text_view, GTK_ALIGN_FILL);
         gtk_widget_set_hexpand(box, TRUE);
-        gtk_widget_set_halign(box, GTK_ALIGN_FILL);
+        gtk_widget_set_halign(box, GTK_ALIGN_END);
     }
 
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
@@ -449,6 +450,9 @@ void edit_accept(GtkButton *button, gpointer data) {
 
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
     const gchar *text = gtk_entry_get_text (GTK_ENTRY (info->entry));
+    if (strlen(text) == 0)
+        return;
+        
     gtk_text_buffer_set_text(buffer, text, strlen(text));
     edit_msg_in_server(info->msg_id_for_edit, text);
 

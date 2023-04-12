@@ -6,6 +6,9 @@ void send_message(GtkButton *button) {
 
     text = gtk_entry_get_text(GTK_ENTRY(info->entry));
 
+    if(strlen(text) == 0)
+        return;
+
     send_message_to_server(text);
     // create_chat_in_server(text, CHAT_NORMAL);
 

@@ -126,7 +126,6 @@ button:hover {
     border: 0px;
 }
 
-
 .receive text{
     color: @fill-color;
     background-color: @main-bg-color;
@@ -148,6 +147,6 @@ button:hover {
 .receive label {
     font-family: Gill Sans;
     font-size: 14px;
-    font-weight: 1000;
+    font-weight: 900;
     color: @fill-bg-color;
 }
