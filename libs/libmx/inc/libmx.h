@@ -83,6 +83,7 @@ bool mx_isspace(char c);
 bool mx_isdigit(int c);
 bool mx_isalpha(int c);
 int mx_atoi(const char *str);
+char *mx_ltoa(long long number);
 int mx_get_strarr_index(char **strarr, char *str);
 int mx_strncmp(const char *s1, const char *s2, int n);
 void mx_printerr(const char *s);

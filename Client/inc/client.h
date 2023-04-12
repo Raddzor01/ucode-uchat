@@ -17,6 +17,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+ #include <strings.h>
 // #include <sqlite3.h>
 #include <time.h>
 
@@ -33,6 +34,7 @@ typedef struct s_info {
   GtkWidget *entry;
   // GtkTextView *text_view;
   SSL *ssl;
+  int server_socket;
   int msg_id_for_edit;
 } t_info;
 

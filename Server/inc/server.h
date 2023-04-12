@@ -44,6 +44,7 @@ typedef struct s_user_info
     int id;
     char *username;
     char *password;
+    int image_id;
 } t_user_info;
 typedef struct s_client_info
 {
@@ -79,6 +80,8 @@ int db_check_user_exists(char *username);
 int db_get_id_by_username(char *username);
 bool db_check_chat_exists(int id);
 bool db_check_chat_membership(int chat_id, int user_id);
+int db_get_last_message_id(int user_id, int chat_id);
+int db_get_last_file_id(char *filename, char *file_type);
 
 void handle_responde(cJSON *json, t_client_info *client_info);
 void send_responde(SSL *ssl, t_req_type req_type, t_error_type err_code);
