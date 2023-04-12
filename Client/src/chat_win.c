@@ -6,6 +6,9 @@ void send_message(GtkButton *button) {
 
     text = gtk_entry_get_text(GTK_ENTRY(info->entry));
 
+    if(strlen(text) == 0)
+        return;
+
     send_message_to_server(text);
     // create_chat_in_server(text, CHAT_NORMAL);
 
@@ -29,9 +32,7 @@ void find_chats(GtkWidget *entry) {
 
     find_chats_from_server(text);
 
-    // gtk_entry_set_text(GTK_ENTRY(entry), "");
-
-    read_found_chats();
+    read_from_server_to_logs();
 }
 
 void chat_window() {
@@ -39,8 +40,6 @@ void chat_window() {
     hog();
 
     get_user_chats();
-    // send_from_server();
-    get_chat_messages_from_server(1);
 
     if (main_window)
         clear_window(main_window);
@@ -48,11 +47,11 @@ void chat_window() {
     create_new_window("UChat", 500, 400, true);
 
     GtkWidget *grid = gtk_grid_new();
+    gtk_widget_set_name(grid, "chat_grid");
     gtk_container_add(GTK_CONTAINER(main_window), grid);
-    build_profile(grid);
     build_users(grid);
 
-    build_chat_window(grid);
+    build_chat_window();
 
     gtk_widget_show_all(main_window);
 }

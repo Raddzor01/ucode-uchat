@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
 
   gtk_main();
 
-  send_exit_from_server();
+  send_exit_to_server();
 
   freeing_memory();
 

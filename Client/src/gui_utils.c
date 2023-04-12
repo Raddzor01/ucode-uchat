@@ -2,6 +2,10 @@
 
 guint cancel_handler_id;
 guint accept_handler_id;
+guint cancel_entry_id;
+guint accept_entry_id;
+bool username_display;
+
 
 void change_chat_id(GtkWidget *widget, int *new_id);
 
@@ -25,6 +29,17 @@ void clear_window(GtkWidget *window) {
         gtk_container_remove(GTK_CONTAINER(window), container);
 }
 
+void clear_box(GtkWidget *box) {
+
+    GList *children, *iter;
+
+    children = gtk_container_get_children(GTK_CONTAINER(box));
+    for (iter = children; iter != NULL; iter = g_list_next(iter)) {
+        gtk_container_remove(GTK_CONTAINER(box), GTK_WIDGET(iter->data));
+    }
+    g_list_free(children);
+}
+
 void create_new_window(char *title, int width, int height, bool resizable) 
 {
     if (!main_window) {
@@ -37,6 +52,26 @@ void create_new_window(char *title, int width, int height, bool resizable)
     gtk_window_resize(GTK_WINDOW(main_window), width, height);
     gtk_window_set_position(GTK_WINDOW(main_window), GTK_WIN_POS_CENTER);
     gtk_window_set_resizable(GTK_WINDOW(main_window), resizable);
+}
+
+GtkWidget* create_image_button(char* image_path, int width, int height) {
+    GdkPixbuf *pixbuf;
+    GtkWidget *button, *image;
+
+    // Load and scale the image
+    pixbuf = gdk_pixbuf_new_from_file(image_path, NULL);
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf, width, height, GDK_INTERP_BILINEAR);
+
+    // Create the image and button widgets
+    image = gtk_image_new_from_pixbuf(pixbuf);
+    button = gtk_button_new();
+    gtk_button_set_image(GTK_BUTTON(button), image);
+
+    // Free the pixbuf
+    g_object_unref(pixbuf);
+
+    // Return the button widget
+    return button;
 }
 
 GtkWidget *get_widget_by_name_r(GtkWidget *container, char *name) {
@@ -85,8 +120,9 @@ void file_select(GtkWidget *widget, gpointer data) {
         GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
         filename = gtk_file_chooser_get_filename(chooser);
 
-        send_file_to_server(filename);
+        // send_file_to_server(filename);
         
+        // Do something with the selected file...
         g_free(filename);
     }
 
@@ -141,37 +177,77 @@ void change_chat_id(GtkWidget *widget, int *new_id) {
     account->chat_id = *new_id;
 
     printf("\ncurrent chat: %d\n", account->chat_id);
+
+    GtkWidget *chat = get_widget_by_name_r(main_window, "box_holder");
+    clear_box(chat);
+
+    t_msg **msg = get_chat_messages_from_server(account->chat_id);
+
+    // printf("\ncurrent chat: %d\n", account->chat_id);
+
+    for (int i = 0; msg[i] != NULL; i++) {
+        if (msg[i]->user_id == account->id) {
+            text_bubble(msg[i]->text, msg[i]->msg_id);
+            free(msg[i]->text);
+        } else {
+            // receive_bubble()
+        }
+    }
+    
+    free(msg);
 }
 
-void text_bubble(const char *text, int msg_id) {
+void receive_bubble(const char *text, const char *name) {
     GtkWidget *box_container = get_widget_by_name_r(main_window, "box_holder");
     GtkWidget *scrolled_window = get_widget_by_name_r(main_window, "scroll");
-    GtkWidget *box;
+
+    GtkWidget *username_box;
+    GtkWidget *username;
     GtkWidget *text_view;
+    GtkWidget *box;
     GtkTextBuffer *buffer;
 
-    int size_limit = gtk_widget_get_allocated_width(box_container) - 200;
-
-    //text part
-    gtk_widget_set_hexpand(box_container, FALSE);
-
-    box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
+    box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
-    gtk_widget_set_halign(box, GTK_ALIGN_END);
-    gtk_widget_set_size_request(box, -1, 30);
-    add_class(box, "bubble");
-    gtk_widget_set_hexpand(box, TRUE);
-    gtk_widget_set_vexpand(box,FALSE);
+    gtk_widget_set_halign(box, GTK_ALIGN_START);
 
+    //username
+    if (username_display) {
+        GdkPixbuf *pixbuf;
+        GtkWidget *image;
+
+        pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", NULL);
+        pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
+        image = gtk_image_new_from_pixbuf(pixbuf);
+        g_object_unref(pixbuf);
+
+        gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+    } else {
+        GtkWidget *blank_space = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+        gtk_widget_set_size_request(blank_space, 50, -1);
+        gtk_box_pack_start(GTK_BOX(box), blank_space, FALSE, FALSE, 0);
+    }
+
+    //text bubble
+    username_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    add_class(username_box, "receive");
+    if (username_display) {
+        username = gtk_label_new(name);
+        gtk_widget_set_halign(username, GTK_ALIGN_START);
+        gtk_widget_set_valign(username, GTK_ALIGN_END);
+        gtk_box_pack_start(GTK_BOX(username_box), username, FALSE, FALSE, 0);
+    }
+    gtk_widget_set_halign(username_box, GTK_ALIGN_START);
+    gtk_box_pack_start(GTK_BOX(box), username_box, FALSE, FALSE, 0);
+
+    //text
     text_view = gtk_text_view_new();
 
-    gtk_widget_set_valign(text_view, GTK_ALIGN_CENTER);
-    // gtk_widget_set_size_request(text_view, -1, -1);
+    gtk_widget_set_valign(text_view, GTK_ALIGN_END);
 
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), FALSE);
-    // gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
-    gtk_box_pack_start(GTK_BOX(box), text_view, FALSE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(username_box), text_view, FALSE, TRUE, 0);
 
     PangoLayout *layout = gtk_widget_create_pango_layout(text_view, text);
     int width, height;
@@ -179,13 +255,69 @@ void text_bubble(const char *text, int msg_id) {
 
     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_NONE);
 
-    if (width > size_limit) {
+    if (width > 400) {
         gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
-        gtk_widget_set_size_request(text_view, size_limit, -1);
+        gtk_widget_set_size_request(text_view, 400, -1);
         gtk_widget_set_hexpand(text_view, TRUE);
         gtk_widget_set_halign(text_view, GTK_ALIGN_FILL);
+        gtk_widget_set_hexpand(username_box, TRUE);
+        gtk_widget_set_halign(username_box, GTK_ALIGN_START);
+    }
+
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+    gtk_text_buffer_set_text(buffer, text, strlen(text));
+
+    GtkAdjustment *vadjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
+    gtk_adjustment_set_value(vadjustment, gtk_adjustment_get_upper(vadjustment) - gtk_adjustment_get_page_size(vadjustment));
+    
+    gtk_widget_show_all(box_container);
+    gtk_widget_queue_draw(main_window);
+    username_display = FALSE;
+}
+
+void text_bubble(const char *text, int msg_id) {
+    username_display = TRUE;
+    GtkWidget *box_container = get_widget_by_name_r(main_window, "box_holder");
+    GtkWidget *scrolled_window = get_widget_by_name_r(main_window, "scroll");
+    GtkWidget *box;
+    GtkWidget *text_view;
+    GtkTextBuffer *buffer;
+
+    //text part
+    gtk_widget_set_hexpand(box_container, FALSE);
+
+    box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
+    gtk_widget_set_halign(box, GTK_ALIGN_END);
+    gtk_widget_set_size_request(box, -1, 30);
+    add_class(box, "bubble");
+    gtk_widget_set_hexpand(box, TRUE);
+    gtk_widget_set_vexpand(box,FALSE);
+
+    gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
+
+    text_view = gtk_text_view_new();
+
+    gtk_widget_set_valign(text_view, GTK_ALIGN_CENTER);
+
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), FALSE);
+    // gtk_box_pack_start(GTK_BOX(box), text_view, FALSE, TRUE, 0);
+    gtk_container_add(GTK_CONTAINER(box), text_view);
+
+    PangoLayout *layout = gtk_widget_create_pango_layout(text_view, text);
+    int width, height;
+    pango_layout_get_pixel_size(layout, &width, &height);
+
+    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_NONE);
+
+    if (width > 400) {
+        gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
+        gtk_widget_set_size_request(text_view, 400, -1);
+        gtk_widget_set_hexpand(text_view, TRUE);
+        gtk_widget_set_halign(text_view, GTK_ALIGN_END);
+
         gtk_widget_set_hexpand(box, TRUE);
-        gtk_widget_set_halign(box, GTK_ALIGN_FILL);
+        gtk_widget_set_halign(box, GTK_ALIGN_END);
     }
 
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
@@ -195,17 +327,8 @@ void text_bubble(const char *text, int msg_id) {
 
     //redact button
     GtkWidget *edit_button;
-    GdkPixbuf *pixbuf;
-    GtkWidget *image;
 
-    pixbuf = gdk_pixbuf_new_from_file("Client/icons/pen.png", NULL);
-    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 12, 12, GDK_INTERP_BILINEAR);
-
-    image = gtk_image_new_from_pixbuf(pixbuf);
-    g_object_unref(pixbuf);
-
-    edit_button = gtk_button_new();
-    gtk_button_set_image(GTK_BUTTON(edit_button), image);
+    edit_button = create_image_button("Client/icons/pen.png", 12, 12);
     gtk_box_pack_start(GTK_BOX(box), edit_button, FALSE, FALSE, 0);
 
     g_signal_connect(G_OBJECT(edit_button), "clicked", G_CALLBACK(change_msg_id_for_edit), GINT_TO_POINTER(msg_id));
@@ -213,21 +336,12 @@ void text_bubble(const char *text, int msg_id) {
 
     //delete button
     GtkWidget *delete_button;
-    GtkWidget *image2;
 
-    pixbuf = gdk_pixbuf_new_from_file("Client/icons/trash.png", NULL);
-    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 12, 12, GDK_INTERP_BILINEAR);
-
-    image2 = gtk_image_new_from_pixbuf(pixbuf);
-
-    delete_button = gtk_button_new();
-    gtk_button_set_image(GTK_BUTTON(delete_button), image2);
+    delete_button = create_image_button("Client/icons/trash.png", 12, 12);
     gtk_box_pack_start(GTK_BOX(box), delete_button, FALSE, FALSE, 0);
 
     g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg_id), GINT_TO_POINTER(msg_id));
     g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg), box);
-
-    g_object_unref(pixbuf);
 
     GtkAdjustment *vadjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
     gtk_adjustment_set_value(vadjustment, gtk_adjustment_get_upper(vadjustment) - gtk_adjustment_get_page_size(vadjustment));
@@ -254,10 +368,16 @@ void delete_msg_id(GtkButton *button, gpointer msg_id) {
 void cancel_edit(GtkButton *button, gpointer data) {
 
     GtkWidget *send_button = get_widget_by_name_r(main_window, "send_button");
+    GtkWidget *entry = get_widget_by_name_r(main_window, "chat_text_entry");
 
     g_signal_handler_disconnect(G_OBJECT(send_button), cancel_handler_id);
     g_signal_handler_disconnect(G_OBJECT(send_button), accept_handler_id);
     g_signal_connect(send_button, "clicked", G_CALLBACK(send_message), NULL);
+
+    g_signal_handler_disconnect(G_OBJECT(entry), cancel_entry_id);
+    g_signal_handler_disconnect(G_OBJECT(entry), accept_entry_id);
+    g_signal_connect(entry, "activate", G_CALLBACK(send_message), NULL);
+
     gtk_entry_set_text (GTK_ENTRY (info->entry), "");
 
     GtkWidget *box = (GtkWidget*) data;
@@ -273,6 +393,7 @@ void edit_msg(GtkButton *button, gpointer data) {
     GtkWidget *box;
     GtkWidget *cancel_button;
     GtkWidget *edit_text;
+    GtkWidget *entry = get_widget_by_name_r(main_window, "chat_text_entry");
     GtkWidget *send_button = get_widget_by_name_r(main_window, "send_button");
 
     //take text from bubble (to set it to entry)
@@ -302,24 +423,19 @@ void edit_msg(GtkButton *button, gpointer data) {
     gtk_text_buffer_set_text(buffer, text, strlen(text));
 
     //close edit tab
-    GdkPixbuf *pixbuf;
-    GtkWidget *image;
 
-    pixbuf = gdk_pixbuf_new_from_file("Client/icons/cross.png", NULL);
-    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 14, 14, GDK_INTERP_BILINEAR);
-
-    image = gtk_image_new_from_pixbuf(pixbuf);
-
-    cancel_button = gtk_button_new();
+    cancel_button = create_image_button("Client/icons/cross.png", 14, 14);
     gtk_widget_set_hexpand(cancel_button, TRUE);
     gtk_widget_set_halign(cancel_button, GTK_ALIGN_END);
-    gtk_button_set_image(GTK_BUTTON(cancel_button), image);
     gtk_box_pack_start(GTK_BOX(box), cancel_button, FALSE, FALSE, 0);
 
     g_signal_handlers_disconnect_by_func(send_button, (gpointer)send_message, NULL);
     accept_handler_id = g_signal_connect(G_OBJECT(send_button), "clicked", G_CALLBACK(edit_accept), text_view);
     cancel_handler_id = g_signal_connect(G_OBJECT(send_button), "clicked", G_CALLBACK(cancel_edit), box);
 
+    g_signal_handlers_disconnect_by_func(entry, (gpointer)send_message, NULL);
+    accept_entry_id = g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(edit_accept), text_view);
+    cancel_entry_id = g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(cancel_edit), box);
 
     g_signal_connect(G_OBJECT(cancel_button), "clicked", G_CALLBACK(cancel_edit), box);
 
@@ -333,6 +449,9 @@ void edit_accept(GtkButton *button, gpointer data) {
 
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
     const gchar *text = gtk_entry_get_text (GTK_ENTRY (info->entry));
+    if (strlen(text) == 0)
+        return;
+        
     gtk_text_buffer_set_text(buffer, text, strlen(text));
     edit_msg_in_server(info->msg_id_for_edit, text);
 
