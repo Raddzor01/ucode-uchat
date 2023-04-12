@@ -47,7 +47,11 @@ t_user_info *get_user_info(sqlite3 *db, char *username)
 {
     sqlite3_stmt *stmt;
     t_user_info *user_info = NULL;
+    char *query = NULL;
 
+    // query = sqlite3_mprintf("SELECT id, username, password, image_id FROM users WHERE username = '%s' ",
+    //                         username);
+    // stmt = db_execute_query_and_return_stmt(query, db);
     sqlite3_prepare_v2(db, "SELECT id, username, password FROM users WHERE username = ?", -1, &stmt, NULL);
     sqlite3_bind_text(stmt, 1, username, -1, NULL);
 
@@ -57,6 +61,7 @@ t_user_info *get_user_info(sqlite3 *db, char *username)
         user_info->id = sqlite3_column_int64(stmt, 0);
         user_info->username = mx_strdup((const char *)sqlite3_column_text(stmt, 1));
         user_info->password = mx_strdup((const char *)sqlite3_column_text(stmt, 2));
+        // user_info->image_id = sqlite3_column_int64(stmt, 3);
     }
 
     sqlite3_finalize(stmt);
@@ -72,6 +77,7 @@ void send_login_response(SSL *ssl, t_user_info *user_info)
     cJSON_AddStringToObject(json, "username", user_info->username);
     cJSON_AddNumberToObject(json, "type", REQ_USER_LOGIN);
     cJSON_AddNumberToObject(json, "id", user_info->id);
+    // cJSON_AddNumberToObject(json, "image_id", user_info->image_id);
     cJSON_AddNumberToObject(json, "error_code", ERR_SUCCESS);
     json_str = cJSON_PrintUnformatted(json);
 

@@ -28,7 +28,7 @@ void connect_new_client(SSL *ssl, int client_socket)
 // read the information received from the client and write it as a string
 char *read_client_data(SSL *ssl)
 {
-    char buffer[MAX_BUF_SIZE];
+    char buffer[BUFSIZ];
     int n_bytes;
 
     n_bytes = SSL_read(ssl, &buffer, sizeof(buffer));

@@ -57,3 +57,4 @@ dkms.conf
 info/
 obj/
 .vscode/
+Server/db/data/*

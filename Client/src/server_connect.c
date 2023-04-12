@@ -51,5 +51,6 @@ void connect_to_server(const char *ip_address, int port, int *server_fd,
 
   connect_ssl(ssl, server_fd, ctx);
 
+  info->server_socket = *server_fd;
   info->ssl = *ssl;
 }
