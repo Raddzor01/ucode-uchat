@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
 
   info = malloc(sizeof(*info));
   account = malloc(sizeof(*account));
-  account->chat_id = 1;
+  account->chat_id = -1;
 
   // server part
 

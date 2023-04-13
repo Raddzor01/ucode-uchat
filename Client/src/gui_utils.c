@@ -179,7 +179,8 @@ void change_chat_id(GtkWidget *widget, int *new_id) {
     printf("\ncurrent chat: %d\n", account->chat_id);
 
     GtkWidget *chat = get_widget_by_name_r(main_window, "box_holder");
-    clear_box(chat);
+    if (chat)
+        clear_box(chat);
 
     t_msg **msg = get_chat_messages_from_server(account->chat_id);
 
