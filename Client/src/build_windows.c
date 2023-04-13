@@ -84,9 +84,7 @@ void build_login() {
     gtk_box_pack_start(GTK_BOX(box), password_entry, FALSE, FALSE, 0);
 
     GtkWidget *login_button = gtk_button_new_with_label("Login");
-    add_class(login_button, "button");
     GtkWidget *signup_button = gtk_button_new_with_label("Sign up");
-    add_class(signup_button, "button");
     gtk_box_pack_start(GTK_BOX(box), login_button, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(box), signup_button, FALSE, FALSE, 0);
     g_signal_connect(login_button, "clicked", G_CALLBACK(login_clicked), NULL);
@@ -138,7 +136,6 @@ void build_chat_window() {
     box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_widget_set_name(box, "chat");
     gtk_grid_attach(GTK_GRID(grid), box, 1, 0, 1, 1);
-
 
     chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_widget_set_size_request (chat_box, 500, 450);
@@ -202,6 +199,7 @@ void build_users(GtkWidget *grid) {
     GtkWidget *scrolled_window;
     GtkWidget *box_for_users;
     GtkWidget *search_box;
+    GtkWidget *create_chat;
 
     users_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     add_class(users_box, "user-box");
@@ -216,6 +214,10 @@ void build_users(GtkWidget *grid) {
     GtkWidget *entry = gtk_entry_new();
     gtk_box_pack_start(GTK_BOX(search_box), entry, TRUE, TRUE, 0);
     g_signal_connect(entry, "changed", G_CALLBACK(find_chats), NULL);
+
+    create_chat = create_image_button("Client/icons/plus.png", 20, 20);
+    gtk_box_pack_start(GTK_BOX(search_box), create_chat, TRUE, TRUE, 0);
+    g_signal_connect(create_chat, "clicked", G_CALLBACK(create_chat_menu), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_widget_set_size_request (scrolled_window, 200, 400);
@@ -314,4 +316,38 @@ void hog() {
 
     // Set a timer to close the window after 1 second
     g_timeout_add(100, close_popup_window, NULL);
+}
+
+void close_window_by_button(GtkButton *button, gpointer *data) {
+    GtkWidget *window = GTK_WIDGET(data);
+    gtk_widget_destroy(window);
+
+    (void)button;
+}
+
+void close_window (gpointer *data) {
+    GtkWidget *window = GTK_WIDGET(data);
+    gtk_widget_destroy(window);
+}
+
+void create_chat_menu() {
+    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(window), 300, 1);
+    g_signal_connect(window, "delete_event", G_CALLBACK(close_window), window);
+
+    GtkWidget *box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 10);
+    gtk_container_add (GTK_CONTAINER (window), box);
+
+    GtkWidget *chatname_label = gtk_label_new("Username:");
+    gtk_box_pack_start(GTK_BOX(box), chatname_label, FALSE, FALSE, 0);
+
+    GtkWidget *chatname_entry = gtk_entry_new();
+    gtk_box_pack_start(GTK_BOX(box), chatname_entry, FALSE, FALSE, 0);
+
+    GtkWidget *make_chat_button = gtk_button_new_with_label("create chat");
+    gtk_box_pack_start(GTK_BOX(box), make_chat_button, FALSE, FALSE, 0);
+    g_signal_connect(make_chat_button, "clicked", G_CALLBACK(create_chat), chatname_entry);
+    g_signal_connect(make_chat_button, "clicked", G_CALLBACK(close_window_by_button), window);
+
+    gtk_widget_show_all(window);
 }

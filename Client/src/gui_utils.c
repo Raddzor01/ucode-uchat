@@ -179,8 +179,7 @@ void change_chat_id(GtkWidget *widget, int *new_id) {
     printf("\ncurrent chat: %d\n", account->chat_id);
 
     GtkWidget *chat = get_widget_by_name_r(main_window, "box_holder");
-    if (chat)
-        clear_box(chat);
+    clear_box(chat);
 
     t_msg **msg = get_chat_messages_from_server(account->chat_id);
 
@@ -464,4 +463,11 @@ void change_msg_id_for_edit(GtkButton *button, gpointer msg_id) {
     info->msg_id_for_edit = GPOINTER_TO_INT(msg_id);
 
     if(button){}
+}
+
+void create_chat(GtkButton *button, gpointer chatname) {
+    (void)button;
+    const char *text = gtk_entry_get_text(GTK_ENTRY(GTK_ENTRY(chatname)));
+
+    if(text){};
 }
