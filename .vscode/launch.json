@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/uchat", //path to your programs exe and exe name
-            "args": ["127.0.0.1 8000"],
+            "args": ["127.0.0.1", "8000"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

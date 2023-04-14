@@ -47,7 +47,7 @@ t_user_info *get_user_info(sqlite3 *db, char *username)
 {
     sqlite3_stmt *stmt;
     t_user_info *user_info = NULL;
-    char *query = NULL;
+    // char *query = NULL;
 
     // query = sqlite3_mprintf("SELECT id, username, password, image_id FROM users WHERE username = '%s' ",
     //                         username);

@@ -1,6 +1,6 @@
 #include "server.h"
 
-#define MAP_SIZE 15 // request map size
+#define MAP_SIZE 17 // request map size
 
 void user_signup(cJSON *json, t_client_info *client_info);
 void user_login(cJSON *json, t_client_info *client_info);
@@ -17,6 +17,8 @@ void edit_username(cJSON *json, t_client_info *client_info);
 void edit_password(cJSON *json, t_client_info *client_info);
 void user_logout(cJSON *__attribute__((unused)) json, t_client_info *client_info);
 void client_exit(cJSON *__attribute__((unused)) json, t_client_info *client_info);
+void leave_chat(cJSON *json, t_client_info *client_info);
+void delete_account(cJSON *__attribute__((unused)) json, t_client_info *client_info);
 
 typedef void (*request_handler)(cJSON *, t_client_info *);
 
@@ -39,8 +41,10 @@ static t_map_entry request_map[MAP_SIZE] =
     {REQ_EDIT_MESSAGE, edit_message},
     {REQ_DEL_MESSAGE, delete_message},
     {REQ_JOIN_CHAT, join_chat},
+    {REQ_LEAVE_CHAT, leave_chat},
     {REQ_EDIT_USERNAME, edit_username},
     {REQ_EDIT_PASSWORD, edit_password},
+    {REQ_DEL_ACCOUNT, delete_account},
     {REQ_USER_LOGOUT, user_logout},
     {REQ_CLIENT_EXIT, client_exit}
 };

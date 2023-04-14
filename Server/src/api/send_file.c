@@ -1,6 +1,6 @@
 #include "../../inc/server.h"
 
-void send_file(cJSON *json, t_client_info *client_info)
+void send_file(cJSON *__attribute__((unused)) json, t_client_info *client_info)
 {
     FILE *image = fopen("Server/db/data/image.png", "wb");
     long size;
