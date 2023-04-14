@@ -47,12 +47,12 @@ t_user_info *get_user_info(sqlite3 *db, char *username)
 {
     sqlite3_stmt *stmt;
     t_user_info *user_info = NULL;
-    char *query = NULL;
+    // char *query = NULL;
 
     // query = sqlite3_mprintf("SELECT id, username, password, image_id FROM users WHERE username = '%s' ",
     //                         username);
     // stmt = db_execute_query_and_return_stmt(query, db);
-    sqlite3_prepare_v2(db, "SELECT id, username, password FROM users WHERE username = ?", -1, &stmt, NULL);
+    sqlite3_prepare_v2(db, "SELECT id, username, password FROM users WHERE username = ?; ", -1, &stmt, NULL);
     sqlite3_bind_text(stmt, 1, username, -1, NULL);
 
     if (sqlite3_step(stmt) == SQLITE_ROW)

@@ -350,6 +350,20 @@ int check_chat_id_from_server() {
   return chat_id;
 }
 
+int join_to_found_chat(int chat_id) {
+  
+  cJSON *json = cJSON_CreateObject();
+
+  cJSON_AddNumberToObject(json, "type", REQ_JOIN_CHAT);
+  cJSON_AddNumberToObject(json, "chat_id", chat_id);
+
+  char *json_str = cJSON_PrintUnformatted(json);
+  SSL_write(info->ssl, json_str, mx_strlen(json_str));
+
+  cJSON_Delete(json);
+  free(json_str);
+}
+
 int edit_msg_in_server(int msg_id, const char *new_text) {
 
   cJSON *json = cJSON_CreateObject();

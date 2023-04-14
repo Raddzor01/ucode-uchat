@@ -84,6 +84,7 @@ int create_chat_in_server(const char *chat_name, int chat_type);
 int check_account_exists();
 bool check_account_from_server();
 int check_chat_id_from_server();
+int join_to_found_chat(int chat_id);
 int edit_msg_in_server(int msg_id, const char *new_text);
 int delete_msg_in_server(int msg_id);
 

@@ -47,7 +47,7 @@ sqlite3_stmt *get_chats_stmt(sqlite3 *db, int user_id)
     sqlite3_prepare_v2(db, "SELECT chats.id, chats.name, chats.type, members.privilege FROM chats "
                            "INNER JOIN members ON members.chat_id = chats.id "
                            "WHERE chats.id IN (SELECT chat_id FROM members WHERE user_id = ?) AND members.user_id = ? "
-                           "ORDER BY chats.date DESC ",
+                           "ORDER BY chats.date DESC; ",
                        -1, &stmt, NULL);
     sqlite3_bind_int64(stmt, 1, user_id);
     sqlite3_bind_int64(stmt, 2, user_id);

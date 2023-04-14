@@ -23,7 +23,7 @@ static cJSON *get_messages_array(int chat_id)
     db = db_open();
     query = sqlite3_mprintf("SELECT messages.id, messages.user_id, messages.chat_id, users.username, messages.message, messages.time FROM messages "
                             "INNER JOIN users ON users.id = messages.user_id "
-                            "WHERE messages.chat_id = %d ",
+                            "WHERE messages.chat_id = %d; ",
                             chat_id);
     sqlite3_prepare_v2(db, query, -1, &stmt, NULL);
 

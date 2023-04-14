@@ -9,7 +9,7 @@ int db_get_last_file_id(char *filename, char *file_type)
 
     db = db_open();
     query = sqlite3_mprintf("SELECT id FROM files WHERE filename = '%s' AND file_type = '%s' "
-                            "ORDER BY id DESC LIMIT 1",
+                            "ORDER BY id DESC LIMIT 1; ",
                             filename, file_type);
     stmt = db_execute_query_and_return_stmt(query, db);
 
