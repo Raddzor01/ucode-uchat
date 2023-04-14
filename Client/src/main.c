@@ -78,7 +78,7 @@ void set_start_of_current_day() {
   u->tm_min = 0;
   u->tm_hour = 0;
 
-  info->start_of_current_day = timer;
+  info->start_of_current_day = mktime(u);
   // char *f = settime(u);
   // printf("%ld соответствует %s", timer, f);
 

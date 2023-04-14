@@ -35,17 +35,18 @@ int send_login_to_server(const char *username, const char *password) {
   return check_account_from_server();
 }
 
-int send_message_to_server(const char *str) {
+long send_message_to_server(const char *str) {
   // printf("%d\t%s\n", account->id, account->username);
 
   cJSON *json = cJSON_CreateObject();
+  long timer = time(NULL);
 
   cJSON_AddNumberToObject(json, "type", REQ_SEND_MSG);
   cJSON_AddNumberToObject(json, "user_id", account->id);
   cJSON_AddNumberToObject(json, "chat_id", account->chat_id);
   cJSON_AddStringToObject(json, "message", str);
   cJSON_AddStringToObject(json, "username", account->username);
-  cJSON_AddNumberToObject(json, "time", time(NULL));
+  cJSON_AddNumberToObject(json, "time", timer);
 
   char *json_str = cJSON_PrintUnformatted(json);
   SSL_write(info->ssl, json_str, mx_strlen(json_str));
@@ -53,7 +54,7 @@ int send_message_to_server(const char *str) {
   cJSON_Delete(json);
   free(json_str);
 
-  return 0;
+  return timer;
 }
 
 int send_exit_to_server() {
@@ -192,6 +193,7 @@ t_msg **get_chat_messages_from_server(int chat_id) {
 int get_msg_id() {
 
   char *str = read_from_server();
+  // printf("%s\n", str);
   cJSON *json = cJSON_Parse(str);
   int msg_id;
 
@@ -226,7 +228,7 @@ t_chat **find_chats_from_server(const char *str) {
   char *json_str_2 = read_from_server();
   cJSON *json_2 = cJSON_Parse(json_str_2);
 
-  printf("%s\n", cJSON_PrintUnformatted(json_2->child));
+  // printf("%s\n", cJSON_PrintUnformatted(json_2->child));
 
   int arr_size = cJSON_GetArraySize(json_2->child);
   t_chat **chat = (t_chat **)malloc((arr_size) * sizeof(t_chat *));
@@ -240,10 +242,12 @@ t_chat **find_chats_from_server(const char *str) {
     chat[i]->chat_id = cJSON_GetObjectItem(json_temp, "chat_id")->valueint;
   }
 
+  chat[arr_size] = NULL;
+
   cJSON_Delete(json_2);
   free(json_str_2);
 
-  return 0;
+  return chat;
 }
 
 int create_chat_in_server(const char *chat_name, int chat_type) {

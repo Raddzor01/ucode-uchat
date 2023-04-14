@@ -7,7 +7,7 @@ guint accept_entry_id;
 bool username_display;
 
 
-void change_chat_id(GtkWidget *widget, int *new_id);
+void change_chat_id(GtkWidget *widget, gpointer new_id);
 
 char *settime(struct tm *u) {
 
@@ -149,7 +149,7 @@ void file_select(GtkWidget *widget, gpointer data) {
     gtk_widget_destroy(dialog);
 }
 
-void user_box(int number) {
+void user_box(char *username, int id) {
     GtkWidget *button;
     GtkWidget *image;
     GtkWidget *label;
@@ -173,7 +173,7 @@ void user_box(int number) {
     image = gtk_image_new_from_pixbuf(pixbuf);
 
     // create a label
-    label = gtk_label_new(account->chat_list[number]);
+    label = gtk_label_new(username);
 
     // create a box to hold the image and label
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -187,14 +187,14 @@ void user_box(int number) {
     gtk_container_add(GTK_CONTAINER(button), box);
     gtk_box_pack_start(GTK_BOX(out_box), button, FALSE, FALSE, 0);
     gtk_widget_show_all(out_box);
-    g_signal_connect(button, "clicked", G_CALLBACK(change_chat_id), &account->chat_id_list[number]);
+    g_signal_connect(button, "clicked", G_CALLBACK(change_chat_id), GINT_TO_POINTER(id));
 }
 
-void change_chat_id(GtkWidget *widget, int *new_id) {
+void change_chat_id(GtkWidget *widget, gpointer new_id) {
 
     (void)widget;
 
-    account->chat_id = *new_id;
+    account->chat_id = GPOINTER_TO_INT(new_id);
 
     printf("\ncurrent chat: %d\n", account->chat_id);
 

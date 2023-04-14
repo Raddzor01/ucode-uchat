@@ -229,9 +229,7 @@ void build_users(GtkWidget *grid) {
     gtk_container_add(GTK_CONTAINER(scrolled_window), box_for_users);
     gtk_widget_set_name(box_for_users, "box_for_users");
 
-    for (int i = account->chat_count - 1; i >= 0; i--) {
-        user_box(i);
-    }
+    display_users();
 
     //chert moment
     GError *error = NULL;
@@ -350,4 +348,9 @@ void create_chat_menu() {
     g_signal_connect(make_chat_button, "clicked", G_CALLBACK(close_window_by_button), window);
 
     gtk_widget_show_all(window);
+}
+
+void display_users() {
+    for (int i = account->chat_count - 1; i >= 0; i--)
+        user_box(account->chat_list[i], account->chat_id_list[i]);
 }

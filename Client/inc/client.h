@@ -71,7 +71,7 @@ extern t_account *account;
 // Interaction with the server
 int send_sign_up_to_server(const char *username, const char *password);
 int send_login_to_server(const char *username, const char *password);
-int send_message_to_server(const char *str);
+long send_message_to_server(const char *str);
 int send_exit_to_server();
 int send_logout_to_server();
 char *read_from_server();
@@ -94,6 +94,7 @@ void connect_to_server(const char *ip_address, int port, int *server_fd,
                        SSL_CTX **ctx, SSL **ssl);
 
 // GTK part
+void clear_box(GtkWidget *box);
 void send_message(GtkButton *button);
 void find_chats(GtkWidget *entry);
 void chat_window();
@@ -109,7 +110,7 @@ void pop_up_window(char *text);
 void add_class(GtkWidget *widget, char *class_name);
 void file_select(GtkWidget *widget, gpointer data);
 void build_users(GtkWidget *grid);
-void user_box(int number);
+void user_box(char *username, int id);
 bool chech_fields(const gchar *username, const gchar *password);
 void text_bubble(const char *text, int msg_id);
 void delete_msg(GtkButton *button, gpointer data);
@@ -121,6 +122,7 @@ void change_msg_id_for_edit(GtkButton *button, gpointer msg_id);
 GtkWidget* create_image_button(char* image_path, int width, int height);
 void receive_bubble(const char *text, const char *name);
 void create_chat_menu();
+void display_users();
 
 void create_chat(GtkButton *button, gpointer chatname);
 
