@@ -7,7 +7,7 @@ int db_check_user_exists(char *username)
     char *query = NULL;
     bool check = false;
 
-    query = sqlite3_mprintf("SELECT EXISTS (SELECT id FROM users WHERE username = '%s')",
+    query = sqlite3_mprintf("SELECT EXISTS (SELECT id FROM users WHERE username = '%s'); ",
                             username);
     
     db = db_open();

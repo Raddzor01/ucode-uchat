@@ -7,7 +7,7 @@ bool db_check_chat_exists(int id)
     char *query = NULL;
     bool check = false;
 
-    query = sqlite3_mprintf("SELECT EXISTS (SELECT id FROM chats WHERE id = '%d')",
+    query = sqlite3_mprintf("SELECT EXISTS (SELECT id FROM chats WHERE id = '%d'); ",
                             id);
 
     db = db_open();

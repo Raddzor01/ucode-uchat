@@ -18,7 +18,7 @@ void leave_chat(cJSON *json, t_client_info *client_info)
         return;
     }
 
-    query = sqlite3_mprintf("DELETE FROM members WHERE chat_id = %d AND user_id = %d;",
+    query = sqlite3_mprintf("DELETE FROM members WHERE chat_id = %d AND user_id = %d; ",
                             chat_id, client_info->user->id);
     db_execute_query(query);
     

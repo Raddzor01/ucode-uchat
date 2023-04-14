@@ -5,7 +5,7 @@ int db_get_id_by_username(char *username)
     sqlite3 *db = db_open();
     sqlite3_stmt *stmt;
 
-    sqlite3_prepare_v2(db, "SELECT id FROM users WHERE username = ?", -1, &stmt, NULL);
+    sqlite3_prepare_v2(db, "SELECT id FROM users WHERE username = ?; ", -1, &stmt, NULL);
     sqlite3_bind_text(stmt, 1, username, -1, NULL);
 
     int user_id = -1;

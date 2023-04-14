@@ -51,7 +51,7 @@ void update_user_photo(cJSON *json, t_client_info *client_info)
     if(write_file_to_data(file_path, size, client_info->socket_info))
         return;
     
-    query = sqlite3_mprintf("INSERT INTO files (filename, file_type, file_size, file_path, time) VALUES('%s', '%s', '%d', '%s', '%d')",
+    query = sqlite3_mprintf("INSERT INTO files (filename, file_type, file_size, file_path, time) VALUES('%s', '%s', '%d', '%s', '%d'); ",
                             file_name, extension, size, file_path, time);
     db_execute_query(query);
     sqlite3_free(query);

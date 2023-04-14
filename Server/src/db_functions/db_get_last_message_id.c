@@ -9,7 +9,7 @@ int db_get_last_message_id(int user_id, int chat_id)
 
     db = db_open();
     query = sqlite3_mprintf("SELECT id FROM messages WHERE user_id = '%d' AND chat_id = '%d' "
-                            "ORDER BY id DESC LIMIT 1",
+                            "ORDER BY id DESC LIMIT 1; ",
                             user_id, chat_id);
     stmt = db_execute_query_and_return_stmt(query, db);
 

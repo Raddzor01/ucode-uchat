@@ -13,7 +13,7 @@ void join_chat(cJSON *chat_info, t_client_info *client_info)
         return;
     }
 
-    query = sqlite3_mprintf("INSERT INTO members (user_id, chat_id, permissions) VALUES('%d', '%d', '%d')",
+    query = sqlite3_mprintf("INSERT INTO members (user_id, chat_id, permissions) VALUES('%d', '%d', '%d'); ",
                             client_info->user->id, chat_id, USERTYPE_NORMAL);
     db_execute_query(query);
 
