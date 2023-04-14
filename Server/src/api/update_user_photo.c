@@ -40,6 +40,7 @@ void update_user_photo(cJSON *json, t_client_info *client_info)
 {
     char *query = NULL;
     int file_id = 0;
+
     char *extension = cJSON_GetObjectItemCaseSensitive(json, "extension")->valuestring;
     long time = cJSON_GetObjectItemCaseSensitive(json, "time")->valueint;
     long size = cJSON_GetObjectItemCaseSensitive(json, "size")->valueint;
@@ -58,7 +59,7 @@ void update_user_photo(cJSON *json, t_client_info *client_info)
     
     file_id = db_get_last_file_id(file_name, extension);
 
-    query = sqlite3_mprintf("UPDATE users SET image_id = %d WHERE id = %d ",
+    query = sqlite3_mprintf("UPDATE users SET image_id = %d WHERE id = %d; ",
                             file_id, client_info->user->id);
     db_execute_query(query);
 
