@@ -36,6 +36,7 @@ typedef struct s_info {
   SSL *ssl;
   int server_socket;
   int msg_id_for_edit;
+  time_t start_of_current_day;
 } t_info;
 
 // user data structure
@@ -53,10 +54,16 @@ typedef struct s_msg {
   int user_id;
   char *text;
   // char *username;
-  // int time;
+  time_t date;
 } t_msg;
 
+typedef struct s_chat {
+  int chat_id;
+  char *chat_name;
+} t_chat;
+
 int send_file_to_server(char *filedir);
+char *settime(struct tm *u);
 extern GtkWidget *main_window;
 extern t_info *info;
 extern t_account *account;
@@ -72,10 +79,11 @@ void read_from_server_to_logs();
 int get_user_chats();
 t_msg **get_chat_messages_from_server(int chat_id);
 int get_msg_id();
-int find_chats_from_server(const char *str);
+t_chat **find_chats_from_server(const char *str);
 int create_chat_in_server(const char *chat_name, int chat_type);
 int check_account_exists();
 bool check_account_from_server();
+int check_chat_id_from_server();
 int edit_msg_in_server(int msg_id, const char *new_text);
 int delete_msg_in_server(int msg_id);
 

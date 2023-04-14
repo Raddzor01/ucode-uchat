@@ -177,6 +177,7 @@ t_msg **get_chat_messages_from_server(int chat_id) {
         cJSON_GetObjectItemCaseSensitive(json_temp, "message")->valuestring);
     msg[i]->msg_id = cJSON_GetObjectItem(json_temp, "message_id")->valueint;
     msg[i]->user_id = cJSON_GetObjectItem(json_temp, "user_id")->valueint;
+    msg[i]->date = cJSON_GetObjectItem(json_temp, "date")->valueint;
     // printf("%d\n", msg[i]->msg_id);
   }
 
@@ -209,7 +210,7 @@ int get_msg_id() {
   return msg_id;
 }
 
-int find_chats_from_server(const char *str) {
+t_chat **find_chats_from_server(const char *str) {
 
   cJSON *json = cJSON_CreateObject();
 
@@ -221,6 +222,26 @@ int find_chats_from_server(const char *str) {
 
   cJSON_Delete(json);
   free(json_str);
+
+  char *json_str_2 = read_from_server();
+  cJSON *json_2 = cJSON_Parse(json_str_2);
+
+  printf("%s\n", cJSON_PrintUnformatted(json_2->child));
+
+  int arr_size = cJSON_GetArraySize(json_2->child);
+  t_chat **chat = (t_chat **)malloc((arr_size) * sizeof(t_chat *));
+  cJSON *json_temp = NULL;
+
+  for (int i = 0; i < arr_size; i++) {
+    chat[i] = (t_chat *)malloc(sizeof(t_chat));
+    json_temp = cJSON_GetArrayItem(json_2->child, i);
+    chat[i]->chat_name = mx_strdup(
+        cJSON_GetObjectItemCaseSensitive(json_temp, "chat_name")->valuestring);
+    chat[i]->chat_id = cJSON_GetObjectItem(json_temp, "chat_id")->valueint;
+  }
+
+  cJSON_Delete(json_2);
+  free(json_str_2);
 
   return 0;
 }

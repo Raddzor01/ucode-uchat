@@ -5,12 +5,13 @@
 //     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
 //     gtk_container_add(GTK_CONTAINER(container), text_view);
 // }
+void freeing_memory();
+void set_start_of_current_day();
 
 GtkWidget *main_window;
 t_info *info;
 t_account *account;
 
-void freeing_memory();
 
 int main(int argc, char **argv) {
 
@@ -22,6 +23,8 @@ int main(int argc, char **argv) {
   info = malloc(sizeof(*info));
   account = malloc(sizeof(*account));
   account->chat_id = -1;
+
+  set_start_of_current_day();
 
   // server part
 
@@ -62,4 +65,23 @@ void freeing_memory() {
   free(info->ssl);
 
   free(info);
+}
+
+void set_start_of_current_day() {
+
+  struct tm *u;
+  const time_t timer = time(NULL);
+
+  u = localtime(&timer);
+
+  u->tm_sec = 0;
+  u->tm_min = 0;
+  u->tm_hour = 0;
+
+  info->start_of_current_day = timer;
+  // char *f = settime(u);
+  // printf("%ld соответствует %s", timer, f);
+
+  // free(f);
+  // free(u);
 }

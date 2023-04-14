@@ -9,6 +9,26 @@ bool username_display;
 
 void change_chat_id(GtkWidget *widget, int *new_id);
 
+char *settime(struct tm *u) {
+
+  char s[40];
+  char *tmp;
+
+  for (int i = 0; i<40; i++) 
+    s[i] = 0;
+
+  int length = strftime(s, 40, "%d.%m.%Y %H:%M:%S, %A", u);
+
+  if (length == 0)
+    return NULL;
+
+  tmp = (char*)malloc(sizeof(s));
+
+  mx_strcpy(tmp, s);
+
+  return(tmp);
+}
+
 void load_css () {
 	GtkCssProvider *styles = gtk_css_provider_new();
     gtk_css_provider_load_from_path(styles, "Client/src/style/main.css", NULL);
@@ -186,11 +206,24 @@ void change_chat_id(GtkWidget *widget, int *new_id) {
     // printf("\ncurrent chat: %d\n", account->chat_id);
 
     for (int i = 0; msg[i] != NULL; i++) {
-        if (msg[i]->user_id == account->id) {
-            text_bubble(msg[i]->text, msg[i]->msg_id);
-            free(msg[i]->text);
-        } else {
+        if (msg[i]->date > info->start_of_current_day) {
+            // today
+            if (msg[i]->user_id == account->id) {
+                text_bubble(msg[i]->text, msg[i]->msg_id);
+                printf("%s\n", settime(localtime(&msg[i]->date)));
+                free(msg[i]->text);
+            } else {
             // receive_bubble()
+            }
+        } else {
+            // not today
+            if (msg[i]->user_id == account->id) {
+                text_bubble(msg[i]->text, msg[i]->msg_id);
+                printf("%s\n", settime(localtime(&msg[i]->date)));
+                free(msg[i]->text);
+            } else {
+            // receive_bubble()
+            }
         }
     }
     
@@ -469,5 +502,7 @@ void create_chat(GtkButton *button, gpointer chatname) {
     (void)button;
     const char *text = gtk_entry_get_text(GTK_ENTRY(GTK_ENTRY(chatname)));
 
-    if(text){};
+    create_chat_in_server(text, CHAT_NORMAL);
+
+    // int chat_id = check_chat_id_from_server();
 }

@@ -32,7 +32,7 @@ void find_chats(GtkWidget *entry) {
 
     find_chats_from_server(text);
 
-    read_from_server_to_logs();
+    // read_from_server_to_logs();
 }
 
 void chat_window() {
