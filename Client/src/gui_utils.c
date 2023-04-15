@@ -401,7 +401,7 @@ void text_bubble(const char *text, int msg_id) {
     gtk_box_pack_start(GTK_BOX(box), delete_button, FALSE, FALSE, 0);
 
     g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg_id), GINT_TO_POINTER(msg_id));
-    g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg), time_box);
+    g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg), box);
 
     //scroll to the bottom
     GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
