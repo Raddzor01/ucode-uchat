@@ -135,6 +135,10 @@ void build_chat_window() {
 
     box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_widget_set_name(box, "chat");
+    gtk_widget_set_hexpand(box, TRUE);
+    gtk_widget_set_vexpand(box, TRUE);
+    gtk_widget_set_halign(box, GTK_ALIGN_FILL);
+    gtk_widget_set_valign(box, GTK_ALIGN_FILL);
     gtk_grid_attach(GTK_GRID(grid), box, 1, 0, 1, 1);
 
     chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -142,19 +146,11 @@ void build_chat_window() {
     gtk_widget_set_name(chat_box, "chat_box");
     gtk_box_pack_start(GTK_BOX(box), chat_box, TRUE, TRUE, 0);
 
-    gtk_widget_set_hexpand(chat_box, TRUE);
-    gtk_widget_set_vexpand(chat_box, TRUE);
-    gtk_widget_set_halign(chat_box, GTK_ALIGN_FILL);
-    gtk_widget_set_valign(chat_box, GTK_ALIGN_FILL);
-
     input_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_box_pack_start(GTK_BOX(box), input_box, TRUE, TRUE, 0);
-
+    gtk_box_pack_start(GTK_BOX(box), input_box, FALSE, FALSE, 0);
     gtk_widget_set_size_request (input_box, -1, 20);
-    gtk_widget_set_hexpand(input_box, TRUE);
-    gtk_widget_set_halign(input_box, GTK_ALIGN_FILL);
     gtk_widget_set_vexpand(input_box, FALSE);
-    gtk_widget_set_valign(input_box, GTK_ALIGN_START);
+
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_box_pack_start(GTK_BOX(chat_box), scrolled_window, TRUE, TRUE, 0);
@@ -236,12 +232,8 @@ void build_users(GtkWidget *grid) {
     GdkPixbuf *pixbuf;
 
     GtkWidget *user_info_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_box_pack_start(GTK_BOX(users_box), user_info_box, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(users_box), user_info_box, FALSE, FALSE, 0);
     gtk_widget_set_size_request (user_info_box, -1, 20);
-    gtk_widget_set_hexpand(user_info_box, TRUE);
-    gtk_widget_set_halign(user_info_box, GTK_ALIGN_FILL);
-    gtk_widget_set_vexpand(user_info_box, FALSE);
-    gtk_widget_set_valign(user_info_box, GTK_ALIGN_START);
 
     pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", &error);
     if (error != NULL)
@@ -256,6 +248,7 @@ void build_users(GtkWidget *grid) {
 
     GtkWidget *name_label = gtk_label_new(account->username);
     gtk_widget_set_size_request (user_info_box, -1, 10);
+    gtk_widget_set_valign (name_label, GTK_ALIGN_START);
     gtk_box_pack_start(GTK_BOX(user_info_box), name_label, FALSE, FALSE, 10);
 }
 

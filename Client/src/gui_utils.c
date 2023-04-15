@@ -232,7 +232,6 @@ void change_chat_id(GtkWidget *widget, gpointer new_id) {
 
 void receive_bubble(const char *text, const char *name) {
     GtkWidget *box_container = get_widget_by_name_r(main_window, "box_holder");
-    GtkWidget *scrolled_window = get_widget_by_name_r(main_window, "scroll");
 
     GtkWidget *username_box;
     GtkWidget *username;
@@ -310,9 +309,6 @@ void receive_bubble(const char *text, const char *name) {
     gtk_widget_set_valign(time_label, GTK_ALIGN_START);
     add_class(time_label, "time");
     gtk_box_pack_start(GTK_BOX(username_box), time_label, FALSE, TRUE, 0);
-
-    GtkAdjustment *vadjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
-    gtk_adjustment_set_value(vadjustment, gtk_adjustment_get_upper(vadjustment) - gtk_adjustment_get_page_size(vadjustment));
     
     gtk_widget_show_all(box_container);
     gtk_widget_queue_draw(main_window);
@@ -407,8 +403,9 @@ void text_bubble(const char *text, int msg_id) {
     g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg_id), GINT_TO_POINTER(msg_id));
     g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg), time_box);
 
-    GtkAdjustment *vadjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
-    gtk_adjustment_set_value(vadjustment, gtk_adjustment_get_upper(vadjustment) - gtk_adjustment_get_page_size(vadjustment));
+    //scroll to the bottom
+    GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
+    gtk_adjustment_set_value(adjustment, gtk_adjustment_get_upper(adjustment) - gtk_adjustment_get_page_size(adjustment));
     
     gtk_widget_show_all(box_container);
     gtk_widget_queue_draw(main_window);

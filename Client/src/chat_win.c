@@ -14,9 +14,9 @@ void send_message(GtkButton *button) {
     timer++;
 
     text_bubble(text, get_msg_id());
-    receive_bubble(text, "hog");
-    receive_bubble(text, "hog");
-    receive_bubble(text, "hog");
+    // receive_bubble(text, "hog");
+    // receive_bubble(text, "hog");
+    // receive_bubble(text, "hog");
 
     // if (strcmp(text, "e") == 0)
     //     account->chat_id = 2;
