@@ -239,6 +239,9 @@ void receive_bubble(const char *text, const char *name) {
     GtkWidget *text_view;
     GtkWidget *box;
     GtkTextBuffer *buffer;
+    GtkWidget *time_label;
+
+    char* time = {"16:30"};
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
@@ -266,6 +269,7 @@ void receive_bubble(const char *text, const char *name) {
     add_class(username_box, "receive");
     if (username_display) {
         username = gtk_label_new(name);
+        add_class(username, "username");
         gtk_widget_set_halign(username, GTK_ALIGN_START);
         gtk_widget_set_valign(username, GTK_ALIGN_END);
         gtk_box_pack_start(GTK_BOX(username_box), username, FALSE, FALSE, 0);
@@ -300,6 +304,13 @@ void receive_bubble(const char *text, const char *name) {
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
     gtk_text_buffer_set_text(buffer, text, strlen(text));
 
+    //show time
+    time_label = gtk_label_new(time);
+    gtk_widget_set_halign(time_label, GTK_ALIGN_END);
+    gtk_widget_set_valign(time_label, GTK_ALIGN_START);
+    add_class(time_label, "time");
+    gtk_box_pack_start(GTK_BOX(username_box), time_label, FALSE, TRUE, 0);
+
     GtkAdjustment *vadjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
     gtk_adjustment_set_value(vadjustment, gtk_adjustment_get_upper(vadjustment) - gtk_adjustment_get_page_size(vadjustment));
     
@@ -315,18 +326,28 @@ void text_bubble(const char *text, int msg_id) {
     GtkWidget *box;
     GtkWidget *text_view;
     GtkTextBuffer *buffer;
+    GtkWidget *time_box;
+    GtkWidget *time_label;
+
+    char* time = {"16:30"};
 
     //text part
     gtk_widget_set_hexpand(box_container, FALSE);
 
+    //box with text and buttons
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
     gtk_widget_set_halign(box, GTK_ALIGN_END);
     gtk_widget_set_size_request(box, -1, 30);
     add_class(box, "bubble");
     gtk_widget_set_hexpand(box, TRUE);
-    gtk_widget_set_vexpand(box,FALSE);
-
+    gtk_widget_set_vexpand(box, FALSE);
     gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
+
+    time_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_widget_set_hexpand(time_box, FALSE);
+    gtk_widget_set_vexpand(time_box, FALSE);
+    gtk_widget_set_halign(time_box, GTK_ALIGN_END);
+    gtk_box_pack_start(GTK_BOX(box), time_box, FALSE, FALSE, 0);
 
     text_view = gtk_text_view_new();
 
@@ -334,8 +355,7 @@ void text_bubble(const char *text, int msg_id) {
 
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), FALSE);
-    // gtk_box_pack_start(GTK_BOX(box), text_view, FALSE, TRUE, 0);
-    gtk_container_add(GTK_CONTAINER(box), text_view);
+    gtk_container_add(GTK_CONTAINER(time_box), text_view);
 
     PangoLayout *layout = gtk_widget_create_pango_layout(text_view, text);
     int width, height;
@@ -349,12 +369,19 @@ void text_bubble(const char *text, int msg_id) {
         gtk_widget_set_hexpand(text_view, TRUE);
         gtk_widget_set_halign(text_view, GTK_ALIGN_END);
 
-        gtk_widget_set_hexpand(box, TRUE);
-        gtk_widget_set_halign(box, GTK_ALIGN_END);
+        gtk_widget_set_hexpand(time_box, TRUE);
+        gtk_widget_set_halign(time_box, GTK_ALIGN_END);
     }
 
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
     gtk_text_buffer_set_text(buffer, text, strlen(text));
+
+    //show time
+    time_label = gtk_label_new(time);
+    gtk_widget_set_halign(time_label, GTK_ALIGN_START);
+    gtk_widget_set_valign(time_label, GTK_ALIGN_START);
+    add_class(time_label, "time");
+    gtk_box_pack_start(GTK_BOX(time_box), time_label, FALSE, FALSE, 0);
 
     // gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
 
@@ -362,6 +389,8 @@ void text_bubble(const char *text, int msg_id) {
     GtkWidget *edit_button;
 
     edit_button = create_image_button("Client/icons/pen.png", 12, 12);
+    gtk_widget_set_vexpand(edit_button, FALSE);
+    gtk_widget_set_valign(edit_button, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(box), edit_button, FALSE, FALSE, 0);
 
     g_signal_connect(G_OBJECT(edit_button), "clicked", G_CALLBACK(change_msg_id_for_edit), GINT_TO_POINTER(msg_id));
@@ -371,10 +400,12 @@ void text_bubble(const char *text, int msg_id) {
     GtkWidget *delete_button;
 
     delete_button = create_image_button("Client/icons/trash.png", 12, 12);
+    gtk_widget_set_vexpand(delete_button, FALSE);
+    gtk_widget_set_valign(delete_button, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(box), delete_button, FALSE, FALSE, 0);
 
     g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg_id), GINT_TO_POINTER(msg_id));
-    g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg), box);
+    g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg), time_box);
 
     GtkAdjustment *vadjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
     gtk_adjustment_set_value(vadjustment, gtk_adjustment_get_upper(vadjustment) - gtk_adjustment_get_page_size(vadjustment));
