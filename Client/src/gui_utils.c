@@ -6,9 +6,6 @@ guint cancel_entry_id;
 guint accept_entry_id;
 bool username_display;
 
-
-void change_chat_id(GtkWidget *widget, gpointer new_id);
-
 char *settime(struct tm *u) {
 
   char s[40];
@@ -149,7 +146,7 @@ void file_select(GtkWidget *widget, gpointer data) {
     gtk_widget_destroy(dialog);
 }
 
-void user_box(char *username, int id) {
+void user_box(char *username, int id, bool key) {
     GtkWidget *button;
     GtkWidget *image;
     GtkWidget *label;
@@ -187,7 +184,11 @@ void user_box(char *username, int id) {
     gtk_container_add(GTK_CONTAINER(button), box);
     gtk_box_pack_start(GTK_BOX(out_box), button, FALSE, FALSE, 0);
     gtk_widget_show_all(out_box);
-    g_signal_connect(button, "clicked", G_CALLBACK(change_chat_id), GINT_TO_POINTER(id));
+
+    if (key == true)
+        g_signal_connect(button, "clicked", G_CALLBACK(change_chat_id), GINT_TO_POINTER(id));
+    else 
+        g_signal_connect(button, "clicked", G_CALLBACK(join_chat), GINT_TO_POINTER(id));
 }
 
 void change_chat_id(GtkWidget *widget, gpointer new_id) {
@@ -228,6 +229,13 @@ void change_chat_id(GtkWidget *widget, gpointer new_id) {
     }
     
     free(msg);
+}
+
+void join_chat(GtkWidget *widget, gpointer id) {
+
+    (void)widget;
+
+    join_to_found_chat(GPOINTER_TO_INT(id));
 }
 
 void receive_bubble(const char *text, const char *name) {

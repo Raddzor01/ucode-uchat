@@ -256,7 +256,7 @@ int create_chat_in_server(const char *chat_name, int chat_type) {
 
   cJSON_AddNumberToObject(json, "type", REQ_CREATE_CHAT);
   cJSON_AddStringToObject(json, "name", chat_name);
-  // cJSON_AddNumberToObject(json, "user_id", account->id);
+  cJSON_AddNumberToObject(json, "image_id", 1);
   cJSON_AddNumberToObject(json, "chat_type", chat_type);
   cJSON_AddNumberToObject(json, "time", time(NULL));
 
@@ -362,6 +362,10 @@ int join_to_found_chat(int chat_id) {
 
   cJSON_Delete(json);
   free(json_str);
+
+  
+  
+  return 0;
 }
 
 int edit_msg_in_server(int msg_id, const char *new_text) {

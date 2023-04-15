@@ -361,5 +361,5 @@ void create_chat_menu() {
 
 void display_users() {
     for (int i = account->chat_count - 1; i >= 0; i--)
-        user_box(account->chat_list[i], account->chat_id_list[i]);
+        user_box(account->chat_list[i], account->chat_id_list[i], true);
 }

@@ -9,7 +9,7 @@ CREATE TABLE chats (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name INTEGER NOT NULL,
     type INTEGER NOT NULL,
-    -- image_id INTEGER NOT NULL,
+    image_id INTEGER NOT NULL,
     date INTEGER NOT NULL
 );
 

@@ -41,7 +41,7 @@ void find_chats(GtkWidget *entry) {
     t_chat **chat = find_chats_from_server(text);
 
     for (int i = 0; chat[i] != NULL; i++) 
-        user_box(chat[i]->chat_name, chat[i]->chat_id);
+        user_box(chat[i]->chat_name, chat[i]->chat_id, false);
 
     // read_from_server_to_logs();
 }
