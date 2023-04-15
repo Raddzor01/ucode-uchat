@@ -451,11 +451,25 @@ void edit_msg(GtkButton *button, gpointer data) {
 
     GtkTextView *text_view = GTK_TEXT_VIEW(data);
     GtkWidget *chat_box = get_widget_by_name_r(main_window, "chat_box");
-    GtkWidget *box;
     GtkWidget *cancel_button;
     GtkWidget *edit_text;
     GtkWidget *entry = get_widget_by_name_r(main_window, "chat_text_entry");
     GtkWidget *send_button = get_widget_by_name_r(main_window, "send_button");
+
+    if(get_widget_by_name_r(main_window, "edit")) {
+        GtkWidget *temp = get_widget_by_name_r(main_window, "edit");
+        gtk_widget_destroy(temp);
+
+        g_signal_handler_disconnect(G_OBJECT(send_button), cancel_handler_id);
+        g_signal_handler_disconnect(G_OBJECT(send_button), accept_handler_id);
+        g_signal_connect(send_button, "clicked", G_CALLBACK(send_message), NULL);
+
+        g_signal_handler_disconnect(G_OBJECT(entry), cancel_entry_id);
+        g_signal_handler_disconnect(G_OBJECT(entry), accept_entry_id);
+        g_signal_connect(entry, "activate", G_CALLBACK(send_message), NULL);
+
+        gtk_entry_set_text (GTK_ENTRY (info->entry), "");
+    }
 
     //take text from bubble (to set it to entry)
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
@@ -464,11 +478,12 @@ void edit_msg(GtkButton *button, gpointer data) {
     char *text = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
 
     //create redact field
-    box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
+    GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
     gtk_widget_set_size_request(box, -1, -1);
     gtk_widget_set_hexpand(box, TRUE);
     gtk_widget_set_halign(box, GTK_ALIGN_FILL);
     gtk_box_pack_start(GTK_BOX(chat_box), box, FALSE, FALSE, 0);
+    gtk_widget_set_name(box, "edit");
 
     //edited text
     edit_text = gtk_text_view_new();

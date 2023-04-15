@@ -129,7 +129,7 @@ void build_chat_window() {
     GtkWidget *entry;
     GtkWidget *send_button;
     GtkWidget *scrolled_window;
-    GtkWidget *file_selection;
+    // GtkWidget *file_selection;
     GtkWidget *box_container;
     GtkWidget *grid = get_widget_by_name_r(main_window, "chat_grid");
 
@@ -174,9 +174,9 @@ void build_chat_window() {
 
     g_signal_connect(entry, "activate", G_CALLBACK(send_message), NULL);
 
-    file_selection = gtk_button_new_with_label("...");
-    gtk_box_pack_start(GTK_BOX(input_box), file_selection, FALSE, FALSE, 0);
-    g_signal_connect(file_selection, "clicked", G_CALLBACK(file_select), NULL);
+    // file_selection = gtk_button_new_with_label("...");
+    // gtk_box_pack_start(GTK_BOX(input_box), file_selection, FALSE, FALSE, 0);
+    // g_signal_connect(file_selection, "clicked", G_CALLBACK(file_select), NULL);
 
     send_button = gtk_button_new_with_label("Send");
     gtk_widget_set_size_request (send_button, 100, -1);
@@ -211,8 +211,10 @@ void build_users(GtkWidget *grid) {
     gtk_box_pack_start(GTK_BOX(search_box), entry, TRUE, TRUE, 0);
     g_signal_connect(entry, "changed", G_CALLBACK(find_chats), NULL);
 
-    create_chat = create_image_button("Client/icons/plus.png", 20, 20);
-    gtk_box_pack_start(GTK_BOX(search_box), create_chat, TRUE, TRUE, 0);
+    create_chat = create_image_button("Client/icons/plus.png", 16, 16);
+    add_class(create_chat, "plus_button");
+    gtk_widget_set_size_request (create_chat, 16, 16);
+    gtk_box_pack_start(GTK_BOX(search_box), create_chat, FALSE, FALSE, 0);
     g_signal_connect(create_chat, "clicked", G_CALLBACK(create_chat_menu), NULL);
 
     scrolled_window = gtk_scrolled_window_new(NULL, NULL);
@@ -309,21 +311,34 @@ void hog() {
     g_timeout_add(100, close_popup_window, NULL);
 }
 
+bool window_check = false;
+
 void close_window_by_button(GtkButton *button, gpointer *data) {
     GtkWidget *window = GTK_WIDGET(data);
     gtk_widget_destroy(window);
 
+    window_check = false;
     (void)button;
 }
 
 void close_window (gpointer *data) {
     GtkWidget *window = GTK_WIDGET(data);
     gtk_widget_destroy(window);
+    window_check = false;
 }
 
 void create_chat_menu() {
-    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+    if(window_check == true)
+        return;
+
+    GtkWidget *window;
+
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_default_size(GTK_WINDOW(window), 300, 1);
+
+    gtk_widget_set_name(window, "create_chat");
+
     g_signal_connect(window, "delete_event", G_CALLBACK(close_window), window);
 
     GtkWidget *box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 10);
@@ -341,6 +356,7 @@ void create_chat_menu() {
     g_signal_connect(make_chat_button, "clicked", G_CALLBACK(close_window_by_button), window);
 
     gtk_widget_show_all(window);
+    window_check = true;
 }
 
 void display_users() {

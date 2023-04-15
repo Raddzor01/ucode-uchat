@@ -11,7 +11,6 @@ void send_message(GtkButton *button) {
 
     time_t timer = send_message_to_server(text);
     // create_chat_in_server(text, CHAT_NORMAL);
-    timer++;
 
     text_bubble(text, get_msg_id());
 
