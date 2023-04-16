@@ -21,7 +21,7 @@ void delete_message(cJSON *json, t_client_info *client_info)
         return;
     }
 
-    query = sqlite3_mprintf("DELETE FROM messages WHERE id = '%d' AND chat_id = '%d'; ", 
+    query = sqlite3_mprintf("DELETE FROM messages WHERE id = %d AND chat_id = %d; ", 
                             message_id, chat_id);
     db_execute_query(query);
 

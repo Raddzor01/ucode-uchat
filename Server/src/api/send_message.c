@@ -35,17 +35,23 @@ void insert_message_into_db(cJSON *json)
     int user_id;
     int chat_id;
     char *message;
-    unsigned long time;
+    int time;
     char *query;
+    sqlite3_stmt *stmt;
+    sqlite3 *db = db_open();
 
     user_id = cJSON_GetObjectItem(json, "user_id")->valueint;
     chat_id = cJSON_GetObjectItem(json, "chat_id")->valueint;
     message = cJSON_GetObjectItemCaseSensitive(json, "message")->valuestring;
     time = cJSON_GetObjectItemCaseSensitive(json, "time")->valueint;
 
-    query = sqlite3_mprintf("INSERT INTO messages (user_id, chat_id, message, time) VALUES('%d', '%d', %Q, '%d'); ",
+    query = sqlite3_mprintf("INSERT INTO messages (user_id, chat_id, message, time) VALUES(%d, %d, ?, %d); ",
                             user_id, chat_id, message, time);
-    db_execute_query(query);
+    sqlite3_prepare_v2(db, query, -1, &stmt, NULL);
+    sqlite3_bind_text(stmt, 1, message, -1, SQLITE_STATIC);
+    sqlite3_step(stmt);
 
+    sqlite3_finalize(stmt);
+    sqlite3_close(db);
     sqlite3_free(query);
 }

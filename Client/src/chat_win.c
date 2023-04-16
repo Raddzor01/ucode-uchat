@@ -9,7 +9,7 @@ void send_message(GtkButton *button) {
     if(strlen(text) == 0)
         return;
 
-    send_message_to_server(text);
+    time_t timer = send_message_to_server(text);
     // create_chat_in_server(text, CHAT_NORMAL);
 
     text_bubble(text, get_msg_id());
@@ -27,12 +27,22 @@ void find_chats(GtkWidget *entry) {
 
     const char *text = gtk_entry_get_text(GTK_ENTRY(entry));
 
-    if (mx_strlen(text) <= 0) 
+    GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
+    clear_box(box);
+
+    if (mx_strlen(text) <= 0)
+    {
+        display_users();
         return;
+    }
 
-    find_chats_from_server(text);
-
-    read_from_server_to_logs();
+    t_chat *chats = find_chats_from_server(text);
+    while (chats)
+    {
+        user_box(chats, true);
+        chats = chats->next;
+    }
+    
 }
 
 void chat_window() {

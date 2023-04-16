@@ -1,3 +1,7 @@
+
+#define USERTYPE_NORMAL 0
+#define USERTYPE_ADMIN 1
+
 typedef enum e_req_type
 {
     REQ_USER_SIGNUP,
@@ -7,6 +11,7 @@ typedef enum e_req_type
     REQ_CREATE_CHAT,
     REQ_GET_CHATS,
     REQ_GET_CHAT_MESSAGES,
+    REQ_GET_LAST_MSG,
     REQ_SEARCH_CHATS,
     REQ_EDIT_MESSAGE,
     REQ_DEL_MESSAGE,
@@ -37,8 +42,3 @@ typedef enum e_chat_type {
     CHAT_NORMAL,
     CHAT_PRIVATE
 }   t_chat_type;
-
-typedef enum e_user_type {
-    USERTYPE_NORMAL,
-    USERTYPE_ADMIN
-}   t_user_type;

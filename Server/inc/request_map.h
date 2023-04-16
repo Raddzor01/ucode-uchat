@@ -1,6 +1,6 @@
 #include "server.h"
 
-#define MAP_SIZE 17 // request map size
+#define MAP_SIZE 18 // request map size
 
 void user_signup(cJSON *json, t_client_info *client_info);
 void user_login(cJSON *json, t_client_info *client_info);
@@ -9,6 +9,7 @@ void update_user_photo(cJSON *json, t_client_info *client_info);
 void create_chat(cJSON *json, t_client_info *client_info);
 void get_chats(cJSON *__attribute__((unused)) json, t_client_info *client_info);
 void get_chat_messages(cJSON *json, t_client_info *client_info);
+void get_last_msg(cJSON *json, t_client_info *client_info);
 void search_chats(cJSON *client_json, t_client_info *client_info);
 void edit_message(cJSON *client_json, t_client_info *client_info);
 void delete_message(cJSON *json, t_client_info *client_info);
@@ -37,6 +38,7 @@ static t_map_entry request_map[MAP_SIZE] =
     {REQ_CREATE_CHAT, create_chat},
     {REQ_GET_CHATS, get_chats},
     {REQ_GET_CHAT_MESSAGES, get_chat_messages},
+    {REQ_GET_LAST_MSG, get_last_msg},
     {REQ_SEARCH_CHATS, search_chats},
     {REQ_EDIT_MESSAGE, edit_message},
     {REQ_DEL_MESSAGE, delete_message},

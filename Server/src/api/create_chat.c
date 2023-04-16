@@ -34,8 +34,8 @@ void create_chat(cJSON *json, t_client_info *client_info)
     sqlite3_free(query);
     sqlite3_finalize(stmt);
 
-    query = sqlite3_mprintf("INSERT INTO chats (name, type, image_id, date) VALUES('%s', '%d', 1, '%d'); ",
-                            chat_name, type, date);
+    query = sqlite3_mprintf("INSERT INTO chats (name, type, image_id, date) VALUES('%s', %d, %d, %d); ",
+                            chat_name, type, 1, date);
     db_execute_query(query);
 
     sqlite3_free(query);
@@ -49,7 +49,7 @@ void create_chat(cJSON *json, t_client_info *client_info)
     sqlite3_finalize(stmt);
     sqlite3_free(query);
 
-    query = sqlite3_mprintf("INSERT INTO members (chat_id, user_id, privilege) VALUES('%d', '%d', '%d'); ",
+    query = sqlite3_mprintf("INSERT INTO members (chat_id, user_id, privilege) VALUES(%d, %d, %d); ",
                             chat_id, client_info->user->id, USERTYPE_ADMIN);
     db_execute_query(query);
 
