@@ -127,6 +127,7 @@ void build_login();
 void sign_up_menu(GtkWidget *__attribute__((unused)) widget);
 void build_signup();
 GtkWidget *get_widget_by_name_r(GtkWidget *container, char *name);
+void chat_info();
 void build_chat_window();
 void pop_up_window(char *text);
 void add_class(GtkWidget *widget, char *class_name);

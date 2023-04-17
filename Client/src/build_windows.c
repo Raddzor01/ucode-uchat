@@ -140,6 +140,37 @@ void build_signup()
     g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 }
 
+void chat_info() {
+    GtkWidget *box = get_widget_by_name_r(main_window, "chat_info");
+    GtkWidget *image;
+    GtkWidget *chat_name;
+    GtkWidget *chat_info;
+    GtkWidget *text_box;
+
+    GdkPixbuf *pixbuf;
+
+    pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", NULL);
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 40, 40, GDK_INTERP_BILINEAR);
+
+    image = gtk_image_new_from_pixbuf(pixbuf);
+
+    chat_name = gtk_label_new(account->current_chat->name);
+
+    chat_info = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_widget_set_size_request(chat_info, -1, 40);
+    gtk_widget_set_halign(chat_info, GTK_ALIGN_FILL);
+    gtk_box_pack_start(GTK_BOX(box), chat_info, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(chat_info), image, FALSE, FALSE, 0);
+
+    text_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_widget_set_halign(text_box, GTK_ALIGN_START);
+    gtk_box_pack_start(GTK_BOX(chat_info), text_box, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(text_box), chat_name, FALSE, FALSE, 0);
+
+    g_object_unref(pixbuf);
+    gtk_widget_show_all(box);
+}
+
 void build_chat_window()
 {
     if (get_widget_by_name_r(main_window, "chat"))
@@ -154,6 +185,7 @@ void build_chat_window()
     // GtkWidget *file_selection;
     GtkWidget *box_container;
     GtkWidget *grid = get_widget_by_name_r(main_window, "chat_grid");
+    GtkWidget *chat_info;
 
     box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_widget_set_name(box, "chat");
@@ -162,6 +194,10 @@ void build_chat_window()
     gtk_widget_set_halign(box, GTK_ALIGN_FILL);
     gtk_widget_set_valign(box, GTK_ALIGN_FILL);
     gtk_grid_attach(GTK_GRID(grid), box, 1, 0, 1, 1);
+
+    chat_info = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_widget_set_name(chat_info, "chat_info");
+    gtk_box_pack_start(GTK_BOX(box), chat_info, FALSE, FALSE, 0);
 
     chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_widget_set_size_request(chat_box, 500, 450);
@@ -261,6 +297,7 @@ void build_users(GtkWidget *grid)
     GdkPixbuf *pixbuf;
 
     GtkWidget *user_info_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    add_class(user_info_box, "profile");
     gtk_box_pack_start(GTK_BOX(users_box), user_info_box, FALSE, FALSE, 0);
     gtk_widget_set_size_request(user_info_box, -1, 20);
 
@@ -280,7 +317,7 @@ void build_users(GtkWidget *grid)
 
     GtkWidget *name_label = gtk_label_new(account->username);
     gtk_widget_set_size_request(user_info_box, -1, 10);
-    gtk_widget_set_valign(name_label, GTK_ALIGN_START);
+    gtk_widget_set_valign(name_label, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(text_box), name_label, FALSE, FALSE, 10);
 
     GtkWidget *link_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);

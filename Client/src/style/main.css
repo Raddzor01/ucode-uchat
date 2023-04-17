@@ -58,12 +58,17 @@ grid box{
     border:0px;
 }
 
-.user-box{
+.user-box {
     padding: 0px;
+    margin: 0px;
+}
+
+.user-box scrolledwindow{
+    padding: 1px;
     margin: 0px; /*-9*/
 }
 
-.user-box button{
+.user-box  scrolledwindow button{
     font-family: Gill Sans;
     font-size: 10px;
     font-weight: bold;
@@ -73,6 +78,14 @@ grid box{
     margin: -6px;
     border-radius: 0px;
 }
+
+.user-box entry{
+    border-radius: 5px;
+}
+
+/* .user-box button {
+    border-radius: 1px;
+} */
 
 .user-box button:hover{
     background-color: @fill-hbg-color;
@@ -164,4 +177,10 @@ button:hover {
     font-family: Gill Sans;
     font-size: 10px;
     font-weight:600;
+}
+
+.profile {
+    border-top: 2px solid @entry-bg-color;
+    border-right: 2px solid @entry-bg-color;
+    border-radius: 0px;
 }
