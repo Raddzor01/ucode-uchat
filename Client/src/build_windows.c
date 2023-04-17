@@ -142,6 +142,9 @@ void build_signup()
 
 void build_chat_window()
 {
+    if (get_widget_by_name_r(main_window, "chat"))
+        return;
+
     GtkWidget *box;
     GtkWidget *chat_box;
     GtkWidget *input_box;
@@ -205,6 +208,7 @@ void build_chat_window()
     g_signal_connect(send_button, "clicked", G_CALLBACK(send_message), NULL);
 
     g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    gtk_widget_show_all(box);
 }
 
 void build_users(GtkWidget *grid)

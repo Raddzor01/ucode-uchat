@@ -186,14 +186,16 @@ void user_box(t_chat *chat, bool is_search)
     gtk_container_add(GTK_CONTAINER(button), box);
     gtk_box_pack_start(GTK_BOX(out_box), button, FALSE, FALSE, 0);
     gtk_widget_show_all(out_box);
-    if (is_search)
+    if (is_search) {
         g_signal_connect(button, "clicked", G_CALLBACK(join_chat), (gpointer)chat);
-    else
+        // g_signal_connect(button, "clicked", G_CALLBACK(change_chat_id), (gpointer)chat);
+    }else
         g_signal_connect(button, "clicked", G_CALLBACK(change_chat_id), (gpointer)chat);
 }
 
 void change_chat_id(GtkWidget *__attribute__((unused)) widget, gpointer user_data)
 {
+    build_chat_window();
     account->current_chat = (t_chat *)user_data;
 
     printf("\ncurrent chat: %d\n", account->current_chat->id);
