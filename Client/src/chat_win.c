@@ -63,7 +63,6 @@ void chat_window()
 
     if (main_window)
         clear_window(main_window);
-
     create_new_window("UChat", 700, 400, true);
 
     GtkWidget *grid = gtk_grid_new();
