@@ -103,10 +103,8 @@ void msg_pop_back(t_msg **head)
 
     t_msg *prelast = *head;
     while (prelast->next->next != NULL)
-    {
-
         prelast = prelast->next;
-    }
+        
     msg_clear(&prelast->next);
     prelast->next = NULL;
 }
@@ -135,9 +133,8 @@ void msg_pop_index(t_msg **list, int index)
 
     t_msg *current = *list;
     for (int i = 0; current != NULL && i < (index - 1); ++i)
-    {
         current = current->next;
-    }
+
     t_msg *next = current->next->next;
     msg_clear(&current->next);
     current->next = next;
@@ -145,7 +142,6 @@ void msg_pop_index(t_msg **list, int index)
 
 void msg_pop_id(t_msg **list, int msg_id)
 {
-
     t_msg *temp = *list;
     for (int i = 0; temp; temp = temp->next, ++i)
     {
@@ -155,4 +151,15 @@ void msg_pop_id(t_msg **list, int msg_id)
             return;
         }
     }
+}
+
+t_msg *msg_get_last_msg(t_msg *list)
+{
+    if (!list)
+        return NULL;
+
+    while (list->next)
+        list = list->next;
+
+    return list;
 }

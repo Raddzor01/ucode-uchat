@@ -79,11 +79,14 @@ void msg_pop_id(t_msg **list, int msg_id);
 void msg_pop_index(t_msg **list, int index);
 void msg_pop_back(t_msg **head);
 void msg_pop_front(t_msg **head);
+t_msg *msg_get_last_msg(t_msg *list);
 
 void chat_push_back(t_chat **list, t_chat *new_node);
 t_chat *chat_get_by_id(t_chat *list, int chat_id);
 void chat_clear_list(t_chat **list);
 int chat_list_size(t_chat *list);
+
+void *server_update_thread();
 
 // Interaction with the server
 int send_sign_up_to_server(const char *username, const char *password);
@@ -103,7 +106,8 @@ int check_account_exists();
 bool check_account_from_server();
 int edit_msg_in_server(int msg_id, const char *new_text);
 int delete_msg_in_server(int msg_id);
-int get_last_msg_from_server(int chat_id);
+int get_last_msg_id_from_server(int chat_id);
+t_msg *get_msg_by_id_from_server(int msg_id, int chat_id);
 
 // Conection to the server
 void init_ssl(SSL_CTX **ctx);

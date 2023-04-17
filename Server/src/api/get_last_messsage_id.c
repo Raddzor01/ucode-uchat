@@ -1,6 +1,6 @@
 #include "../../inc/server.h"
 
-void get_last_msg(cJSON *json, t_client_info *client_info)
+void get_last_message_id(cJSON *json, t_client_info *client_info)
 {
     sqlite3 *db;
     sqlite3_stmt *stmt;
@@ -12,7 +12,7 @@ void get_last_msg(cJSON *json, t_client_info *client_info)
 
     if(!db_check_chat_exists(chat_id))
     {
-        send_responde(client_info->ssl, REQ_GET_LAST_MSG, ERR_CHAT_NONEXIST);
+        send_responde(client_info->ssl, REQ_GET_LAST_MSG_ID, ERR_CHAT_NONEXIST);
         return;
     }
 

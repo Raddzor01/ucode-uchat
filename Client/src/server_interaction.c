@@ -38,17 +38,6 @@ time_t send_message_to_server(const char *message)
 {
     time_t current_time = time(NULL);
 
-    t_msg *new_node = malloc(sizeof(t_msg));
-    new_node->text = mx_strdup(message);
-    new_node->time = current_time;
-    new_node->user_id = account->id;
-    new_node->username = mx_strdup(account->username);
-    new_node->next = NULL;
-
-    pthread_mutex_lock(&account->mutex);
-    msg_push_back(&account->current_chat->messages, new_node);
-    pthread_mutex_unlock(&account->mutex);
-
     cJSON *json = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(json, "type", REQ_SEND_MSG);
@@ -104,7 +93,7 @@ int send_logout_to_server()
 
 char *read_from_server()
 {
-    char buffer[1024];
+    char buffer[BUFSIZ];
     int bytes = SSL_read(info->ssl, buffer, sizeof(buffer));
 
     if (bytes > 0)
@@ -178,7 +167,8 @@ int get_user_chats()
     mx_strdel(&json_str);
 
     json_str = read_from_server();
-    json = cJSON_GetObjectItemCaseSensitive(cJSON_Parse(json_str), "chats");
+    cJSON *chats_array = cJSON_Parse(json_str);
+    json = cJSON_GetObjectItemCaseSensitive(chats_array, "chats");
 
     // chat_clear_list(&account->chats);
 
@@ -419,12 +409,12 @@ int delete_msg_in_server(int msg_id)
     return 0;
 }
 
-int get_last_msg_from_server(int chat_id)
+int get_last_msg_id_from_server(int chat_id)
 {
     int msg_id = 0;
 
     cJSON *json = cJSON_CreateObject();
-    cJSON_AddNumberToObject(json, "type", REQ_GET_LAST_MSG);
+    cJSON_AddNumberToObject(json, "type", REQ_GET_LAST_MSG_ID);
     cJSON_AddNumberToObject(json, "chat_id", chat_id);
     char *json_str = cJSON_PrintUnformatted(json);
 
@@ -449,6 +439,38 @@ int get_last_msg_from_server(int chat_id)
     cJSON_Delete(json);
 
     return msg_id;
+}
+
+t_msg *get_msg_by_id_from_server(int msg_id, int chat_id)
+{
+    cJSON *json = cJSON_CreateObject();
+    cJSON_AddNumberToObject(json, "type", REQ_GET_MSG_BY_ID);
+    cJSON_AddNumberToObject(json, "message_id", msg_id);
+    cJSON_AddNumberToObject(json, "chat_id", chat_id);
+    char *json_str = cJSON_PrintUnformatted(json);
+
+    SSL_write(info->ssl, json_str, mx_strlen(json_str));
+
+    mx_strdel(&json_str);
+    cJSON_Delete(json);
+
+    json_str = read_from_server();
+    json = cJSON_Parse(json_str);
+
+    if (cJSON_GetObjectItem(json, "error_code")->valueint != ERR_SUCCESS)
+        return NULL;
+
+    cJSON *message_json = cJSON_GetObjectItem(json, "message");
+
+    t_msg *new_node = (t_msg *)malloc(sizeof(t_msg));
+    new_node->text = mx_strdup(cJSON_GetObjectItemCaseSensitive(message_json, "message")->valuestring);
+    new_node->msg_id = cJSON_GetObjectItem(message_json, "message_id")->valueint;
+    new_node->user_id = cJSON_GetObjectItem(message_json, "user_id")->valueint;
+    new_node->username = mx_strdup(cJSON_GetObjectItemCaseSensitive(message_json, "username")->valuestring);
+    new_node->time = cJSON_GetObjectItemCaseSensitive(message_json, "date")->valueint;
+    new_node->next = NULL;
+
+    return new_node;
 }
 
 int join_to_found_chat(int chat_id)

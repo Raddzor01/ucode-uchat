@@ -1,7 +1,6 @@
 #include "../../inc/server.h"
 
 void insert_message_into_db(cJSON *json);
-int get_last_message_id(int user_id, int chat_id);
 
 void send_message(cJSON *json, t_client_info *client_info)
 {

@@ -188,12 +188,12 @@ void user_box(t_chat *chat, bool is_search)
     gtk_widget_show_all(out_box);
     if (is_search)
         g_signal_connect(button, "clicked", G_CALLBACK(join_chat), (gpointer)chat);
-    else
-        g_signal_connect(button, "clicked", G_CALLBACK(change_chat_id), (gpointer)chat);
+    g_signal_connect(button, "clicked", G_CALLBACK(change_chat_id), (gpointer)chat);
 }
 
 void change_chat_id(GtkWidget *__attribute__((unused)) widget, gpointer user_data)
 {
+    build_chat_window();
     account->current_chat = (t_chat *)user_data;
 
     printf("\ncurrent chat: %d\n", account->current_chat->id);
@@ -440,7 +440,8 @@ void edit_msg(GtkButton *__attribute__((unused)) button, gpointer data)
     GtkWidget *entry = get_widget_by_name_r(main_window, "chat_text_entry");
     GtkWidget *send_button = get_widget_by_name_r(main_window, "send_button");
 
-    if(get_widget_by_name_r(main_window, "edit")) {
+    if (get_widget_by_name_r(main_window, "edit"))
+    {
         GtkWidget *temp = get_widget_by_name_r(main_window, "edit");
         gtk_widget_destroy(temp);
 
@@ -452,16 +453,16 @@ void edit_msg(GtkButton *__attribute__((unused)) button, gpointer data)
         g_signal_handler_disconnect(G_OBJECT(entry), accept_entry_id);
         g_signal_connect(entry, "activate", G_CALLBACK(send_message), NULL);
 
-        gtk_entry_set_text (GTK_ENTRY (info->entry), "");
+        gtk_entry_set_text(GTK_ENTRY(info->entry), "");
     }
 
-    //take text from bubble (to set it to entry)
+    // take text from bubble (to set it to entry)
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
     GtkTextIter start, end;
     gtk_text_buffer_get_bounds(buffer, &start, &end);
     char *text = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
 
-    //create redact field
+    // create redact field
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
     gtk_widget_set_size_request(box, -1, -1);
     gtk_widget_set_hexpand(box, TRUE);
@@ -470,7 +471,7 @@ void edit_msg(GtkButton *__attribute__((unused)) button, gpointer data)
     gtk_widget_set_name(box, "edit");
     add_class(box, "edit");
 
-    //edited text
+    // edited text
     edit_text = gtk_text_view_new();
     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(edit_text), GTK_WRAP_WORD_CHAR);
     gtk_text_view_set_editable(GTK_TEXT_VIEW(edit_text), FALSE);
@@ -484,7 +485,7 @@ void edit_msg(GtkButton *__attribute__((unused)) button, gpointer data)
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(edit_text));
     gtk_text_buffer_set_text(buffer, text, strlen(text));
 
-    //close edit tab
+    // close edit tab
 
     cancel_button = create_image_button("Client/icons/cross.png", 14, 14);
     gtk_widget_set_hexpand(cancel_button, TRUE);
@@ -553,6 +554,7 @@ void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
 void join_chat(GtkWidget *__attribute__((unused)) widget, gpointer user_data)
 {
     t_chat *chat = (t_chat *)user_data;
+    chat->messages = get_chat_messages_from_server(chat->id);
     chat_push_back(&account->chats, chat);
     join_to_found_chat(chat->id);
 }
