@@ -159,3 +159,9 @@ button:hover {
 .edit text{
     background-color: @main-bg-color;
 }
+
+.links {
+    font-family: Gill Sans;
+    font-size: 10px;
+    font-weight:600;
+}

@@ -270,10 +270,35 @@ void build_users(GtkWidget *grid)
     gtk_widget_set_size_request(avatar, 64, 64);
     gtk_box_pack_start(GTK_BOX(user_info_box), avatar, FALSE, FALSE, 0);
 
+    GtkWidget *text_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_box_pack_start(GTK_BOX(user_info_box), text_box, FALSE, FALSE, 10);
+
     GtkWidget *name_label = gtk_label_new(account->username);
     gtk_widget_set_size_request(user_info_box, -1, 10);
     gtk_widget_set_valign(name_label, GTK_ALIGN_START);
-    gtk_box_pack_start(GTK_BOX(user_info_box), name_label, FALSE, FALSE, 10);
+    gtk_box_pack_start(GTK_BOX(text_box), name_label, FALSE, FALSE, 10);
+
+    GtkWidget *link_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_pack_start(GTK_BOX(text_box), link_box, FALSE, FALSE, 10);
+    add_class(link_box, "links");
+
+    GtkWidget *edit_profile_box = gtk_event_box_new();
+    gtk_box_pack_start(GTK_BOX(link_box), edit_profile_box, FALSE, FALSE, 10);
+
+    GtkWidget *edit_profile = gtk_label_new(NULL);
+    gtk_label_set_markup(GTK_LABEL(edit_profile), "<u>Edit Profile</u>");
+    gtk_container_add(GTK_CONTAINER(edit_profile_box), edit_profile);
+
+    // g_signal_connect(edit_profile_box, "button_press_event", G_CALLBACK(), NULL);
+
+    GtkWidget *log_out_box = gtk_event_box_new();
+    gtk_box_pack_start(GTK_BOX(link_box), log_out_box, FALSE, FALSE, 10);
+
+    GtkWidget *log_out = gtk_label_new(NULL);
+    gtk_label_set_markup(GTK_LABEL(log_out), "<u>Log Out</u>");
+    gtk_container_add(GTK_CONTAINER(log_out_box), log_out);
+
+    g_signal_connect(log_out_box, "button_press_event", G_CALLBACK(log_menu), NULL);
 }
 
 void pop_up_window(char *text)
