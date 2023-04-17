@@ -6,60 +6,48 @@ guint cancel_entry_id;
 guint accept_entry_id;
 bool username_display;
 
-char *settime(struct tm *u) {
+void change_chat_id(GtkWidget *widget, gpointer user_data);
 
-  char s[40];
-  char *tmp;
-
-  for (int i = 0; i<40; i++) 
-    s[i] = 0;
-
-  int length = strftime(s, 40, "%d.%m.%Y %H:%M:%S, %A", u);
-
-  if (length == 0)
-    return NULL;
-
-  tmp = (char*)malloc(sizeof(s));
-
-  mx_strcpy(tmp, s);
-
-  return(tmp);
-}
-
-void load_css () {
-	GtkCssProvider *styles = gtk_css_provider_new();
+void load_css()
+{
+    GtkCssProvider *styles = gtk_css_provider_new();
     gtk_css_provider_load_from_path(styles, "Client/src/style/main.css", NULL);
     gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(styles), GTK_STYLE_PROVIDER_PRIORITY_USER);
 }
 
-void add_class(GtkWidget *widget, char *class_name) {
-	GtkStyleContext *context = gtk_widget_get_style_context(widget);
-	gtk_style_context_add_class(context, class_name);
+void add_class(GtkWidget *widget, char *class_name)
+{
+    GtkStyleContext *context = gtk_widget_get_style_context(widget);
+    gtk_style_context_add_class(context, class_name);
 }
 
-void clear_window(GtkWidget *window) {
+void clear_window(GtkWidget *window)
+{
     // Get the container widget of the window
     GtkWidget *container = gtk_bin_get_child(GTK_BIN(window));
 
     // Remove any existing widget from the container
-    if (GTK_IS_WIDGET(container)) 
+    if (GTK_IS_WIDGET(container))
         gtk_container_remove(GTK_CONTAINER(window), container);
 }
 
-void clear_box(GtkWidget *box) {
+void clear_box(GtkWidget *box)
+{
 
     GList *children, *iter;
 
     children = gtk_container_get_children(GTK_CONTAINER(box));
-    for (iter = children; iter != NULL; iter = g_list_next(iter)) {
+    for (iter = children; iter != NULL; iter = g_list_next(iter))
+    {
         gtk_container_remove(GTK_CONTAINER(box), GTK_WIDGET(iter->data));
     }
     g_list_free(children);
 }
 
-void create_new_window(char *title, int width, int height, bool resizable) 
+void create_new_window(char *title, int width, int height, bool resizable)
 {
-    if (!main_window) {
+    if (!main_window)
+    {
         main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         gtk_window_set_default_size(GTK_WINDOW(main_window), 400, 0);
         g_signal_connect(main_window, "delete_event", G_CALLBACK(gtk_main_quit), NULL);
@@ -71,7 +59,8 @@ void create_new_window(char *title, int width, int height, bool resizable)
     gtk_window_set_resizable(GTK_WINDOW(main_window), resizable);
 }
 
-GtkWidget* create_image_button(char* image_path, int width, int height) {
+GtkWidget *create_image_button(char *image_path, int width, int height)
+{
     GdkPixbuf *pixbuf;
     GtkWidget *button, *image;
 
@@ -91,28 +80,36 @@ GtkWidget* create_image_button(char* image_path, int width, int height) {
     return button;
 }
 
-GtkWidget *get_widget_by_name_r(GtkWidget *container, char *name) {
-    GtkWidget *result = NULL; 
+GtkWidget *get_widget_by_name_r(GtkWidget *container, char *name)
+{
+    GtkWidget *result = NULL;
     GList *children = NULL;
 
-    if (GTK_IS_CONTAINER(container)) {
+    if (GTK_IS_CONTAINER(container))
+    {
         children = gtk_container_get_children(GTK_CONTAINER(container));
-    } else {
+    }
+    else
+    {
         return NULL;
     }
 
-    while (children) {
-        if (!mx_strcmp(gtk_widget_get_name(GTK_WIDGET(children->data)), name)) {
+    while (children)
+    {
+        if (!mx_strcmp(gtk_widget_get_name(GTK_WIDGET(children->data)), name))
+        {
             result = GTK_WIDGET(children->data);
             break;
-        } else if (GTK_IS_CONTAINER(children->data)) {
+        }
+        else if (GTK_IS_CONTAINER(children->data))
+        {
             result = get_widget_by_name_r(children->data, name);
 
             if (result != NULL)
                 break;
         }
 
-        children = children->next;   
+        children = children->next;
     }
 
     g_list_free(g_steal_pointer(&children)); // g_list_free(children_c); //
@@ -120,25 +117,29 @@ GtkWidget *get_widget_by_name_r(GtkWidget *container, char *name) {
     return result;
 }
 
-void file_select(GtkWidget *widget, gpointer data) {
+void file_select(GtkWidget *widget, gpointer data)
+{
 
-    if(data){};
-        (void)widget;
+    if (data)
+    {
+    };
+    (void)widget;
 
     GtkWidget *dialog;
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
     gint res;
 
-    dialog = gtk_file_chooser_dialog_new("Open File", NULL, action, "_Cancel", 
+    dialog = gtk_file_chooser_dialog_new("Open File", NULL, action, "_Cancel",
                                          GTK_RESPONSE_CANCEL, "_Open", GTK_RESPONSE_ACCEPT, NULL);
     res = gtk_dialog_run(GTK_DIALOG(dialog));
-    if (res == GTK_RESPONSE_ACCEPT) {
+    if (res == GTK_RESPONSE_ACCEPT)
+    {
         char *filename;
         GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
         filename = gtk_file_chooser_get_filename(chooser);
 
         // send_file_to_server(filename);
-        
+
         // Do something with the selected file...
         g_free(filename);
     }
@@ -146,7 +147,8 @@ void file_select(GtkWidget *widget, gpointer data) {
     gtk_widget_destroy(dialog);
 }
 
-void user_box(char *username, int id, bool key) {
+void user_box(t_chat *chat, bool is_search)
+{
     GtkWidget *button;
     GtkWidget *image;
     GtkWidget *label;
@@ -170,7 +172,7 @@ void user_box(char *username, int id, bool key) {
     image = gtk_image_new_from_pixbuf(pixbuf);
 
     // create a label
-    label = gtk_label_new(username);
+    label = gtk_label_new(chat->name);
 
     // create a box to hold the image and label
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -184,61 +186,34 @@ void user_box(char *username, int id, bool key) {
     gtk_container_add(GTK_CONTAINER(button), box);
     gtk_box_pack_start(GTK_BOX(out_box), button, FALSE, FALSE, 0);
     gtk_widget_show_all(out_box);
-
-    if (key == true)
-        g_signal_connect(button, "clicked", G_CALLBACK(change_chat_id), GINT_TO_POINTER(id));
-    else 
-        g_signal_connect(button, "clicked", G_CALLBACK(join_chat), GINT_TO_POINTER(id));
+    if (is_search)
+        g_signal_connect(button, "clicked", G_CALLBACK(join_chat), (gpointer)chat);
+    g_signal_connect(button, "clicked", G_CALLBACK(change_chat_id), (gpointer)chat);
 }
 
-void change_chat_id(GtkWidget *widget, gpointer new_id) {
+void change_chat_id(GtkWidget *__attribute__((unused)) widget, gpointer user_data)
+{
+    build_chat_window();
+    account->current_chat = (t_chat *)user_data;
 
-    (void)widget;
-
-    account->chat_id = GPOINTER_TO_INT(new_id);
-
-    printf("\ncurrent chat: %d\n", account->chat_id);
+    printf("\ncurrent chat: %d\n", account->current_chat->id);
 
     GtkWidget *chat = get_widget_by_name_r(main_window, "box_holder");
     clear_box(chat);
 
-    t_msg **msg = get_chat_messages_from_server(account->chat_id);
-
-    // printf("\ncurrent chat: %d\n", account->chat_id);
-
-    for (int i = 0; msg[i] != NULL; i++) {
-        if (msg[i]->date > info->start_of_current_day) {
-            // today
-            if (msg[i]->user_id == account->id) {
-                text_bubble(msg[i]->text, msg[i]->msg_id);
-                printf("%s\n", settime(localtime(&msg[i]->date)));
-                free(msg[i]->text);
-            } else {
-            // receive_bubble()
-            }
-        } else {
-            // not today
-            if (msg[i]->user_id == account->id) {
-                text_bubble(msg[i]->text, msg[i]->msg_id);
-                printf("%s\n", settime(localtime(&msg[i]->date)));
-                free(msg[i]->text);
-            } else {
-            // receive_bubble()
-            }
-        }
+    t_msg *msg = account->current_chat->messages;
+    while (msg != NULL)
+    {
+        if (msg->user_id == account->id)
+            text_bubble(msg->text, msg->msg_id);
+        else
+            receive_bubble(msg->text, msg->username);
+        msg = msg->next;
     }
-    
-    free(msg);
 }
 
-void join_chat(GtkWidget *widget, gpointer id) {
-
-    (void)widget;
-
-    join_to_found_chat(GPOINTER_TO_INT(id));
-}
-
-void receive_bubble(const char *text, const char *name) {
+void receive_bubble(const char *text, const char *name)
+{
     GtkWidget *box_container = get_widget_by_name_r(main_window, "box_holder");
 
     GtkWidget *username_box;
@@ -248,14 +223,15 @@ void receive_bubble(const char *text, const char *name) {
     GtkTextBuffer *buffer;
     GtkWidget *time_label;
 
-    char* time = {"16:30"};
+    char *time = {"16:30"};
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
     gtk_widget_set_halign(box, GTK_ALIGN_START);
 
-    //username
-    if (username_display) {
+    // username
+    if (username_display)
+    {
         GdkPixbuf *pixbuf;
         GtkWidget *image;
 
@@ -265,16 +241,19 @@ void receive_bubble(const char *text, const char *name) {
         g_object_unref(pixbuf);
 
         gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
-    } else {
+    }
+    else
+    {
         GtkWidget *blank_space = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
         gtk_widget_set_size_request(blank_space, 50, -1);
         gtk_box_pack_start(GTK_BOX(box), blank_space, FALSE, FALSE, 0);
     }
 
-    //text bubble
+    // text bubble
     username_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     add_class(username_box, "receive");
-    if (username_display) {
+    if (username_display)
+    {
         username = gtk_label_new(name);
         add_class(username, "username");
         gtk_widget_set_halign(username, GTK_ALIGN_START);
@@ -284,7 +263,7 @@ void receive_bubble(const char *text, const char *name) {
     gtk_widget_set_halign(username_box, GTK_ALIGN_START);
     gtk_box_pack_start(GTK_BOX(box), username_box, FALSE, FALSE, 0);
 
-    //text
+    // text
     text_view = gtk_text_view_new();
 
     gtk_widget_set_valign(text_view, GTK_ALIGN_END);
@@ -299,7 +278,8 @@ void receive_bubble(const char *text, const char *name) {
 
     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_NONE);
 
-    if (width > 400) {
+    if (width > 400)
+    {
         gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
         gtk_widget_set_size_request(text_view, 400, -1);
         gtk_widget_set_hexpand(text_view, TRUE);
@@ -311,19 +291,20 @@ void receive_bubble(const char *text, const char *name) {
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
     gtk_text_buffer_set_text(buffer, text, strlen(text));
 
-    //show time
+    // show time
     time_label = gtk_label_new(time);
     gtk_widget_set_halign(time_label, GTK_ALIGN_END);
     gtk_widget_set_valign(time_label, GTK_ALIGN_START);
     add_class(time_label, "time");
     gtk_box_pack_start(GTK_BOX(username_box), time_label, FALSE, TRUE, 0);
-    
+
     gtk_widget_show_all(box_container);
     gtk_widget_queue_draw(main_window);
     username_display = FALSE;
 }
 
-void text_bubble(const char *text, int msg_id) {
+void text_bubble(const char *text, int msg_id)
+{
     username_display = TRUE;
     GtkWidget *box_container = get_widget_by_name_r(main_window, "box_holder");
     GtkWidget *scrolled_window = get_widget_by_name_r(main_window, "scroll");
@@ -333,12 +314,12 @@ void text_bubble(const char *text, int msg_id) {
     GtkWidget *time_box;
     GtkWidget *time_label;
 
-    char* time = {"16:30"};
+    char *time = {"16:30"};
 
-    //text part
+    // text part
     gtk_widget_set_hexpand(box_container, FALSE);
 
-    //box with text and buttons
+    // box with text and buttons
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
     gtk_widget_set_halign(box, GTK_ALIGN_END);
     gtk_widget_set_size_request(box, -1, 30);
@@ -367,8 +348,9 @@ void text_bubble(const char *text, int msg_id) {
 
     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_NONE);
 
-    if (width > 400) {
-        gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
+    if (width > 400)
+    {
+        gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD_CHAR);
         gtk_widget_set_size_request(text_view, 400, -1);
         gtk_widget_set_hexpand(text_view, TRUE);
         gtk_widget_set_halign(text_view, GTK_ALIGN_END);
@@ -380,7 +362,7 @@ void text_bubble(const char *text, int msg_id) {
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
     gtk_text_buffer_set_text(buffer, text, strlen(text));
 
-    //show time
+    // show time
     time_label = gtk_label_new(time);
     gtk_widget_set_halign(time_label, GTK_ALIGN_START);
     gtk_widget_set_valign(time_label, GTK_ALIGN_START);
@@ -389,7 +371,7 @@ void text_bubble(const char *text, int msg_id) {
 
     // gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
 
-    //redact button
+    // redact button
     GtkWidget *edit_button;
 
     edit_button = create_image_button("Client/icons/pen.png", 12, 12);
@@ -400,7 +382,7 @@ void text_bubble(const char *text, int msg_id) {
     g_signal_connect(G_OBJECT(edit_button), "clicked", G_CALLBACK(change_msg_id_for_edit), GINT_TO_POINTER(msg_id));
     g_signal_connect(G_OBJECT(edit_button), "clicked", G_CALLBACK(edit_msg), text_view);
 
-    //delete button
+    // delete button
     GtkWidget *delete_button;
 
     delete_button = create_image_button("Client/icons/trash.png", 12, 12);
@@ -411,31 +393,27 @@ void text_bubble(const char *text, int msg_id) {
     g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg_id), GINT_TO_POINTER(msg_id));
     g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg), box);
 
-    //scroll to the bottom
+    // scroll to the bottom
     GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
     gtk_adjustment_set_value(adjustment, gtk_adjustment_get_upper(adjustment) - gtk_adjustment_get_page_size(adjustment));
-    
+
     gtk_widget_show_all(box_container);
     gtk_widget_queue_draw(main_window);
 }
 
-void delete_msg(GtkButton *button, gpointer data) {
-
-    GtkWidget *box = (GtkWidget*) data;
+void delete_msg(GtkButton *__attribute__((unused)) button, gpointer data)
+{
+    GtkWidget *box = (GtkWidget *)data;
     gtk_widget_destroy(box);
-
-    if(button){}
 }
 
-void delete_msg_id(GtkButton *button, gpointer msg_id) {
-
+void delete_msg_id(GtkButton *__attribute__((unused)) button, gpointer msg_id)
+{
     delete_msg_in_server(GPOINTER_TO_INT(msg_id));
-
-    if(button){}
 }
 
-void cancel_edit(GtkButton *button, gpointer data) {
-
+void cancel_edit(GtkButton *__attribute__((unused)) button, gpointer data)
+{
     GtkWidget *send_button = get_widget_by_name_r(main_window, "send_button");
     GtkWidget *entry = get_widget_by_name_r(main_window, "chat_text_entry");
 
@@ -447,16 +425,14 @@ void cancel_edit(GtkButton *button, gpointer data) {
     g_signal_handler_disconnect(G_OBJECT(entry), accept_entry_id);
     g_signal_connect(entry, "activate", G_CALLBACK(send_message), NULL);
 
-    gtk_entry_set_text (GTK_ENTRY (info->entry), "");
+    gtk_entry_set_text(GTK_ENTRY(info->entry), "");
 
-    GtkWidget *box = (GtkWidget*) data;
+    GtkWidget *box = (GtkWidget *)data;
     gtk_widget_destroy(box);
-
-    if(button){}
 }
 
-void edit_msg(GtkButton *button, gpointer data) {
-
+void edit_msg(GtkButton *__attribute__((unused)) button, gpointer data)
+{
     GtkTextView *text_view = GTK_TEXT_VIEW(data);
     GtkWidget *chat_box = get_widget_by_name_r(main_window, "chat_box");
     GtkWidget *cancel_button;
@@ -464,7 +440,8 @@ void edit_msg(GtkButton *button, gpointer data) {
     GtkWidget *entry = get_widget_by_name_r(main_window, "chat_text_entry");
     GtkWidget *send_button = get_widget_by_name_r(main_window, "send_button");
 
-    if(get_widget_by_name_r(main_window, "edit")) {
+    if (get_widget_by_name_r(main_window, "edit"))
+    {
         GtkWidget *temp = get_widget_by_name_r(main_window, "edit");
         gtk_widget_destroy(temp);
 
@@ -476,28 +453,30 @@ void edit_msg(GtkButton *button, gpointer data) {
         g_signal_handler_disconnect(G_OBJECT(entry), accept_entry_id);
         g_signal_connect(entry, "activate", G_CALLBACK(send_message), NULL);
 
-        gtk_entry_set_text (GTK_ENTRY (info->entry), "");
+        gtk_entry_set_text(GTK_ENTRY(info->entry), "");
     }
 
-    //take text from bubble (to set it to entry)
+    // take text from bubble (to set it to entry)
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
     GtkTextIter start, end;
     gtk_text_buffer_get_bounds(buffer, &start, &end);
     char *text = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
 
-    //create redact field
+    // create redact field
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
     gtk_widget_set_size_request(box, -1, -1);
     gtk_widget_set_hexpand(box, TRUE);
     gtk_widget_set_halign(box, GTK_ALIGN_FILL);
     gtk_box_pack_start(GTK_BOX(chat_box), box, FALSE, FALSE, 0);
     gtk_widget_set_name(box, "edit");
+    add_class(box, "edit");
 
-    //edited text
+    // edited text
     edit_text = gtk_text_view_new();
+    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(edit_text), GTK_WRAP_WORD_CHAR);
     gtk_text_view_set_editable(GTK_TEXT_VIEW(edit_text), FALSE);
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(edit_text), FALSE);
-    gtk_widget_set_size_request(edit_text, -1, -1);
+    gtk_widget_set_size_request(edit_text, 400, -1);
     gtk_widget_set_hexpand(edit_text, TRUE);
     gtk_widget_set_halign(edit_text, GTK_ALIGN_FILL);
     gtk_widget_set_valign(edit_text, GTK_ALIGN_CENTER);
@@ -506,7 +485,7 @@ void edit_msg(GtkButton *button, gpointer data) {
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(edit_text));
     gtk_text_buffer_set_text(buffer, text, strlen(text));
 
-    //close edit tab
+    // close edit tab
 
     cancel_button = create_image_button("Client/icons/cross.png", 14, 14);
     gtk_widget_set_hexpand(cancel_button, TRUE);
@@ -524,36 +503,58 @@ void edit_msg(GtkButton *button, gpointer data) {
     g_signal_connect(G_OBJECT(cancel_button), "clicked", G_CALLBACK(cancel_edit), box);
 
     gtk_widget_show_all(chat_box);
-    if(button){}
 }
 
-void edit_accept(GtkButton *button, gpointer data) {
+void edit_accept(GtkButton *__attribute__((unused)) button, gpointer data)
+{
+    GtkWidget *text_view = GTK_WIDGET(data);
+    const gchar *text = gtk_entry_get_text(GTK_ENTRY(info->entry));
 
-    GtkTextView *text_view = GTK_TEXT_VIEW(data);
-
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
-    const gchar *text = gtk_entry_get_text (GTK_ENTRY (info->entry));
     if (strlen(text) == 0)
         return;
-        
+
+    PangoLayout *layout = gtk_widget_create_pango_layout(text_view, text);
+    int width, height;
+    pango_layout_get_pixel_size(layout, &width, &height);
+
+    if (width > 400)
+    {
+        gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD_CHAR);
+        gtk_widget_set_size_request(text_view, 400, -1);
+        gtk_widget_set_halign(text_view, GTK_ALIGN_END);
+    }
+    else
+    {
+        gtk_widget_set_size_request(text_view, width, -1);
+        gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_NONE);
+        gtk_widget_set_halign(text_view, GTK_ALIGN_START);
+    }
+
+    g_object_unref(layout);
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+
     gtk_text_buffer_set_text(buffer, text, strlen(text));
     edit_msg_in_server(info->msg_id_for_edit, text);
-
-    if(button){}
 }
 
-void change_msg_id_for_edit(GtkButton *button, gpointer msg_id) {
-
+void change_msg_id_for_edit(GtkButton *__attribute__((unused)) button, gpointer msg_id)
+{
     info->msg_id_for_edit = GPOINTER_TO_INT(msg_id);
-
-    if(button){}
 }
 
-void create_chat(GtkButton *button, gpointer chatname) {
-    (void)button;
+void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
+{
     const char *text = gtk_entry_get_text(GTK_ENTRY(GTK_ENTRY(chatname)));
 
     create_chat_in_server(text, CHAT_NORMAL);
 
     // int chat_id = check_chat_id_from_server();
+}
+
+void join_chat(GtkWidget *__attribute__((unused)) widget, gpointer user_data)
+{
+    t_chat *chat = (t_chat *)user_data;
+    chat->messages = get_chat_messages_from_server(chat->id);
+    chat_push_back(&account->chats, chat);
+    join_to_found_chat(chat->id);
 }

@@ -60,6 +60,8 @@ void get_chat_messages(cJSON *json, t_client_info *client_info)
     cJSON_AddItemReferenceToObject(client_json, "messages", messages);
     char *json_str = cJSON_PrintUnformatted(client_json);
 
+    // char *json_str_len = mx_itoa(mx_strlen(json_str)); 
+    // SSL_write();
     SSL_write(client_info->ssl, json_str, mx_strlen(json_str));
 
     mx_strdel(&json_str);

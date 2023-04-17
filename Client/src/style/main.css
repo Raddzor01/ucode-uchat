@@ -155,3 +155,13 @@ button:hover {
     color: @fill-hbg-color;
     font-size: 10px;
 }
+
+.edit text{
+    background-color: @main-bg-color;
+}
+
+.links {
+    font-family: Gill Sans;
+    font-size: 10px;
+    font-weight:600;
+}

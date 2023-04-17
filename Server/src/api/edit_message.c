@@ -11,7 +11,7 @@ void edit_message(cJSON *json, t_client_info *client_info)
     chat_id = cJSON_GetObjectItem(json, "chat_id")->valueint;
     new_message = cJSON_GetObjectItemCaseSensitive(json, "text")->valuestring;
 
-    query = sqlite3_mprintf("UPDATE messages SET message = '%s' WHERE id = '%d' AND user_id = '%d' AND chat_id = '%d'; ",
+    query = sqlite3_mprintf("UPDATE messages SET message = '%s' WHERE id = %d AND user_id = %d AND chat_id = %d; ",
                             new_message, message_id, client_info->user->id, chat_id);
     db_execute_query(query);
 

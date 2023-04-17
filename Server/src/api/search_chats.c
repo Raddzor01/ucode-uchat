@@ -43,7 +43,7 @@ void search_chats(cJSON *client_json, t_client_info *client_info)
 
     query = sqlite3_mprintf("SELECT chats.id, chats.name FROM chats "
                             "WHERE chats.name LIKE '%s' "
-                            "AND chats.id NOT IN (SELECT chat_id FROM members WHERE user_id = '%d') "
+                            "AND chats.id NOT IN (SELECT chat_id FROM members WHERE user_id = %d) "
                             "ORDER BY chats.date DESC; ",
                             search_str, client_info->user->id);
     

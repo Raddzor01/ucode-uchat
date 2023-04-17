@@ -17,5 +17,7 @@ void join_chat(cJSON *chat_info, t_client_info *client_info)
                             client_info->user->id, chat_id, USERTYPE_NORMAL);
     db_execute_query(query);
 
+    // send_responde(client_info->ssl, REQ_JOIN_CHAT, ERR_SUCCESS);
+    
     sqlite3_free(query);
 }
