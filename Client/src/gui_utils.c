@@ -4,7 +4,7 @@ guint cancel_handler_id;
 guint accept_handler_id;
 guint cancel_entry_id;
 guint accept_entry_id;
-bool username_display;
+bool username_display = TRUE;
 
 void change_chat_id(GtkWidget *widget, gpointer user_data);
 
@@ -281,12 +281,11 @@ void receive_bubble(const char *text, const char *name)
 
     if (width > 400)
     {
-        gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
+        gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD_CHAR);
         gtk_widget_set_size_request(text_view, 400, -1);
         gtk_widget_set_hexpand(text_view, TRUE);
-        gtk_widget_set_halign(text_view, GTK_ALIGN_FILL);
-        gtk_widget_set_hexpand(username_box, TRUE);
-        gtk_widget_set_halign(username_box, GTK_ALIGN_START);
+        gtk_widget_set_halign(text_view, GTK_ALIGN_START);
+
     }
 
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));

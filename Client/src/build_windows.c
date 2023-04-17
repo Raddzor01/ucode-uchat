@@ -142,6 +142,7 @@ void build_signup()
 
 void chat_info() {
     GtkWidget *box = get_widget_by_name_r(main_window, "chat_info");
+    clear_box(box);
     GtkWidget *image;
     GtkWidget *chat_name;
     GtkWidget *chat_info;
