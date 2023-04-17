@@ -36,13 +36,15 @@ int send_login_to_server(const char *username, const char *password)
 
 time_t send_message_to_server(const char *message)
 {
-    time_t current_time = time(NULL);
+    const time_t current_time = time(NULL);
+
+    printf("%ld\n", current_time);
 
     cJSON *json = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(json, "type", REQ_SEND_MSG);
     cJSON_AddNumberToObject(json, "user_id", account->id);
-    cJSON_AddNumberToObject(json, "chat_id", account->chat_id);
+    cJSON_AddNumberToObject(json, "chat_id", account->current_chat->id);
     cJSON_AddStringToObject(json, "message", message);
     cJSON_AddStringToObject(json, "username", account->username);
     cJSON_AddNumberToObject(json, "time", current_time);
@@ -267,7 +269,7 @@ int create_chat_in_server(const char *chat_name, int chat_type)
     cJSON_Delete(json);
     free(json_str);
 
-    return 0;
+    return check_chat_id_from_server();
 }
 
 int check_account_exists()
@@ -341,7 +343,7 @@ int check_chat_id_from_server()
 
     if (json == NULL)
     {
-        mx_printerr("cJSON is NULL\n");
+        mx_printerr("Error getting new chat ID\ncJSON is NULL\n");
         cJSON_Delete(json);
         free(json_str);
         return -1;
@@ -360,7 +362,7 @@ int edit_msg_in_server(int msg_id, const char *new_text)
 
     cJSON_AddNumberToObject(json, "type", REQ_EDIT_MESSAGE);
     cJSON_AddNumberToObject(json, "id", msg_id);
-    cJSON_AddNumberToObject(json, "chat_id", account->chat_id);
+    cJSON_AddNumberToObject(json, "chat_id", account->current_chat->id);
     cJSON_AddStringToObject(json, "text", new_text);
 
     char *json_str = cJSON_PrintUnformatted(json);
@@ -384,7 +386,7 @@ int delete_msg_in_server(int msg_id)
     cJSON *json = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(json, "type", REQ_DEL_MESSAGE);
-    cJSON_AddNumberToObject(json, "chat_id", account->chat_id);
+    cJSON_AddNumberToObject(json, "chat_id", account->current_chat->id);
     cJSON_AddNumberToObject(json, "message_id", msg_id);
 
     char *json_str = cJSON_PrintUnformatted(json);

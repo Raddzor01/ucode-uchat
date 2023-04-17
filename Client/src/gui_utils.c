@@ -205,7 +205,7 @@ void change_chat_id(GtkWidget *__attribute__((unused)) widget, gpointer user_dat
     while (msg != NULL)
     {
         if (msg->user_id == account->id)
-            text_bubble(msg->text, msg->msg_id);
+            text_bubble(msg->text, msg->msg_id, msg->time);
         else
             receive_bubble(msg->text, msg->username);
         msg = msg->next;
@@ -303,7 +303,7 @@ void receive_bubble(const char *text, const char *name)
     username_display = FALSE;
 }
 
-void text_bubble(const char *text, int msg_id)
+void text_bubble(const char *text, int msg_id, time_t send_time)
 {
     username_display = TRUE;
     GtkWidget *box_container = get_widget_by_name_r(main_window, "box_holder");
@@ -314,7 +314,8 @@ void text_bubble(const char *text, int msg_id)
     GtkWidget *time_box;
     GtkWidget *time_label;
 
-    char *time = {"16:30"};
+    // char *time = {"16:30"};
+    char *time = get_send_time_str(send_time);
 
     // text part
     gtk_widget_set_hexpand(box_container, FALSE);
@@ -546,15 +547,50 @@ void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
 {
     const char *text = gtk_entry_get_text(GTK_ENTRY(GTK_ENTRY(chatname)));
 
-    create_chat_in_server(text, CHAT_NORMAL);
+    int chat_id = create_chat_in_server(text, CHAT_NORMAL);
 
-    // int chat_id = check_chat_id_from_server();
+    t_chat *chat = (t_chat *)malloc(sizeof(t_chat));
+    chat->name = mx_strdup(text);
+    chat->id = chat_id;
+    chat->messages = NULL;
+    chat->next = NULL;
+    chat_push_front(&account->chats, chat);
+
+    GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
+    clear_box(box);
+
+    display_users();
 }
 
 void join_chat(GtkWidget *__attribute__((unused)) widget, gpointer user_data)
 {
     t_chat *chat = (t_chat *)user_data;
     chat->messages = get_chat_messages_from_server(chat->id);
-    chat_push_back(&account->chats, chat);
+    chat_push_front(&account->chats, chat);
     join_to_found_chat(chat->id);
+}
+
+char *get_send_time_str(time_t send_time)
+{
+    char *result_str = NULL;
+    char s[20];
+    struct tm *time_struct = localtime(&send_time);
+    for (int i = 0; i < 20; i++)
+        s[i] = 0;
+    //   strftime(s, 40, "%d.%m.%Y %H:%M:%S, %A", time_struct);
+
+    if (send_time > info->current_day_time)
+    {
+        result_str = (char *)malloc(strftime(s, 20, "%H:%M", time_struct));
+        mx_strcpy(result_str, s);
+        return (result_str);
+    }
+    else if (send_time < info->current_day_time)
+    {
+        result_str = (char *)malloc(strftime(s, 20, "%d.%m %H:%M", time_struct));
+        mx_strcpy(result_str, s);
+        return (result_str);
+    }
+
+    return result_str;
 }

@@ -16,6 +16,13 @@ void chat_push_back(t_chat **list, t_chat *new_node)
     last->next = new_node;
 }
 
+void chat_push_front(t_chat **list, t_chat *new_node)
+{
+    t_chat *new = new_node;
+    new->next = *list;
+    *list = new;
+}
+
 t_chat *chat_get_by_id(t_chat *list, int chat_id)
 {
     while (list)

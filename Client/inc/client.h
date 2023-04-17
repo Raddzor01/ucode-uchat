@@ -59,7 +59,6 @@ typedef struct s_chat {
 typedef struct s_account {
   char *username;
   int id;
-  int chat_id;
   
   pthread_mutex_t mutex;
   t_chat *chats;
@@ -82,6 +81,7 @@ void msg_pop_front(t_msg **head);
 t_msg *msg_get_last_msg(t_msg *list);
 
 void chat_push_back(t_chat **list, t_chat *new_node);
+void chat_push_front(t_chat **list, t_chat *new_node);
 t_chat *chat_get_by_id(t_chat *list, int chat_id);
 void chat_clear_list(t_chat **list);
 int chat_list_size(t_chat *list);
@@ -104,6 +104,7 @@ t_chat *find_chats_from_server(const char *str);
 int create_chat_in_server(const char *chat_name, int chat_type);
 int check_account_exists();
 bool check_account_from_server();
+int check_chat_id_from_server();
 int edit_msg_in_server(int msg_id, const char *new_text);
 int delete_msg_in_server(int msg_id);
 int get_last_msg_id_from_server(int chat_id);
@@ -134,13 +135,13 @@ void file_select(GtkWidget *widget, gpointer data);
 void build_users(GtkWidget *grid);
 void user_box(t_chat *chat, bool is_search);
 bool chech_fields(const gchar *username, const gchar *password);
-void text_bubble(const char *text, int msg_id);
+void text_bubble(const char *text, int msg_id, time_t send_time);
 void delete_msg(GtkButton *__attribute__((unused)) button, gpointer data);
 void delete_msg_id(GtkButton *__attribute__((unused)) button, gpointer msg_id);
 void edit_msg(GtkButton *__attribute__((unused)) button, gpointer data);
 void edit_accept(GtkButton *__attribute__((unused)) button, gpointer data);
 void cancel_edit(GtkButton *__attribute__((unused)) button, gpointer data);
-void change_msg_id_for_edit(GtkButton *button, gpointer msg_id);
+void change_msg_id_for_edit(GtkButton *__attribute__((unused)) button, gpointer msg_id);
 GtkWidget* create_image_button(char* image_path, int width, int height);
 void receive_bubble(const char *text, const char *name);
 void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname);
@@ -148,6 +149,7 @@ void join_chat(GtkWidget *__attribute__((unused)) widget, gpointer id);
 void receive_bubble(const char *text, const char *name);
 void create_chat_menu();
 void display_users();
+char *get_send_time_str(time_t send_time);
 
 // CSS part
 void load_css();

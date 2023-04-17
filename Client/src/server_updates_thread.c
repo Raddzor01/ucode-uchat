@@ -26,7 +26,7 @@ void *server_update_thread()
             {
                 msg_push_back(&chat->messages, server_msg);
                 if (server_msg->user_id == account->id)
-                    text_bubble(server_msg->text, server_msg->msg_id);
+                    text_bubble(server_msg->text, server_msg->msg_id, server_msg->time);
                 else
                     receive_bubble(server_msg->text, server_msg->username);
             }

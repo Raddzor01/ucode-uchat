@@ -25,7 +25,7 @@ void send_message(GtkButton *__attribute__((unused)) button)
     msg_push_back(&account->current_chat->messages, new_node);
     pthread_mutex_unlock(&account->mutex);
 
-    text_bubble(text, server_msg_id);
+    text_bubble(text, server_msg_id, timer);
 
     // if (strcmp(text, "e") == 0)
     //     account->chat_id = 2;
