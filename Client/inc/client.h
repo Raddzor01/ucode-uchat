@@ -107,6 +107,7 @@ t_chat *find_chats_from_server(const char *str);
 int create_chat_in_server(const char *chat_name, int chat_type);
 int check_account_exists();
 bool check_account_from_server();
+int check_chat_id_from_server();
 int edit_msg_in_server(int msg_id, const char *new_text);
 int delete_msg_in_server(int msg_id);
 int get_last_msg_id_from_server(int chat_id);
@@ -152,7 +153,6 @@ void join_chat(GtkWidget *__attribute__((unused)) widget, gpointer id);
 void receive_bubble(const char *text, const char *name);
 void create_chat_menu();
 void display_users();
-int check_chat_id_from_server();
 char *get_send_time_str(time_t send_time);
 
 // CSS part

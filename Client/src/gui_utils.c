@@ -548,7 +548,17 @@ void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
 
     int chat_id = create_chat_in_server(text, CHAT_NORMAL);
 
-    int chat_id = check_chat_id_from_server();
+    t_chat *chat = (t_chat *)malloc(sizeof(t_chat));
+    chat->name = mx_strdup(text);
+    chat->id = chat_id;
+    chat->messages = NULL;
+    chat->next = NULL;
+    chat_push_front(&account->chats, chat);
+
+    GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
+    clear_box(box);
+
+    display_users();
 }
 
 void join_chat(GtkWidget *__attribute__((unused)) widget, gpointer user_data)

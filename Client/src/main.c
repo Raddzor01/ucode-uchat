@@ -25,6 +25,8 @@ int main(int argc, char **argv)
     info = malloc(sizeof(*info));
     account = malloc(sizeof(*account));
     pthread_mutex_init(&account->mutex, NULL);
+    set_start_of_current_day();
+    // account->chat_id = 1;
     account->chats = NULL;
     account->username = NULL;
     account->current_chat = NULL;
