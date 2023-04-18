@@ -8,7 +8,6 @@ void *thread_control(void *arg)
 
     while (true)
     {
-
         request = read_client_data(client_info->ssl);
         if (!request)
             continue;

@@ -9,6 +9,7 @@
 GtkWidget *main_window;
 t_info *info;
 t_account *account;
+// pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void freeing_memory();
 void set_start_of_current_day();
@@ -24,10 +25,12 @@ int main(int argc, char **argv)
     info = malloc(sizeof(*info));
     account = malloc(sizeof(*account));
     pthread_mutex_init(&account->mutex, NULL);
-    account->chat_id = 1;
     account->chats = NULL;
     account->username = NULL;
     account->current_chat = NULL;
+    account->is_busy = false;
+
+    set_start_of_current_day();
 
     // server part
 
@@ -35,7 +38,7 @@ int main(int argc, char **argv)
     SSL_CTX *ctx = NULL;
     SSL *ssl = NULL;
 
-    connect_to_server(argv[1], atoi(argv[2]), &server_socket, &ctx, &ssl);
+    connect_to_server(argv[1], atoi(argv[2]), server_socket, &ctx, &ssl);
 
     info->ssl = ssl;
     // gtk part
@@ -48,7 +51,7 @@ int main(int argc, char **argv)
 
     pthread_t thread;
 
-    // pthread_create(&thread, NULL, server_update_thread, NULL);
+    pthread_create(&thread, NULL, server_update_thread, NULL);
 
     gtk_main();
 

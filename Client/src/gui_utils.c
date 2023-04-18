@@ -4,7 +4,7 @@ guint cancel_handler_id;
 guint accept_handler_id;
 guint cancel_entry_id;
 guint accept_entry_id;
-bool username_display;
+bool username_display = TRUE;
 
 void change_chat_id(GtkWidget *widget, gpointer user_data);
 
@@ -33,7 +33,6 @@ void clear_window(GtkWidget *window)
 
 void clear_box(GtkWidget *box)
 {
-
     GList *children, *iter;
 
     children = gtk_container_get_children(GTK_CONTAINER(box));
@@ -205,11 +204,12 @@ void change_chat_id(GtkWidget *__attribute__((unused)) widget, gpointer user_dat
     while (msg != NULL)
     {
         if (msg->user_id == account->id)
-            text_bubble(msg->text, msg->msg_id);
+            text_bubble(msg->text, msg->msg_id, msg->time);
         else
             receive_bubble(msg->text, msg->username);
         msg = msg->next;
     }
+    gtk_widget_show_all(chat);
 }
 
 void receive_bubble(const char *text, const char *name)
@@ -303,7 +303,7 @@ void receive_bubble(const char *text, const char *name)
     username_display = FALSE;
 }
 
-void text_bubble(const char *text, int msg_id)
+void text_bubble(const char *text, int msg_id, time_t msg_time)
 {
     username_display = TRUE;
     GtkWidget *box_container = get_widget_by_name_r(main_window, "box_holder");
@@ -314,7 +314,7 @@ void text_bubble(const char *text, int msg_id)
     GtkWidget *time_box;
     GtkWidget *time_label;
 
-    char *time = {"16:30"};
+    char *time = get_send_time_str(msg_time);
 
     // text part
     gtk_widget_set_hexpand(box_container, FALSE);
@@ -546,15 +546,40 @@ void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
 {
     const char *text = gtk_entry_get_text(GTK_ENTRY(GTK_ENTRY(chatname)));
 
-    create_chat_in_server(text, CHAT_NORMAL);
+    int chat_id = create_chat_in_server(text, CHAT_NORMAL);
 
-    // int chat_id = check_chat_id_from_server();
+    int chat_id = check_chat_id_from_server();
 }
 
 void join_chat(GtkWidget *__attribute__((unused)) widget, gpointer user_data)
 {
     t_chat *chat = (t_chat *)user_data;
     chat->messages = get_chat_messages_from_server(chat->id);
-    chat_push_back(&account->chats, chat);
+    chat_push_front(&account->chats, chat);
     join_to_found_chat(chat->id);
+}
+
+char *get_send_time_str(time_t msg_time)
+{
+    char *result_str = NULL;
+    char s[20];
+    struct tm *time_struct = localtime(&msg_time);
+    for (int i = 0; i < 20; i++)
+        s[i] = 0;
+    //   strftime(s, 40, "%d.%m.%Y %H:%M:%S, %A", time_struct);
+
+    if (msg_time > info->current_day_time)
+    {
+        result_str = (char *)malloc(strftime(s, 20, "%H:%M", time_struct));
+        mx_strcpy(result_str, s);
+        return (result_str);
+    }
+    else if (msg_time < info->current_day_time)
+    {
+        result_str = (char *)malloc(strftime(s, 20, "%d.%m %H:%M", time_struct));
+        mx_strcpy(result_str, s);
+        return (result_str);
+    }
+
+    return result_str;
 }

@@ -16,6 +16,7 @@ void connect_new_client(SSL *ssl, int client_socket)
     // Set the client socket to non-blocking mode
     flags = fcntl(client_socket, F_GETFL, 0);
     fcntl(client_socket, F_SETFL, flags | O_NONBLOCK);
+    fcntl(client_socket, F_SETFD, O_NONBLOCK);
 
     client_info = (t_client_info *)malloc(sizeof(*client_info));
     client_info->socket_info = client_socket;
@@ -28,15 +29,14 @@ void connect_new_client(SSL *ssl, int client_socket)
 // read the information received from the client and write it as a string
 char *read_client_data(SSL *ssl)
 {
-    char buffer[BUFSIZ];
-    int n_bytes;
-
-    n_bytes = SSL_read(ssl, &buffer, sizeof(buffer));
-    if (n_bytes > 0)
+    char buffer[BUFSIZ] = "";
+    int bytes = 0;
+    while ((bytes = SSL_read(ssl, buffer, sizeof(buffer)) <= 0))
     {
-        buffer[n_bytes] = 0;
-        return mx_strdup(buffer);
+        if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
+            continue;
+        return NULL;
     }
-
-    return NULL;
+    // buffer[bytes] = 0;
+    return mx_strdup(buffer);
 }

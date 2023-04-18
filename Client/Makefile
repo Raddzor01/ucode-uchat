@@ -1,17 +1,15 @@
 CC = clang
-# CFLAGS = -std=gnu11 -pthread -g 
-# -Wall -Wextra -Werror -Wpedantic
+CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -pthread -gdwarf-4
 
 GTK_FLAGS = `pkg-config --cflags gtk+-3.0`
 GTK_LIBS_FLAGS = `pkg-config --cflags --libs gtk+-3.0`
-	
-CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -pthread -gdwarf-4
 
 OBJDIR = obj
-SRCDIR = src src/request_handlers src/gui
+SRCDIR = src
+SRCDIRS = $(SRCDIR) $(SRCDIR)/api $(SRCDIR)/lists_functions
 UCHAT = ../uchat
 
-SRC = $(foreach dir, $(SRCDIR), $(wildcard $(dir)/*.c))
+SRC = $(foreach dir, $(SRCDIRS), $(wildcard $(dir)/*.c))
 OBJS = $(OBJDIR)/*.o
 
 LIBMX_DIR = ../libs/libmx

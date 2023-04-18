@@ -53,6 +53,16 @@ void create_chat(cJSON *json, t_client_info *client_info)
                             chat_id, client_info->user->id, USERTYPE_ADMIN);
     db_execute_query(query);
 
+    cJSON *responde = cJSON_CreateObject();
+    cJSON_AddNumberToObject(responde, "type", REQ_CREATE_CHAT);
+    cJSON_AddNumberToObject(responde, "error_code", ERR_SUCCESS);
+    cJSON_AddNumberToObject(responde, "chat_id", chat_id);
+    char *json_str = cJSON_PrintUnformatted(responde);
+
+    SSL_write(client_info->ssl, json_str, mx_strlen(json_str));
+
+    mx_strdel(&json_str);
+    cJSON_Delete(responde);
     sqlite3_free(query);
     sqlite3_close(db);
 }

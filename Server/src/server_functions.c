@@ -14,18 +14,24 @@ int server_init(char *port)
 
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
+        mx_printerr(strerror(errno));
+        mx_printerr("\n");
         mx_logs(strerror(errno), ERROR_LOG);
         exit(EXIT_FAILURE);
     }
 
     if ((bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address))) == -1)
     {
+        mx_printerr(strerror(errno));
+        mx_printerr("\n");
         mx_logs(strerror(errno), ERROR_LOG);
         exit(EXIT_FAILURE);
     }
 
     if ((listen(server_socket, LISTEN_BACKLOG)) == -1)
     {
+        mx_printerr(strerror(errno));
+        mx_printerr("\n");
         mx_logs(strerror(errno), ERROR_LOG);
         exit(EXIT_FAILURE);
     }
@@ -42,13 +48,13 @@ void daemon()
     pid = fork();
     if (pid < 0)
     {
-        perror("Failed to fork");
+        mx_printerr("Failed to fork\n");
         exit(EXIT_FAILURE);
     }
 
     if (pid > 0)
     {
-        printf("Process id: %d\n", pid);
+        printf("Process id: %d \n", pid);
         exit(EXIT_SUCCESS);
     }
 
@@ -57,7 +63,7 @@ void daemon()
 
     if (sid < 0)
     {
-        perror("Failed to set session id");
+        mx_printerr("Failed to set session id\n");
         exit(EXIT_FAILURE);
     }
 
