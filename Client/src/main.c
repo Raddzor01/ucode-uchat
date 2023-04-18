@@ -51,9 +51,7 @@ int main(int argc, char **argv)
 
     log_menu(main_window);
 
-    pthread_t thread;
-
-    pthread_create(&thread, NULL, server_update_thread, NULL);
+    pthread_create(&account->server_update_thread, NULL, server_update_thread, NULL);
 
     gtk_main();
 

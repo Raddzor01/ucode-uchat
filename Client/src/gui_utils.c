@@ -564,7 +564,9 @@ void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
 void join_chat(GtkWidget *__attribute__((unused)) widget, gpointer user_data)
 {
     t_chat *chat = (t_chat *)user_data;
+    pthread_mutex_lock(&account->mutex);
     chat->messages = get_chat_messages_from_server(chat->id);
+    pthread_mutex_unlock(&account->mutex);
     chat_push_front(&account->chats, chat);
     join_to_found_chat(chat->id);
 }

@@ -10,7 +10,7 @@ void get_message_by_id(cJSON *json, t_client_info *client_info)
     int message_id = cJSON_GetObjectItemCaseSensitive(json, "message_id")->valueint;
 
     db = db_open();
-    query = sqlite3_mprintf("messages.id, messages.user_id, messages.chat_id, messages.message, messages.time, users.username, users.image_id FROM messages "
+    query = sqlite3_mprintf("SELECT messages.id, messages.user_id, messages.chat_id, messages.message, messages.time, users.username, users.image_id FROM messages "
                             "INNER JOIN users ON users.id = messages.user_id "
                             "WHERE messages.chat_id = %d AND messages.id = %d; ",
                             chat_id, message_id);

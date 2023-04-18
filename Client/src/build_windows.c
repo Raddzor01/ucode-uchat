@@ -35,22 +35,13 @@ void login_clicked(GtkWidget *widget)
         return;
 
     if (send_login_to_server(username, password) == 1)
-    {
-        // Login successful
         chat_window();
-    }
     else
-    {
-        // Login failed
         pop_up_window("Wrong password or login!");
-    }
 }
 
 void signup_clicked(GtkWidget *widget)
 {
-    if (info)
-    {
-    }
     (void)widget;
 
     const gchar *username = gtk_entry_get_text(GTK_ENTRY(username_entry));

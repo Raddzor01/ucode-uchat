@@ -44,7 +44,6 @@ bool check_account_from_server()
 
 int send_login_to_server(const char *username, const char *password)
 {
-    account->is_busy = true;
     cJSON *json = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(json, "type", REQ_USER_LOGIN);
@@ -57,8 +56,6 @@ int send_login_to_server(const char *username, const char *password)
 
     cJSON_Delete(json);
     free(json_str);
-
-    account->is_busy = false;
 
     return check_account_from_server();
 }

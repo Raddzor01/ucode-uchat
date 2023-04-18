@@ -2,7 +2,6 @@
 
 int delete_msg_in_server(int msg_id)
 {
-
     account->is_busy = true;
 
     cJSON *json = cJSON_CreateObject();

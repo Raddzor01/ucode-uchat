@@ -17,7 +17,7 @@ void get_last_message_id(cJSON *json, t_client_info *client_info)
     }
 
     db = db_open();
-    query = sqlite3_mprintf("SELECT id FROM messages WHERE chat_id = %d ORDER BY id DESC LIMIT 1;",
+    query = sqlite3_mprintf("SELECT id FROM messages WHERE chat_id = %d ORDER BY id DESC LIMIT 1; ",
                             chat_id);
     stmt = db_execute_query_and_return_stmt(query, db);
 

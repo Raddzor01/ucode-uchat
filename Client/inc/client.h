@@ -16,7 +16,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
- #include <strings.h>
+#include <strings.h>
 // #include <sqlite3.h>
 #include <time.h>
 
@@ -29,41 +29,46 @@
 #define MAX_NUMBER_OF_CHARACTERS 16
 
 // struct for sending to server
-typedef struct s_info {
-  GtkWidget *entry;
-  // GtkTextView *text_view;
-  SSL *ssl;
-  int server_socket;
-  int msg_id_for_edit;
-  time_t current_day_time;
+typedef struct s_info
+{
+    GtkWidget *entry;
+    // GtkTextView *text_view;
+    SSL *ssl;
+    int server_socket;
+    int msg_id_for_edit;
+    time_t current_day_time;
 } t_info;
 
-typedef struct s_msg {
-  int msg_id;
-  int user_id;
-  char *text;
-  char *username;
-  int time;
-  struct s_msg *next;
+typedef struct s_msg
+{
+    int msg_id;
+    int user_id;
+    char *text;
+    char *username;
+    int time;
+    struct s_msg *next;
 } t_msg;
 
-typedef struct s_chat {
-  int id;
-  char *name;
-  t_msg *messages;
-  struct s_chat *next;
+typedef struct s_chat
+{
+    int id;
+    char *name;
+    t_msg *messages;
+    struct s_chat *next;
 } t_chat;
 
 // user data structure
-typedef struct s_account {
-  char *username;
-  int id;
-  
-  pthread_mutex_t mutex;
-  bool is_busy;
+typedef struct s_account
+{
+    char *username;
+    int id;
 
-  t_chat *chats;
-  t_chat *current_chat;
+    pthread_t server_update_thread;
+    pthread_mutex_t mutex;
+    bool is_busy;
+
+    t_chat *chats;
+    t_chat *current_chat;
 } t_account;
 
 int send_file_to_server(char *filedir);
@@ -146,7 +151,7 @@ void edit_msg(GtkButton *__attribute__((unused)) button, gpointer data);
 void edit_accept(GtkButton *__attribute__((unused)) button, gpointer data);
 void cancel_edit(GtkButton *__attribute__((unused)) button, gpointer data);
 void change_msg_id_for_edit(GtkButton *__attribute__((unused)) button, gpointer msg_id);
-GtkWidget* create_image_button(char* image_path, int width, int height);
+GtkWidget *create_image_button(char *image_path, int width, int height);
 void receive_bubble(const char *text, const char *name);
 void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname);
 void join_chat(GtkWidget *__attribute__((unused)) widget, gpointer id);

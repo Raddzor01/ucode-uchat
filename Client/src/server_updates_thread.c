@@ -43,7 +43,7 @@ void *server_update_thread()
                 //     text_bubble(server_msg->text, server_msg->msg_id);
                 // else
                 //     receive_bubble(server_msg->text, server_msg->username);
-                g_usleep(100000);
+                g_usleep(500000);
             }
 
             chat = chat->next;

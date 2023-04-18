@@ -2,9 +2,7 @@
 
 int send_exit_to_server()
 {
-
-    account->is_busy = true;
-
+    pthread_cancel(account->server_update_thread);
     if (account->username != NULL)
         send_logout_to_server();
 
@@ -17,8 +15,6 @@ int send_exit_to_server()
 
     cJSON_Delete(json);
     free(json_str);
-
-    account->is_busy = false;
 
     return 0;
 }
