@@ -2,7 +2,6 @@
 
 int join_to_found_chat(int chat_id)
 {
-
     account->is_busy = true;
 
     cJSON *json = cJSON_CreateObject();

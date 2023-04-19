@@ -21,20 +21,18 @@ t_msg *get_chat_messages_from_server(int chat_id)
     cJSON *messages_arr = cJSON_GetObjectItemCaseSensitive(json, "messages");
     t_msg *msgs = NULL;
 
-    cJSON *temp_json = NULL;
+    cJSON *message_json = NULL;
     for (int i = 0; i < cJSON_GetArraySize(messages_arr); i++)
     {
-        temp_json = cJSON_GetArrayItem(messages_arr, i);
+        message_json = cJSON_GetArrayItem(messages_arr, i);
 
-        t_msg *temp = (t_msg *)malloc(sizeof(t_msg));
-        temp->text = mx_strdup(cJSON_GetObjectItemCaseSensitive(temp_json, "message")->valuestring);
-        temp->msg_id = cJSON_GetObjectItem(temp_json, "message_id")->valueint;
-        temp->user_id = cJSON_GetObjectItem(temp_json, "user_id")->valueint;
-        temp->username = mx_strdup(cJSON_GetObjectItemCaseSensitive(temp_json, "username")->valuestring);
-        temp->time = cJSON_GetObjectItemCaseSensitive(temp_json, "date")->valueint;
-        temp->next = NULL;
+        t_msg *new_node = msg_prepare_node(cJSON_GetObjectItem(message_json, "message_id")->valueint,
+                                        cJSON_GetObjectItemCaseSensitive(message_json, "message")->valuestring,
+                                        cJSON_GetObjectItemCaseSensitive(message_json, "date")->valueint,
+                                        cJSON_GetObjectItem(message_json, "user_id")->valueint,
+                                        cJSON_GetObjectItemCaseSensitive(message_json, "username")->valuestring);
 
-        msg_push_back(&msgs, temp);
+        msg_push_back(&msgs, new_node);
     }
 
     cJSON_Delete(json);

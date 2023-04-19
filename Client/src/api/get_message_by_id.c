@@ -26,13 +26,11 @@ t_msg *get_msg_by_id_from_server(int msg_id, int chat_id)
     if(message_json == NULL)
         return NULL;
 
-    t_msg *new_node = (t_msg *)malloc(sizeof(t_msg));
-    new_node->text = mx_strdup(cJSON_GetObjectItemCaseSensitive(message_json, "message")->valuestring);
-    new_node->msg_id = cJSON_GetObjectItem(message_json, "message_id")->valueint;
-    new_node->user_id = cJSON_GetObjectItem(message_json, "user_id")->valueint;
-    new_node->username = mx_strdup(cJSON_GetObjectItemCaseSensitive(message_json, "username")->valuestring);
-    new_node->time = cJSON_GetObjectItemCaseSensitive(message_json, "time")->valueint;
-    new_node->next = NULL;
+    t_msg *new_node = msg_prepare_node(msg_id,
+                                    cJSON_GetObjectItemCaseSensitive(message_json, "message")->valuestring,
+                                    cJSON_GetObjectItemCaseSensitive(message_json, "time")->valueint,
+                                    cJSON_GetObjectItem(message_json, "user_id")->valueint,
+                                    cJSON_GetObjectItemCaseSensitive(message_json, "username")->valuestring);
 
     return new_node;
 }

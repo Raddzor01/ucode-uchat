@@ -201,19 +201,19 @@ void change_chat_id(GtkWidget *__attribute__((unused)) widget, gpointer user_dat
     GtkWidget *chat = get_widget_by_name_r(main_window, "box_holder");
     clear_box(chat);
 
-    t_msg *msg = account->current_chat->messages;
-    while (msg != NULL)
+    t_msg *message = account->current_chat->messages;
+    while (message != NULL)
     {
-        if (msg->user_id == account->id)
-            text_bubble(msg->text, msg->msg_id, msg->time);
+        if (message->user_id == account->id)
+            text_bubble(message);
         else
-            receive_bubble(msg->text, msg->username);
-        msg = msg->next;
+            receive_bubble(message);
+        message = message->next;
     }
     gtk_widget_show_all(chat);
 }
 
-void receive_bubble(const char *text, const char *name)
+void receive_bubble(t_msg *message)
 {
     GtkWidget *box_container = get_widget_by_name_r(main_window, "box_holder");
 
@@ -223,8 +223,6 @@ void receive_bubble(const char *text, const char *name)
     GtkWidget *box;
     GtkTextBuffer *buffer;
     GtkWidget *time_label;
-
-    char *time = {"16:30"};
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
@@ -255,7 +253,7 @@ void receive_bubble(const char *text, const char *name)
     add_class(username_box, "receive");
     if (username_display)
     {
-        username = gtk_label_new(name);
+        username = gtk_label_new(message->username);
         add_class(username, "username");
         gtk_widget_set_halign(username, GTK_ALIGN_START);
         gtk_widget_set_valign(username, GTK_ALIGN_END);
@@ -273,7 +271,7 @@ void receive_bubble(const char *text, const char *name)
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), FALSE);
     gtk_box_pack_start(GTK_BOX(username_box), text_view, FALSE, TRUE, 0);
 
-    PangoLayout *layout = gtk_widget_create_pango_layout(text_view, text);
+    PangoLayout *layout = gtk_widget_create_pango_layout(text_view, message->text);
     int width, height;
     pango_layout_get_pixel_size(layout, &width, &height);
 
@@ -290,10 +288,10 @@ void receive_bubble(const char *text, const char *name)
     }
 
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
-    gtk_text_buffer_set_text(buffer, text, strlen(text));
+    gtk_text_buffer_set_text(buffer, message->text, mx_strlen(message->text));
 
     // show time
-    time_label = gtk_label_new(time);
+    time_label = gtk_label_new(get_send_time_str(message->time));
     gtk_widget_set_halign(time_label, GTK_ALIGN_END);
     gtk_widget_set_valign(time_label, GTK_ALIGN_START);
     add_class(time_label, "time");
@@ -304,7 +302,7 @@ void receive_bubble(const char *text, const char *name)
     username_display = FALSE;
 }
 
-void text_bubble(const char *text, int msg_id, time_t msg_time)
+void text_bubble(t_msg *message)
 {
     username_display = TRUE;
     GtkWidget *box_container = get_widget_by_name_r(main_window, "box_holder");
@@ -314,8 +312,6 @@ void text_bubble(const char *text, int msg_id, time_t msg_time)
     GtkTextBuffer *buffer;
     GtkWidget *time_box;
     GtkWidget *time_label;
-
-    char *time = get_send_time_str(msg_time);
 
     // text part
     gtk_widget_set_hexpand(box_container, FALSE);
@@ -343,7 +339,7 @@ void text_bubble(const char *text, int msg_id, time_t msg_time)
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), FALSE);
     gtk_container_add(GTK_CONTAINER(time_box), text_view);
 
-    PangoLayout *layout = gtk_widget_create_pango_layout(text_view, text);
+    PangoLayout *layout = gtk_widget_create_pango_layout(text_view, message->text);
     int width, height;
     pango_layout_get_pixel_size(layout, &width, &height);
 
@@ -361,10 +357,10 @@ void text_bubble(const char *text, int msg_id, time_t msg_time)
     }
 
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
-    gtk_text_buffer_set_text(buffer, text, strlen(text));
+    gtk_text_buffer_set_text(buffer, message->text, mx_strlen(message->text));
 
     // show time
-    time_label = gtk_label_new(time);
+    time_label = gtk_label_new(get_send_time_str(message->time));
     gtk_widget_set_halign(time_label, GTK_ALIGN_START);
     gtk_widget_set_valign(time_label, GTK_ALIGN_START);
     add_class(time_label, "time");
@@ -380,7 +376,7 @@ void text_bubble(const char *text, int msg_id, time_t msg_time)
     gtk_widget_set_valign(edit_button, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(box), edit_button, FALSE, FALSE, 0);
 
-    g_signal_connect(G_OBJECT(edit_button), "clicked", G_CALLBACK(change_msg_id_for_edit), GINT_TO_POINTER(msg_id));
+    g_signal_connect(G_OBJECT(edit_button), "clicked", G_CALLBACK(change_msg_id_for_edit), GINT_TO_POINTER(message->msg_id));
     g_signal_connect(G_OBJECT(edit_button), "clicked", G_CALLBACK(edit_msg), text_view);
 
     // delete button
@@ -391,7 +387,7 @@ void text_bubble(const char *text, int msg_id, time_t msg_time)
     gtk_widget_set_valign(delete_button, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(box), delete_button, FALSE, FALSE, 0);
 
-    g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg_id), GINT_TO_POINTER(msg_id));
+    g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg_id), GINT_TO_POINTER(message->msg_id));
     g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg), box);
 
     // scroll to the bottom

@@ -30,11 +30,8 @@ t_chat *find_chats_from_server(const char *search_pattern)
     {
         temp_json = cJSON_GetArrayItem(json_2, i);
 
-        t_chat *new_node = (t_chat *)malloc(sizeof(t_chat));
-        new_node->name = mx_strdup(cJSON_GetObjectItemCaseSensitive(temp_json, "chat_name")->valuestring);
-        new_node->id = cJSON_GetObjectItem(temp_json, "chat_id")->valueint;
-        new_node->messages = get_chat_messages_from_server(new_node->id);
-        new_node->next = NULL;
+        t_chat *new_node = chat_prepare_node(cJSON_GetObjectItem(temp_json, "chat_id")->valueint,
+                                            cJSON_GetObjectItemCaseSensitive(temp_json, "chat_name")->valuestring);
         chat_push_back(&chats, new_node);
     }
     pthread_mutex_unlock(&account->mutex);

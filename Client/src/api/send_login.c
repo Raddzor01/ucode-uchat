@@ -28,21 +28,20 @@ bool check_account_from_server()
         return 0;
     }
 
-    char *user_image_name = mx_strjoin(cJSON_GetObjectItemCaseSensitive(json, "filename")->valuestring, cJSON_GetObjectItemCaseSensitive(json, "extension")->valuestring);
-    char *user_image_path = mx_strjoin(DATA_DIR, user_image_name);
-
     pthread_mutex_lock(&account->mutex);
     account->id = cJSON_GetObjectItem(json, "id")->valueint;
     account->username = mx_strdup(cJSON_GetObjectItemCaseSensitive(json, "username")->valuestring);
     account->image_id = cJSON_GetObjectItem(json, "image_id")->valueint;
-    if(account->image_id > 1)
+    if (account->image_id > 1)
+    {
+        char *user_image_name = mx_strjoin(cJSON_GetObjectItemCaseSensitive(json, "filename")->valuestring, cJSON_GetObjectItemCaseSensitive(json, "extension")->valuestring);
+        char *user_image_path = mx_strjoin(DATA_DIR, user_image_name);
         account->image_path = user_image_path;
+        mx_strdel(&user_image_name);
+    }
     pthread_mutex_unlock(&account->mutex);
-    // char *password = cJSON_GetObjectItem(json, "password")->valuestring;
-    // printf("%d\t%s\n", account->id, account->username);
+
     cJSON_Delete(json);
-    mx_strdel(&user_image_name);
-    // mx_strdel(&user_image_path);
     mx_strdel(&json_str);
 
     account->is_busy = false;

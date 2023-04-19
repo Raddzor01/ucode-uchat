@@ -2,9 +2,9 @@
 
 gboolean update_chatlist_from_thread(gpointer user_data)
 {
-    t_msg *server_msg = (t_msg *)user_data;
-    if (server_msg->user_id != account->id)
-        receive_bubble(server_msg->text, server_msg->username);
+    t_msg *server_message = (t_msg *)user_data;
+    if (server_message->user_id != account->id)
+        receive_bubble(server_message);
     return FALSE;
 }
 
@@ -31,16 +31,16 @@ void *server_update_thread()
                 continue;
             }
 
-            t_msg *server_msg = get_msg_by_id_from_server(last_server_msg_id, chat->id);
+            t_msg *server_message = get_msg_by_id_from_server(last_server_msg_id, chat->id);
             if (last_server_msg_id > last_client_msg_id)
             {
-                msg_push_back(&chat->messages, server_msg);
+                msg_push_back(&chat->messages, server_message);
                 if(is_current)
-                    g_idle_add(update_chatlist_from_thread, (gpointer)server_msg);
-                // if (server_msg->user_id == account->id)
-                //     text_bubble(server_msg->text, server_msg->msg_id);
+                    g_idle_add(update_chatlist_from_thread, (gpointer)server_message);
+                // if (server_message->user_id == account->id)
+                //     text_bubble(server_message->text, server_message->msg_id);
                 // else
-                //     receive_bubble(server_msg->text, server_msg->username);
+                //     receive_bubble(server_message->text, server_message->username);
                 g_usleep(10000);
             }
             g_usleep(500000);

@@ -34,6 +34,7 @@ int send_file_to_server(char *str)
 	char buffer[BUFSIZ];
 	size_t bytes_read;
 
+	sleep(1);
 	while ((bytes_read = fread(buffer, sizeof(char), BUFSIZ, picture)) > 0)
 	{
 		if (send(info->server_socket, buffer, bytes_read, 0) < 0)
