@@ -29,12 +29,14 @@ void connect_ssl(SSL **ssl, int server_fd, SSL_CTX **ctx)
     }
 }
 
-void connect_to_server(const char *ip_address, int port, int server_fd,
-                       SSL_CTX **ctx, SSL **ssl)
+void connect_to_server(const char *ip_address, int port)
 {
+    int server_fd = 0;
+    SSL_CTX *ctx = NULL;
+    SSL *ssl = NULL;
     struct sockaddr_in server_addr;
 
-    init_ssl(ctx);
+    init_ssl(&ctx);
 
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = inet_addr(ip_address);
@@ -44,23 +46,23 @@ void connect_to_server(const char *ip_address, int port, int server_fd,
 
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
-        mx_printerr("1");
+        mx_printerr("Error while creating file descriptor\n");
         exit(EXIT_FAILURE);
     }
 
-    if (connect(server_fd, (struct sockaddr *)&server_addr,
-                sizeof(server_addr)) == -1)
+    if (connect(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
     {
-        mx_printerr("2");
+        mx_printerr("Error: Server is not online\n");
         exit(EXIT_FAILURE);
     }
 
-    connect_ssl(ssl, server_fd, ctx);
+    connect_ssl(&ssl, server_fd, &ctx);
 
     int flags = fcntl(server_fd, F_GETFL, 0);
     fcntl(server_fd, F_SETFL, flags | O_NONBLOCK);
     fcntl(server_fd, F_SETFD, O_NONBLOCK);
 
     info->server_socket = server_fd;
-    info->ssl = *ssl;
+    info->ssl = ssl;
+    info->ctx = ctx;
 }

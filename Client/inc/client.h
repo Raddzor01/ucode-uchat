@@ -34,10 +34,13 @@
 // struct for sending to server
 typedef struct s_info
 {
+    int server_socket;
+    SSL_CTX *ctx;
+    SSL *ssl;
+
     GtkWidget *entry;
     // GtkTextView *text_view;
-    SSL *ssl;
-    int server_socket;
+
     int msg_id_for_edit;
     time_t current_day_time;
 } t_info;
@@ -132,8 +135,7 @@ bool get_image_from_server(int image_id);
 // Conection to the server
 void init_ssl(SSL_CTX **ctx);
 void connect_ssl(SSL **ssl, int server_fd, SSL_CTX **ctx);
-void connect_to_server(const char *ip_address, int port, int server_fd,
-                       SSL_CTX **ctx, SSL **ssl);
+void connect_to_server(const char *ip_address, int port);
 
 // GTK part
 void clear_box(GtkWidget *box);

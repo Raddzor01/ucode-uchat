@@ -11,40 +11,37 @@ t_info *info;
 t_account *account;
 // pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void freeing_memory();
-void set_start_of_current_day();
+static void free_memory();
+static void set_start_of_current_day();
 
-int main(int argc, char **argv)
+static void structs_init()
 {
-
-    // announcement part
-
-    (void)argc;
-    srand(time(NULL));
-
     info = malloc(sizeof(*info));
     account = malloc(sizeof(*account));
+
     pthread_mutex_init(&account->mutex, NULL);
-    set_start_of_current_day();
-    // account->chat_id = 1;
     account->chats = NULL;
     account->username = NULL;
     account->current_chat = NULL;
     account->is_busy = false;
-
     set_start_of_current_day();
 
+    info->ctx = NULL;
+    info->ssl = NULL;
+    info->server_socket = 0;
+}
+
+int main(int argc, char **argv)
+{
+    (void)argc;
+    srand(time(NULL));
+
+    structs_init();
+
     // server part
+    connect_to_server(argv[1], atoi(argv[2]));
 
-    int server_socket = 0;
-    SSL_CTX *ctx = NULL;
-    SSL *ssl = NULL;
-
-    connect_to_server(argv[1], atoi(argv[2]), server_socket, &ctx, &ssl);
-
-    info->ssl = ssl;
     // gtk part
-
     gtk_init(&argc, &argv);
 
     load_css();
@@ -57,20 +54,9 @@ int main(int argc, char **argv)
 
     send_exit_to_server();
 
-    freeing_memory();
+    free_memory();
 
     return 0;
-}
-
-void freeing_memory()
-{
-    pthread_mutex_destroy(&account->mutex);
-
-    free(account);
-
-    free(info->ssl);
-
-    free(info);
 }
 
 void set_start_of_current_day()
@@ -92,3 +78,17 @@ void set_start_of_current_day()
     // free(f);
     // free(u);
 }
+
+void free_memory()
+{
+    pthread_mutex_destroy(&account->mutex);
+
+    SSL_free(info->ssl);
+    SSL_CTX_free(info->ctx);
+    free(info);
+    info = NULL;
+
+    free(account);
+    account = NULL;
+}
+
