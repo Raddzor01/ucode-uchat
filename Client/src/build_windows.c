@@ -145,6 +145,7 @@ void chat_info() {
     pixbuf = gdk_pixbuf_scale_simple(pixbuf, 40, 40, GDK_INTERP_BILINEAR);
 
     image = gtk_image_new_from_pixbuf(pixbuf);
+    g_object_unref(pixbuf);
 
     chat_name = gtk_label_new(account->current_chat->name);
 
@@ -212,13 +213,12 @@ void build_chat_window()
     gtk_widget_set_name(box_container, "box_holder");
 
     entry = gtk_entry_new();
+    gtk_box_pack_start(GTK_BOX(input_box), entry, TRUE, TRUE, 0);
     gtk_widget_set_size_request(entry, 400, 10);
     gtk_widget_set_hexpand(entry, TRUE);
     gtk_widget_set_halign(entry, GTK_ALIGN_FILL);
     add_class(entry, "chat_text_entry");
     gtk_widget_set_name(entry, "chat_text_entry");
-
-    gtk_box_pack_start(GTK_BOX(input_box), entry, FALSE, FALSE, 0);
 
     g_signal_connect(entry, "activate", G_CALLBACK(send_message), NULL);
 
@@ -321,7 +321,7 @@ void build_users(GtkWidget *grid)
     gtk_label_set_markup(GTK_LABEL(edit_profile), "<u>Edit Profile</u>");
     gtk_container_add(GTK_CONTAINER(edit_profile_box), edit_profile);
 
-    // g_signal_connect(edit_profile_box, "button_press_event", G_CALLBACK(), NULL);
+    g_signal_connect(edit_profile_box, "button_press_event", G_CALLBACK(build_edit_profile), NULL);
 
     GtkWidget *log_out_box = gtk_event_box_new();
     gtk_box_pack_start(GTK_BOX(link_box), log_out_box, FALSE, FALSE, 10);
@@ -453,4 +453,98 @@ void display_users()
         user_box(chat, false);
         chat = chat->next;
     }
+}
+
+GtkWidget *edit_window;
+
+void build_edit_profile () {
+    if (window_check == true)
+        return;
+
+    // GtkWidget *window;
+
+    edit_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(edit_window), 300, 1);
+    g_signal_connect(edit_window, "delete_event", G_CALLBACK(close_window), edit_window);
+
+    GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_container_add(GTK_CONTAINER(edit_window), box);
+
+    GtkWidget *surprize = gtk_label_new(NULL);
+    gtk_label_set_markup(GTK_LABEL(surprize), "<a href=\"https://youtu.be/klfT41uZniI\">Click me!</a>");
+    gtk_label_set_use_markup(GTK_LABEL(surprize), TRUE);
+    add_class(surprize, "links");
+    gtk_widget_set_halign(surprize, GTK_ALIGN_END);
+    gtk_widget_set_valign(surprize, GTK_ALIGN_START);
+    gtk_box_pack_start(GTK_BOX(box), surprize, FALSE, FALSE, 0);
+
+    GtkWidget *profile_info = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+    gtk_box_pack_start(GTK_BOX(box), profile_info, FALSE, FALSE, 0);
+
+    GtkWidget *edit_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_box_pack_start(GTK_BOX(box), edit_box, FALSE, FALSE, 0);
+    gtk_widget_set_name(edit_box, "edit");
+
+    GdkPixbuf *pixbuf;
+
+    pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", NULL);
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 60, 60, GDK_INTERP_BILINEAR);
+
+    GtkWidget *image = gtk_image_new_from_pixbuf(pixbuf);
+    g_object_unref(pixbuf);
+    gtk_box_pack_start(GTK_BOX(profile_info), image, FALSE, FALSE, 0);
+
+    GtkWidget *text_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_box_pack_start(GTK_BOX(profile_info), text_box, FALSE, FALSE, 0);
+
+    GtkWidget *name = gtk_text_view_new();
+    add_class(text_box, "edit");
+    gtk_widget_set_name(name, "username");
+    gtk_widget_set_halign(name, GTK_ALIGN_START);
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(name), FALSE);
+    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(name), FALSE);
+    gtk_box_pack_start(GTK_BOX(text_box), name, FALSE, FALSE, 0);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(name));
+    gtk_text_buffer_set_text(buffer, account->username, -1);
+
+    GtkWidget *edit_profile_box = gtk_event_box_new();
+    gtk_box_pack_start(GTK_BOX(text_box), edit_profile_box, FALSE, FALSE, 10);
+    GtkWidget *edit_profile = gtk_label_new(NULL);
+    gtk_label_set_markup(GTK_LABEL(edit_profile), "<u>Change Name or Password</u>");
+    gtk_container_add(GTK_CONTAINER(edit_profile_box), edit_profile);
+    add_class(edit_profile, "links");
+
+    g_signal_connect(edit_profile_box, "button_press_event", G_CALLBACK(edit_username), NULL);
+
+    gtk_widget_show_all(edit_window);
+    window_check = true;
+}
+
+void edit_username() {
+
+    GtkWidget *box = get_widget_by_name_r(edit_window, "edit");
+
+    GtkWidget *username_label = gtk_label_new("Username:");
+    gtk_widget_set_valign(username_label, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(box), username_label, FALSE, FALSE, 0);
+
+    GtkWidget *name_entry = gtk_entry_new();
+    gtk_widget_set_name(name_entry, "username_entry");
+    gtk_entry_set_text(GTK_ENTRY(name_entry), account->username);
+    gtk_box_pack_start(GTK_BOX(box), name_entry, FALSE, FALSE, 0);
+
+    GtkWidget *password_label = gtk_label_new("Password:");
+    gtk_widget_set_valign(password_label, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(box), password_label, FALSE, FALSE, 0);
+
+    GtkWidget *pass_entry = gtk_entry_new();
+    gtk_widget_set_name(pass_entry, "password_entry");
+    gtk_entry_set_visibility(GTK_ENTRY(pass_entry), FALSE);
+    gtk_box_pack_start(GTK_BOX(box), pass_entry, FALSE, FALSE, 0);
+
+    GtkWidget *accept_button = gtk_button_new_with_label("Accept");
+    gtk_box_pack_start(GTK_BOX(box), accept_button, FALSE, FALSE, 0);
+    g_signal_connect(accept_button, "clicked", G_CALLBACK(accept_clicked), edit_window);
+    gtk_widget_show_all(box);
 }

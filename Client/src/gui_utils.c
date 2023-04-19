@@ -596,3 +596,23 @@ char *get_send_time_str(time_t msg_time)
 
     return result_str;
 }
+
+void accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window) {
+    GtkWidget *box = get_widget_by_name_r(window, "edit");
+    GtkWidget *username_label = get_widget_by_name_r(window, "username");
+
+    const gchar *username = gtk_entry_get_text(GTK_ENTRY(get_widget_by_name_r(window, "username_entry")));
+
+    // const gchar *password = gtk_entry_get_text(GTK_ENTRY(get_widget_by_name_r(window, "password_entry")));
+
+    if (strlen(username)) {
+        // account->username = username;
+        GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(username_label));
+
+        gtk_text_buffer_set_text(buffer, username, -1);
+    }
+
+    clear_box(box);
+    gtk_window_resize(GTK_WINDOW(window), 300, 1);
+    gtk_widget_show_all(window);
+}

@@ -160,6 +160,9 @@ void receive_bubble(const char *text, const char *name);
 void create_chat_menu();
 void display_users();
 char *get_send_time_str(time_t send_time);
+void build_edit_profile ();
+void edit_username();
+void accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window);
 
 // CSS part
 void load_css();
