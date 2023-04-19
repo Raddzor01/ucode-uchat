@@ -147,6 +147,7 @@ void build_signup();
 GtkWidget *get_widget_by_name_r(GtkWidget *container, char *name);
 void build_chat_window();
 void pop_up_window(char *text);
+void chat_info();
 void add_class(GtkWidget *widget, char *class_name);
 void file_select(GtkWidget *widget, gpointer data);
 void build_users(GtkWidget *grid);
@@ -167,6 +168,9 @@ void receive_bubble(const char *text, const char *name);
 void create_chat_menu();
 void display_users();
 char *get_send_time_str(time_t send_time);
+void build_edit_profile ();
+void edit_username();
+void accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window);
 
 // CSS part
 void load_css();
