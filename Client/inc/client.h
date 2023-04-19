@@ -139,6 +139,7 @@ void build_signup();
 GtkWidget *get_widget_by_name_r(GtkWidget *container, char *name);
 void build_chat_window();
 void pop_up_window(char *text);
+void chat_info();
 void add_class(GtkWidget *widget, char *class_name);
 void file_select(GtkWidget *widget, gpointer data);
 void build_users(GtkWidget *grid);

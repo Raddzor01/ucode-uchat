@@ -194,6 +194,7 @@ void change_chat_id(GtkWidget *__attribute__((unused)) widget, gpointer user_dat
 {
     build_chat_window();
     account->current_chat = (t_chat *)user_data;
+    chat_info();
 
     printf("\ncurrent chat: %d\n", account->current_chat->id);
 
