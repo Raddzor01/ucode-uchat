@@ -215,7 +215,6 @@ void build_chat_window()
     gtk_widget_set_size_request(entry, 400, 10);
     gtk_widget_set_hexpand(entry, TRUE);
     gtk_widget_set_halign(entry, GTK_ALIGN_FILL);
-    gtk_box_pack_start(GTK_BOX(input_box), entry, TRUE, TRUE, 0);
     add_class(entry, "chat_text_entry");
     gtk_widget_set_name(entry, "chat_text_entry");
 
