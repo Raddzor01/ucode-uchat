@@ -17,6 +17,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <strings.h>
+#include <sys/ioctl.h>
 // #include <sqlite3.h>
 #include <time.h>
 
@@ -24,6 +25,8 @@
 
 // local host
 #define IP_ADDRESS "127.0.0.1"
+
+#define DATA_DIR "Client/data/"
 
 #define MIN_NUMBER_OF_CHARACTERS 1
 #define MAX_NUMBER_OF_CHARACTERS 16
@@ -45,7 +48,7 @@ typedef struct s_msg
     int user_id;
     char *text;
     char *username;
-    int time;
+    time_t time;
     struct s_msg *next;
 } t_msg;
 
@@ -62,6 +65,8 @@ typedef struct s_account
 {
     char *username;
     int id;
+    int image_id;
+    char *image_path;
 
     pthread_t server_update_thread;
     pthread_mutex_t mutex;
@@ -95,6 +100,8 @@ void chat_clear_list(t_chat **list);
 int chat_list_size(t_chat *list);
 
 void *server_update_thread();
+char *get_user_image(int image_id);
+
 
 // Interaction with the server
 int send_sign_up_to_server(const char *username, const char *password);
@@ -118,6 +125,7 @@ int delete_msg_in_server(int msg_id);
 int get_last_msg_id_from_server(int chat_id);
 t_msg *get_msg_by_id_from_server(int msg_id, int chat_id);
 gboolean update_chatlist_from_thread(gpointer user_data);
+bool get_image_from_server(int image_id);
 
 // Conection to the server
 void init_ssl(SSL_CTX **ctx);

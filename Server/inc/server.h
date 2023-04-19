@@ -36,15 +36,15 @@
 
 #define TABLE_SIZE 100
 
-// max size 8 mb
-#define MAX_FILE_SIZE 8388608
-
 typedef struct s_user_info
 {
     int id;
     char *username;
     char *password;
     int image_id;
+    char *filename;
+    char *extension;
+    char *file_path;
 } t_user_info;
 typedef struct s_client_info
 {

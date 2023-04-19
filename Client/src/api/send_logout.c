@@ -14,9 +14,9 @@ int send_logout_to_server()
     cJSON_Delete(json);
 
     mx_strdel(&account->username);
+    pthread_cancel(account->server_update_thread);
     chat_clear_list(&account->chats);
-
-    account->is_busy = false;
-
+    pthread_create(&account->server_update_thread, NULL, server_update_thread, NULL);
+    
     return 0;
 }

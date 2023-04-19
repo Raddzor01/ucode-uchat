@@ -5,7 +5,7 @@ void insert_message_into_db(cJSON *json);
 void send_message(cJSON *json, t_client_info *client_info)
 {
     int user_id;
-    int chat_id;
+    unsigned long chat_id;
     int message_id;
     cJSON *responde_json;
     char *json_str;
@@ -45,7 +45,7 @@ void insert_message_into_db(cJSON *json)
     time = cJSON_GetObjectItemCaseSensitive(json, "time")->valueint;
 
     query = sqlite3_mprintf("INSERT INTO messages (user_id, chat_id, message, time) VALUES(%d, %d, ?, %ld); ",
-                            user_id, chat_id, message, time);
+                            user_id, chat_id, time);
     sqlite3_prepare_v2(db, query, -1, &stmt, NULL);
     sqlite3_bind_text(stmt, 1, message, -1, SQLITE_STATIC);
     sqlite3_step(stmt);

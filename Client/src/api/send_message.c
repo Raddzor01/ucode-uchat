@@ -17,6 +17,7 @@ time_t send_message_to_server(const char *message)
     cJSON_AddNumberToObject(json, "time", current_time);
     char *json_str = cJSON_PrintUnformatted(json);
 
+    pthread_mutex_lock(&account->mutex);
     SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
     cJSON_Delete(json);
@@ -32,6 +33,7 @@ int get_msg_id()
     account->is_busy = true;
 
     char *json_str = read_from_server();
+    pthread_mutex_unlock(&account->mutex);
     cJSON *json = cJSON_Parse(json_str);
     int msg_id;
 

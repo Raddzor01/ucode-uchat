@@ -207,6 +207,18 @@ void logout_event(GtkWidget *__attribute__((unused)) widget)
     send_logout_to_server();
 }
 
+char *get_user_image(int image_id)
+{
+    if(image_id == 1)
+        return "Client/Ass/HOG.png";
+    if(access(account->image_path, F_OK) == 0)
+        return account->image_path;
+    
+    if(!get_image_from_server(image_id))
+        return account->image_path;
+    return "Client/Ass/HOG.png";
+}
+
 void build_users(GtkWidget *grid)
 {
     GtkWidget *users_box;
@@ -255,7 +267,7 @@ void build_users(GtkWidget *grid)
     gtk_box_pack_start(GTK_BOX(users_box), user_info_box, FALSE, FALSE, 0);
     gtk_widget_set_size_request(user_info_box, -1, 20);
 
-    pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", &error);
+    pixbuf = gdk_pixbuf_new_from_file(get_user_image(account->image_id), &error);
     if (error != NULL)
         g_error("Error loading image: %s", error->message);
 

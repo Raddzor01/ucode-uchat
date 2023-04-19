@@ -6,10 +6,8 @@ int get_user_chats()
 
     cJSON *json = cJSON_CreateObject();
     cJSON_AddNumberToObject(json, "type", REQ_GET_CHATS);
-
     char *json_str = cJSON_PrintUnformatted(json);
     
-    pthread_mutex_lock(&account->mutex);
     SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
     cJSON_Delete(json);
@@ -31,7 +29,6 @@ int get_user_chats()
         new_node->next = NULL;
         chat_push_back(&account->chats, new_node);
     }
-    pthread_mutex_unlock(&account->mutex);
 
     cJSON_Delete(json);
     mx_strdel(&json_str);

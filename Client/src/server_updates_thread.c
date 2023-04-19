@@ -3,9 +3,7 @@
 gboolean update_chatlist_from_thread(gpointer user_data)
 {
     t_msg *server_msg = (t_msg *)user_data;
-    if (server_msg->user_id == account->id)
-        text_bubble(server_msg->text, server_msg->msg_id, server_msg->time);
-    else
+    if (server_msg->user_id != account->id)
         receive_bubble(server_msg->text, server_msg->username);
     return FALSE;
 }
@@ -43,12 +41,12 @@ void *server_update_thread()
                 //     text_bubble(server_msg->text, server_msg->msg_id);
                 // else
                 //     receive_bubble(server_msg->text, server_msg->username);
-                g_usleep(500000);
+                g_usleep(10000);
             }
-
-            chat = chat->next;
             g_usleep(500000);
+            chat = chat->next;
         }
+        g_usleep(500000);
     }
 
     return NULL;

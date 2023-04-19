@@ -70,6 +70,8 @@ void chat_window()
     gtk_container_add(GTK_CONTAINER(main_window), grid);
     build_users(grid);
 
+    // pthread_create(&account->server_update_thread, NULL, server_update_thread, NULL);
+    
     // build_chat_window();
 
     gtk_widget_show_all(main_window);
