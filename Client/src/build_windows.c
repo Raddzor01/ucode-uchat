@@ -160,7 +160,6 @@ void chat_info() {
     gtk_box_pack_start(GTK_BOX(chat_info), text_box, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(text_box), chat_name, FALSE, FALSE, 0);
 
-    g_object_unref(pixbuf);
     gtk_widget_show_all(box);
 }
 
@@ -536,6 +535,7 @@ void build_edit_profile () {
 void edit_username() {
 
     GtkWidget *box = get_widget_by_name_r(edit_window, "edit");
+    clear_box(box);
 
     GtkWidget *username_label = gtk_label_new("Username:");
     gtk_widget_set_valign(username_label, GTK_ALIGN_CENTER);
