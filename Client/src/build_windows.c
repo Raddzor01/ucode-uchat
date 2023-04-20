@@ -301,6 +301,7 @@ void build_users(GtkWidget *grid)
     GtkWidget *user_info_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(users_box), user_info_box, FALSE, FALSE, 0);
     gtk_widget_set_size_request(user_info_box, -1, 20);
+    add_class(user_info_box, "profile");
 
     pixbuf = gdk_pixbuf_new_from_file(get_user_image(account->image_id), &error);
     if (error != NULL)

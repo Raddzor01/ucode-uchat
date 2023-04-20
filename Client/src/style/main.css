@@ -75,17 +75,14 @@ grid box{
     background-color: @main-bg-color;
     color: @fill-color;
     padding: 10px;
-    margin: -6px;
-    border-radius: 0px;
+    margin-bottom: -10px;
+    margin-left: 1px;
+    border-radius: 6px;
 }
 
 .user-box entry{
     border-radius: 5px;
 }
-
-/* .user-box button {
-    border-radius: 1px;
-} */
 
 .user-box button:hover{
     background-color: @fill-hbg-color;
@@ -188,3 +185,7 @@ button:hover {
 .last_message {
     font-size: 8px;
 }
+
+.plus_button {
+    border-radius: 10px;
+ }
