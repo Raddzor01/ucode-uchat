@@ -23,10 +23,8 @@ void add_class(GtkWidget *widget, char *name)
 
 void clear_window(GtkWidget *window)
 {
-    // Get the container widget of the window
     GtkWidget *container = gtk_bin_get_child(GTK_BIN(window));
 
-    // Remove any existing widget from the container
     if (GTK_IS_WIDGET(container))
         gtk_container_remove(GTK_CONTAINER(window), container);
 }
@@ -63,19 +61,15 @@ GtkWidget *create_image_button(char *image_path, int width, int height)
     GdkPixbuf *pixbuf;
     GtkWidget *button, *image;
 
-    // Load and scale the image
     pixbuf = gdk_pixbuf_new_from_file(image_path, NULL);
     pixbuf = gdk_pixbuf_scale_simple(pixbuf, width, height, GDK_INTERP_BILINEAR);
 
-    // Create the image and button widgets
     image = gtk_image_new_from_pixbuf(pixbuf);
     button = gtk_button_new();
     gtk_button_set_image(GTK_BUTTON(button), image);
 
-    // Free the pixbuf
     g_object_unref(pixbuf);
 
-    // Return the button widget
     return button;
 }
 
@@ -146,6 +140,17 @@ void file_select(GtkWidget *widget, gpointer data)
     gtk_widget_destroy(dialog);
 }
 
+void last_massage_display(char *chatname, char *message) {
+    GtkWidget *box = get_widget_by_name_r(main_window, chatname);
+    clear_box(box);
+
+    GtkWidget *label = gtk_label_new(message);
+    gtk_widget_set_halign(label, GTK_ALIGN_START);
+    gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
+    add_class(label, "last_message");
+    gtk_widget_show_all(box);
+}
+
 void user_box(t_chat *chat, bool is_search)
 {
     GtkWidget *button;
@@ -159,28 +164,32 @@ void user_box(t_chat *chat, bool is_search)
     GdkPixbuf *pixbuf;
     GError *error = NULL;
 
-    // Load the image from a file
     pixbuf = gdk_pixbuf_new_from_file("Client/data/default_image.png", &error);
     if (error != NULL)
         g_error("Error loading image: %s", error->message);
 
-    // Scale the image to a new size
     pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
-
-    // Create a new GtkImage widget from the scaled image
     image = gtk_image_new_from_pixbuf(pixbuf);
 
-    // create a label
     label = gtk_label_new(chat->name);
+    gtk_widget_set_halign(label, GTK_ALIGN_START);
 
-    // create a box to hold the image and label
+    GtkWidget *text_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_box_pack_start(GTK_BOX(text_box), label, FALSE, FALSE, 0);
+
+    GtkWidget *last_message = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_pack_start(GTK_BOX(text_box), last_message, FALSE, FALSE, 0);
+    gtk_widget_set_name(last_message, chat->name);
+    GtkWidget *last = gtk_label_new("123456789123456789123456789");
+    gtk_box_pack_start(GTK_BOX(last_message), last, FALSE, FALSE, 0);
+    add_class(last, "last_message");
+
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
     gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(box), text_box, FALSE, FALSE, 0);
 
     g_object_unref(pixbuf);
 
-    // create a button
     button = gtk_button_new();
     gtk_container_add(GTK_CONTAINER(button), box);
     gtk_box_pack_start(GTK_BOX(out_box), button, FALSE, FALSE, 0);
