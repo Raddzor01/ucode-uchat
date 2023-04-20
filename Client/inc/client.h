@@ -33,6 +33,8 @@
 #define MIN_NUMBER_OF_CHARACTERS 1
 #define MAX_NUMBER_OF_CHARACTERS 16
 
+#define MAX_NUMBER_OF_CHAR_FOR_LAST_MSG 32
+
 // struct for sending to server
 typedef struct s_info
 {
@@ -54,6 +56,7 @@ typedef struct s_msg
     char *text;
     char *username;
     time_t time;
+
     struct s_msg *next;
 } t_msg;
 
@@ -62,6 +65,7 @@ typedef struct s_chat
     int id;
     char *name;
     int image_id;
+
     t_msg *messages;
     struct s_chat *next;
 } t_chat;
@@ -87,6 +91,7 @@ extern GtkWidget *main_window;
 extern t_info *info;
 extern t_account *account;
 
+// msg list part
 t_msg *msg_prepare_node(int id, char *message, time_t time, int user_id, char *username);
 void msg_push_back(t_msg **list, t_msg *new_node);
 void msg_clear_list(t_msg **list);
@@ -99,6 +104,7 @@ void msg_pop_back(t_msg **head);
 void msg_pop_front(t_msg **head);
 t_msg *msg_get_last_message(t_msg *list);
 
+// chat list part
 t_chat *chat_prepare_node(int id, char *name, int image_id);
 void chat_push_back(t_chat **list, t_chat *new_node);
 void chat_push_front(t_chat **list, t_chat *new_node);
@@ -134,6 +140,8 @@ int get_last_msg_id_from_server(int chat_id);
 t_msg *get_msg_by_id_from_server(int msg_id, int chat_id);
 gboolean update_chatlist_from_thread(gpointer user_data);
 char *get_image_from_server(int image_id);
+int edit_username_in_server(const char *new_username);
+int edit_password_in_server(const char *new_password);
 
 // Conection to the server
 void init_ssl(SSL_CTX **ctx);
@@ -177,6 +185,8 @@ char *get_send_time_str(time_t send_time);
 void build_edit_profile();
 void edit_username();
 void accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window);
+void last_massage_display(char *chatname, char *message);
+char *str_to_display_last_msg(char *msg, char *username);
 
 // CSS part
 void load_css();

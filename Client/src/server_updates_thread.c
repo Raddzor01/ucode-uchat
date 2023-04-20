@@ -10,6 +10,7 @@ gboolean update_chatlist_from_thread(gpointer user_data)
 
 void *server_update_thread()
 {
+    char *last_msg_str;
     while (true)
     {
         if (!account)
@@ -44,6 +45,9 @@ void *server_update_thread()
                 //     text_bubble(server_message->text, server_message->msg_id);
                 // else
                 //     receive_bubble(server_message->text, server_message->username);
+                // if (chat->id != account->current_chat->id)
+                last_msg_str = str_to_display_last_msg(server_message->text, server_message->username);
+                last_massage_display(chat->name, last_msg_str);
                 g_usleep(10000);
             }
             g_usleep(500000);
@@ -51,6 +55,7 @@ void *server_update_thread()
         }
         g_usleep(500000);
     }
+    free(last_msg_str);
 
     return NULL;
 }
