@@ -2,8 +2,6 @@
 
 t_msg *get_chat_messages_from_server(int chat_id)
 {
-    account->is_busy = true;
-
     cJSON *json = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(json, "type", REQ_GET_CHAT_MESSAGES);
@@ -37,8 +35,6 @@ t_msg *get_chat_messages_from_server(int chat_id)
 
     cJSON_Delete(json);
     mx_strdel(&json_str);
-
-    account->is_busy = false;
 
     return msgs;
 }

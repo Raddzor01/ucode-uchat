@@ -285,12 +285,8 @@ char *get_user_image(int image_id)
 {
     if (image_id == 1)
         return DEFAULT_IMAGE;
-    if (access(account->image_path, F_OK) == 0)
-        return account->image_path;
 
-    if (!get_image_from_server(image_id))
-        return account->image_path;
-    return DEFAULT_IMAGE;
+    return get_image_from_server(image_id);
 }
 
 void build_users(GtkWidget *grid)

@@ -2,8 +2,6 @@
 
 int get_user_chats()
 {
-    account->is_busy = true;
-
     cJSON *json = cJSON_CreateObject();
     cJSON_AddNumberToObject(json, "type", REQ_GET_CHATS);
     char *json_str = cJSON_PrintUnformatted(json);
@@ -30,8 +28,6 @@ int get_user_chats()
 
     cJSON_Delete(json);
     mx_strdel(&json_str);
-
-    account->is_busy = false;
 
     return 0;
 }

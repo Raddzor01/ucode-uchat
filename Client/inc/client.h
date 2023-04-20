@@ -18,7 +18,7 @@
 #include <unistd.h>
 #include <strings.h>
 #include <sys/ioctl.h>
-// #include <sqlite3.h>
+#include <semaphore.h>
 #include <time.h>
 
 #include <gtk/gtk.h>
@@ -72,10 +72,10 @@ typedef struct s_account
     char *username;
     int id;
     int image_id;
-    char *image_path;
 
     pthread_t server_update_thread;
     pthread_mutex_t mutex;
+    sem_t semaphore;
     bool is_busy;
 
     t_chat *chats;
@@ -133,7 +133,7 @@ int delete_msg_in_server(int msg_id);
 int get_last_msg_id_from_server(int chat_id);
 t_msg *get_msg_by_id_from_server(int msg_id, int chat_id);
 gboolean update_chatlist_from_thread(gpointer user_data);
-bool get_image_from_server(int image_id);
+char *get_image_from_server(int image_id);
 
 // Conection to the server
 void init_ssl(SSL_CTX **ctx);

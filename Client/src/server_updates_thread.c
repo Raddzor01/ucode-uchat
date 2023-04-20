@@ -34,7 +34,10 @@ void *server_update_thread()
             t_msg *server_message = get_msg_by_id_from_server(last_server_msg_id, chat->id);
             if (last_server_msg_id > last_client_msg_id)
             {
+                pthread_mutex_lock(&account->mutex);
                 msg_push_back(&chat->messages, server_message);
+                pthread_mutex_unlock(&account->mutex);
+                
                 if(is_current)
                     g_idle_add(update_chatlist_from_thread, (gpointer)server_message);
                 // if (server_message->user_id == account->id)

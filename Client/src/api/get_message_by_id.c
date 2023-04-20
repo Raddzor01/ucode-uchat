@@ -8,14 +8,14 @@ t_msg *get_msg_by_id_from_server(int msg_id, int chat_id)
     cJSON_AddNumberToObject(json, "chat_id", chat_id);
     char *json_str = cJSON_PrintUnformatted(json);
 
-    pthread_mutex_lock(&account->mutex);
+    sem_wait(&account->semaphore);
     SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
     mx_strdel(&json_str);
     cJSON_Delete(json);
 
     json_str = read_from_server();
-    pthread_mutex_unlock(&account->mutex);
+    sem_post(&account->semaphore);
     json = cJSON_Parse(json_str);
 
     if (cJSON_GetObjectItem(json, "error_code")->valueint != ERR_SUCCESS)

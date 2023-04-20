@@ -20,10 +20,11 @@ static void structs_init()
     account = malloc(sizeof(*account));
 
     pthread_mutex_init(&account->mutex, NULL);
+    sem_init(&account->semaphore, 0, 1);
     account->chats = NULL;
     account->username = NULL;
     account->current_chat = NULL;
-    account->is_busy = false;
+    account->is_busy = true;
     set_start_of_current_day();
 
     info->ctx = NULL;
@@ -47,7 +48,7 @@ int main(int argc, char **argv)
 
     log_menu(main_window);
 
-    pthread_create(&account->server_update_thread, NULL, server_update_thread, NULL);
+    // pthread_create(&account->server_update_thread, NULL, server_update_thread, NULL);
 
     gtk_main();
 

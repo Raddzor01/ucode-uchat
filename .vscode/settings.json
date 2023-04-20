@@ -1,7 +1,8 @@
 {
     "files.associations": {
         "ssl.h": "c",
-        "client.h": "c"
+        "client.h": "c",
+        "err.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
     "clang-format.language.c.enable": true

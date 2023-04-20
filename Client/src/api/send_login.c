@@ -31,13 +31,13 @@ bool check_account_from_server()
     account->id = cJSON_GetObjectItem(json, "id")->valueint;
     account->username = mx_strdup(cJSON_GetObjectItemCaseSensitive(json, "username")->valuestring);
     account->image_id = cJSON_GetObjectItem(json, "image_id")->valueint;
-    if (account->image_id > 1)
-    {
-        char *user_image_name = mx_strjoin(cJSON_GetObjectItemCaseSensitive(json, "filename")->valuestring, cJSON_GetObjectItemCaseSensitive(json, "extension")->valuestring);
-        char *user_image_path = mx_strjoin(DATA_DIR, user_image_name);
-        account->image_path = user_image_path;
-        mx_strdel(&user_image_name);
-    }
+    // if (account->image_id > 1)
+    // {
+    //     char *user_image_name = mx_strjoin(cJSON_GetObjectItemCaseSensitive(json, "filename")->valuestring, cJSON_GetObjectItemCaseSensitive(json, "extension")->valuestring);
+    //     char *user_image_path = mx_strjoin(DATA_DIR, user_image_name);
+    //     account->image_path = user_image_path;
+    //     mx_strdel(&user_image_name);
+    // }
     pthread_mutex_unlock(&account->mutex);
 
     cJSON_Delete(json);
@@ -51,7 +51,7 @@ bool check_account_from_server()
 int send_login_to_server(const char *username, const char *password)
 {
     account->is_busy = true;
-    
+
     cJSON *json = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(json, "type", REQ_USER_LOGIN);

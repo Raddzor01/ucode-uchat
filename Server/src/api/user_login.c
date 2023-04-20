@@ -48,8 +48,12 @@ t_user_info *get_user_info(sqlite3 *db, char *username)
     sqlite3_stmt *stmt;
     t_user_info *user_info = NULL;
 
-    sqlite3_prepare_v2(db, "SELECT users.id, users.username, users.password, users.image_id, files.filename, files.file_path, files.file_type FROM users "
-                            "INNER JOIN files ON files.id = users.image_id "
+    // sqlite3_prepare_v2(db, "SELECT users.id, users.username, users.password, users.image_id, files.filename, files.file_path, files.file_type FROM users "
+    //                         "INNER JOIN files ON files.id = users.image_id "
+    //                         "WHERE users.username = ?; ", -1, &stmt, NULL);
+    // sqlite3_bind_text(stmt, 1, username, -1, NULL);
+
+    sqlite3_prepare_v2(db, "SELECT users.id, users.username, users.password, users.image_id FROM users "
                             "WHERE users.username = ?; ", -1, &stmt, NULL);
     sqlite3_bind_text(stmt, 1, username, -1, NULL);
 
@@ -60,12 +64,12 @@ t_user_info *get_user_info(sqlite3 *db, char *username)
         user_info->username = mx_strdup((const char *)sqlite3_column_text(stmt, 1));
         user_info->password = mx_strdup((const char *)sqlite3_column_text(stmt, 2));
         user_info->image_id = sqlite3_column_int(stmt, 3);
-        if(user_info->image_id > 1)
-        {
-            user_info->filename = mx_strdup((const char *)sqlite3_column_text(stmt, 4));
-            user_info->file_path = mx_strdup((const char *)sqlite3_column_text(stmt, 5));
-            user_info->extension = mx_strdup((const char *)sqlite3_column_text(stmt, 6));
-        }
+        // if(user_info->image_id > 1)
+        // {
+        //     user_info->filename = mx_strdup((const char *)sqlite3_column_text(stmt, 4));
+        //     user_info->file_path = mx_strdup((const char *)sqlite3_column_text(stmt, 5));
+        //     user_info->extension = mx_strdup((const char *)sqlite3_column_text(stmt, 6));
+        // }
     } else {
         mx_logs((char *)sqlite3_errmsg(db), LOG_ERROR);
     }
@@ -85,11 +89,11 @@ void send_login_response(SSL *ssl, t_user_info *user_info)
     cJSON_AddStringToObject(json, "username", user_info->username);
     cJSON_AddNumberToObject(json, "id", user_info->id);
     cJSON_AddNumberToObject(json, "image_id", user_info->image_id);
-    if(user_info->image_id > 1)
-    {
-        cJSON_AddStringToObject(json, "filename", user_info->filename);
-        cJSON_AddStringToObject(json, "extension", user_info->extension);
-    }
+    // if(user_info->image_id > 1)
+    // {
+    //     cJSON_AddStringToObject(json, "filename", user_info->filename);
+    //     cJSON_AddStringToObject(json, "extension", user_info->extension);
+    // }
     json_str = cJSON_PrintUnformatted(json);
 
     SSL_write(ssl, json_str, mx_strlen(json_str));

@@ -2,8 +2,6 @@
 
 int send_logout_to_server()
 {
-    account->is_busy = true;
-
     cJSON *json = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(json, "type", REQ_USER_LOGOUT);

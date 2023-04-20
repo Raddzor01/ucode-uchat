@@ -79,13 +79,9 @@ GtkWidget *get_widget_by_name_r(GtkWidget *container, char *name)
     GList *children = NULL;
 
     if (GTK_IS_CONTAINER(container))
-    {
         children = gtk_container_get_children(GTK_CONTAINER(container));
-    }
     else
-    {
         return NULL;
-    }
 
     while (children)
     {
@@ -159,12 +155,11 @@ void user_box(t_chat *chat, bool is_search)
     GtkWidget *box;
     GtkWidget *out_box = get_widget_by_name_r(main_window, "box_for_users");
 
-    // int *id_link = &account->chat_id_list[number];
-
     GdkPixbuf *pixbuf;
     GError *error = NULL;
 
     pixbuf = gdk_pixbuf_new_from_file("Client/data/default_image.png", &error);
+    // pixbuf = gdk_pixbuf_new_from_file(get_user_image(chat->image_id), &error);
     if (error != NULL)
         g_error("Error loading image: %s", error->message);
 

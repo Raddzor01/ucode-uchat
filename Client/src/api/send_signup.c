@@ -2,8 +2,6 @@
 
 int check_account_exists()
 {
-    account->is_busy = true;
-
     char *json_str = read_from_server();
     pthread_mutex_unlock(&account->mutex);
     cJSON *json = cJSON_Parse(json_str);
@@ -27,14 +25,11 @@ int check_account_exists()
     cJSON_Delete(json);
     free(json_str);
 
-    account->is_busy = false;
-
     return error;
 }
 
 int send_sign_up_to_server(const char *username, const char *password)
 {
-    account->is_busy = true;
     cJSON *json = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(json, "type", REQ_USER_SIGNUP);
@@ -47,8 +42,6 @@ int send_sign_up_to_server(const char *username, const char *password)
 
     cJSON_Delete(json);
     free(json_str);
-
-    account->is_busy = false;
 
     return check_account_exists();
 }

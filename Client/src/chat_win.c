@@ -26,9 +26,6 @@ void send_message(GtkButton *__attribute__((unused)) button)
 
     text_bubble(new_node);
 
-    // if (strcmp(text, "e") == 0)
-    //     account->chat_id = 2;
-
     gtk_entry_set_text(GTK_ENTRY(info->entry), "");
 }
 
@@ -55,6 +52,8 @@ void find_chats(GtkWidget *entry)
 
 void chat_window()
 {
+    account->is_busy = true;
+
     hog();
 
     get_user_chats();
@@ -69,6 +68,10 @@ void chat_window()
     build_users(grid);
     
     // build_chat_window();
+
+    pthread_create(&account->server_update_thread, NULL, server_update_thread, NULL);
+
+    account->is_busy = false;
 
     gtk_widget_show_all(main_window);
 }

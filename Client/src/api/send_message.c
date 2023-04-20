@@ -2,9 +2,6 @@
 
 time_t send_message_to_server(const char *message)
 {
-
-    account->is_busy = true;
-
     time_t current_time = time(NULL);
 
     cJSON *json = cJSON_CreateObject();
@@ -17,23 +14,17 @@ time_t send_message_to_server(const char *message)
     cJSON_AddNumberToObject(json, "time", current_time);
     char *json_str = cJSON_PrintUnformatted(json);
 
-    pthread_mutex_lock(&account->mutex);
     SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
     cJSON_Delete(json);
     mx_strdel(&json_str);
-
-    account->is_busy = false;
 
     return current_time;
 }
 
 int get_msg_id()
 {
-    account->is_busy = true;
-
     char *json_str = read_from_server();
-    pthread_mutex_unlock(&account->mutex);
     cJSON *json = cJSON_Parse(json_str);
     int msg_id;
 
@@ -49,8 +40,6 @@ int get_msg_id()
 
     cJSON_Delete(json);
     free(json_str);
-
-    account->is_busy = false;
 
     return msg_id;
 }
