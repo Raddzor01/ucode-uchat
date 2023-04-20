@@ -3,81 +3,98 @@
 GtkWidget *password_entry;
 GtkWidget *username_entry;
 
-bool chech_fields(const gchar *username, const gchar *password)
+bool check_fields_size(const gchar *username, const gchar *password, GtkWidget *username_error_label, GtkWidget *password_error_label)
 {
-    if (mx_strlen(username) < MIN_NUMBER_OF_CHARACTERS || mx_strlen(password) < MIN_NUMBER_OF_CHARACTERS)
+    bool error = false;
+    if (!mx_strcmp(username, ""))
     {
-        pop_up_window("Fields must store at least one character");
-        return false;
+        gtk_label_set_text(GTK_LABEL(username_error_label), "Field must store at least one character");
+        error = true;
     }
 
-    if (mx_strlen(username) > MAX_NUMBER_OF_CHARACTERS || mx_strlen(password) > MAX_NUMBER_OF_CHARACTERS)
+    if (!mx_strcmp(password, ""))
     {
-        pop_up_window("Password or login has more than 16 characters");
-        return false;
+        gtk_label_set_text(GTK_LABEL(password_error_label), "Field must store at least one character");
+        error = true;
     }
 
-    return true;
+    if(error)
+        return true;
+
+    if (mx_strlen(username) > MAX_NUMBER_OF_CHARACTERS)
+    {
+        gtk_label_set_text(GTK_LABEL(password_error_label), "Login has more than 16 characters");
+        error = true;
+    }
+
+    if (mx_strlen(password) > MAX_NUMBER_OF_CHARACTERS)
+    {
+        gtk_label_set_text(GTK_LABEL(password_error_label), "Password has more than 16 characters");
+        error = true;
+    }
+    return error;
 }
 
-void login_clicked(GtkWidget *widget)
+void login_clicked(GtkWidget *__attribute__((unused)) widget)
 {
-
-    if (info)
-    {
-    }
-    (void)widget;
+    GtkWidget *box = get_widget_by_name_r(main_window, "box");
+    GtkWidget *username_error_label = get_widget_by_name_r(box, "username_error_label");
+    GtkWidget *password_error_label = get_widget_by_name_r(box, "password_error_label");
 
     const gchar *username = gtk_entry_get_text(GTK_ENTRY(username_entry));
     const gchar *password = gtk_entry_get_text(GTK_ENTRY(password_entry));
 
-    if (chech_fields(username, password) == false)
+    gtk_label_set_text(GTK_LABEL(username_error_label), " ");
+    gtk_label_set_text(GTK_LABEL(password_error_label), " ");
+
+    if (check_fields_size(username, password,  username_error_label, password_error_label) == true)
         return;
 
     if (send_login_to_server(username, password) == 1)
+    {
+        gtk_label_set_text(GTK_LABEL(username_error_label), "Login successful");
         chat_window();
+    }
     else
-        pop_up_window("Wrong password or login!");
+    {
+        gtk_label_set_text(GTK_LABEL(username_error_label), "Wrong password or login!");
+    }
 }
 
-void signup_clicked(GtkWidget *widget)
+void signup_clicked(GtkWidget *__attribute__((unused)) widget)
 {
-    (void)widget;
+    GtkWidget *box = get_widget_by_name_r(main_window, "box");
+    GtkWidget *username_error_label = get_widget_by_name_r(box, "username_error_label");
+    GtkWidget *password_error_label = get_widget_by_name_r(box, "password_error_label");
 
     const gchar *username = gtk_entry_get_text(GTK_ENTRY(username_entry));
     const gchar *password = gtk_entry_get_text(GTK_ENTRY(password_entry));
 
-    if (chech_fields(username, password) == false)
+    gtk_label_set_text(GTK_LABEL(username_error_label), " ");
+    gtk_label_set_text(GTK_LABEL(password_error_label), " ");
+
+    if (check_fields_size(username, password,  username_error_label, password_error_label) == true)
         return;
 
-    int output = send_sign_up_to_server(username, password);
-
-    if (output == 0)
+    int error_code = send_sign_up_to_server(username, password);
+    if (error_code == ERR_SUCCESS)
     {
         pop_up_window("Sign up successful");
         log_menu(main_window);
-    }
-    else if (output == 1)
+    } else if (error_code == ERR_USER_EXISTS)
     {
-        pop_up_window("Error in server cJSON");
+        gtk_label_set_text(GTK_LABEL(username_error_label), "This user already exists");
     }
-    else if (output == 2)
+    else
     {
-        pop_up_window("Invalid password");
-    }
-    else if (output == 3)
-    {
-        pop_up_window("This user already exists");
-    }
-    else if (output == -1)
-    {
-        pop_up_window("Error in client cJSON");
+        gtk_label_set_text(GTK_LABEL(username_error_label),"Error while sending sign up request");
     }
 }
 
 void build_login()
 {
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_widget_set_name(box, "box");
     gtk_container_add(GTK_CONTAINER(main_window), box);
 
     GtkWidget *username_label = gtk_label_new("Username:");
@@ -86,12 +103,22 @@ void build_login()
     username_entry = gtk_entry_new();
     gtk_box_pack_start(GTK_BOX(box), username_entry, FALSE, FALSE, 0);
 
+    GtkWidget *username_error_label = gtk_label_new(" ");
+    gtk_widget_set_name(username_error_label, "username_error_label");
+    add_class(username_error_label, "error-label");
+    gtk_box_pack_start(GTK_BOX(box), username_error_label, FALSE, FALSE, 0);
+
     GtkWidget *password_label = gtk_label_new("Password:");
     gtk_box_pack_start(GTK_BOX(box), password_label, FALSE, FALSE, 0);
 
     password_entry = gtk_entry_new();
     gtk_entry_set_visibility(GTK_ENTRY(password_entry), FALSE);
     gtk_box_pack_start(GTK_BOX(box), password_entry, FALSE, FALSE, 0);
+
+    GtkWidget *password_error_label = gtk_label_new(" ");
+    gtk_widget_set_name(password_error_label, "password_error_label");
+    add_class(password_error_label, "error-label");
+    gtk_box_pack_start(GTK_BOX(box), password_error_label, FALSE, FALSE, 0);
 
     GtkWidget *login_button = gtk_button_new_with_label("Login");
     GtkWidget *signup_button = gtk_button_new_with_label("Sign up");
@@ -114,12 +141,22 @@ void build_signup()
     username_entry = gtk_entry_new();
     gtk_box_pack_start(GTK_BOX(box), username_entry, FALSE, FALSE, 0);
 
+    GtkWidget *username_error_label = gtk_label_new(" ");
+    gtk_widget_set_name(username_error_label, "username_error_label");
+    add_class(username_error_label, "error-label");
+    gtk_box_pack_start(GTK_BOX(box), username_error_label, FALSE, FALSE, 0);
+
     GtkWidget *password_label = gtk_label_new("Password:");
     gtk_box_pack_start(GTK_BOX(box), password_label, FALSE, FALSE, 0);
 
     password_entry = gtk_entry_new();
     gtk_entry_set_visibility(GTK_ENTRY(password_entry), FALSE);
     gtk_box_pack_start(GTK_BOX(box), password_entry, FALSE, FALSE, 0);
+
+    GtkWidget *password_error_label = gtk_label_new(" ");
+    gtk_widget_set_name(password_error_label, "password_error_label");
+    add_class(password_error_label, "error-label");
+    gtk_box_pack_start(GTK_BOX(box), password_error_label, FALSE, FALSE, 0);
 
     GtkWidget *login_button = gtk_button_new_with_label("Back");
     GtkWidget *signup_button = gtk_button_new_with_label("Sign up");
@@ -131,7 +168,8 @@ void build_signup()
     g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 }
 
-void chat_info() {
+void chat_info()
+{
     GtkWidget *box = get_widget_by_name_r(main_window, "chat_info");
     clear_box(box);
     GtkWidget *image;
@@ -212,6 +250,7 @@ void build_chat_window()
     gtk_widget_set_name(box_container, "box_holder");
 
     entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(entry), "Message");
     gtk_box_pack_start(GTK_BOX(input_box), entry, TRUE, TRUE, 0);
     gtk_widget_set_size_request(entry, 400, 10);
     gtk_widget_set_hexpand(entry, TRUE);
@@ -244,12 +283,12 @@ void logout_event(GtkWidget *__attribute__((unused)) widget)
 
 char *get_user_image(int image_id)
 {
-    if(image_id == 1)
+    if (image_id == 1)
         return DEFAULT_IMAGE;
-    if(access(account->image_path, F_OK) == 0)
+    if (access(account->image_path, F_OK) == 0)
         return account->image_path;
-    
-    if(!get_image_from_server(image_id))
+
+    if (!get_image_from_server(image_id))
         return account->image_path;
     return DEFAULT_IMAGE;
 }
@@ -273,6 +312,7 @@ void build_users(GtkWidget *grid)
     gtk_box_pack_start(GTK_BOX(users_box), search_box, FALSE, FALSE, 0);
 
     GtkWidget *entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(entry), "Search");
     gtk_box_pack_start(GTK_BOX(search_box), entry, TRUE, TRUE, 0);
     g_signal_connect(entry, "changed", G_CALLBACK(find_chats), NULL);
 
@@ -344,7 +384,6 @@ void build_users(GtkWidget *grid)
     g_signal_connect(log_out_box, "button_press_event", G_CALLBACK(logout_event), NULL);
     g_signal_connect(log_out_box, "button_press_event", G_CALLBACK(log_menu), NULL);
 }
-
 
 void pop_up_window(char *text)
 {
@@ -445,6 +484,7 @@ void create_chat_menu()
     gtk_box_pack_start(GTK_BOX(box), chatname_label, FALSE, FALSE, 0);
 
     GtkWidget *chatname_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(chatname_entry), "Chat name");
     gtk_box_pack_start(GTK_BOX(box), chatname_entry, FALSE, FALSE, 0);
 
     GtkWidget *make_chat_button = gtk_button_new_with_label("create chat");
@@ -468,7 +508,8 @@ void display_users()
 
 GtkWidget *edit_window;
 
-void build_edit_profile () {
+void build_edit_profile()
+{
     if (window_check == true)
         return;
 
@@ -532,8 +573,8 @@ void build_edit_profile () {
     window_check = true;
 }
 
-void edit_username() {
-
+void edit_username()
+{
     GtkWidget *box = get_widget_by_name_r(edit_window, "edit");
     clear_box(box);
 

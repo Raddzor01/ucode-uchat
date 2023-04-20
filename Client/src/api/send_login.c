@@ -2,7 +2,6 @@
 
 bool check_account_from_server()
 {
-    account->is_busy = true;
     char *json_str = read_from_server();
     pthread_mutex_unlock(&account->mutex);
 
@@ -51,6 +50,8 @@ bool check_account_from_server()
 
 int send_login_to_server(const char *username, const char *password)
 {
+    account->is_busy = true;
+    
     cJSON *json = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(json, "type", REQ_USER_LOGIN);

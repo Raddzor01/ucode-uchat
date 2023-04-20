@@ -15,10 +15,10 @@ void load_css()
     gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(styles), GTK_STYLE_PROVIDER_PRIORITY_USER);
 }
 
-void add_class(GtkWidget *widget, char *class_name)
+void add_class(GtkWidget *widget, char *name)
 {
     GtkStyleContext *context = gtk_widget_get_style_context(widget);
-    gtk_style_context_add_class(context, class_name);
+    gtk_style_context_add_class(context, name);
 }
 
 void clear_window(GtkWidget *window)
@@ -196,7 +196,7 @@ void change_chat_id(GtkWidget *__attribute__((unused)) widget, gpointer user_dat
     account->current_chat = (t_chat *)user_data;
     chat_info();
 
-    printf("\ncurrent chat: %d\n", account->current_chat->id);
+    // printf("\ncurrent chat: %d\n", account->current_chat->id);
 
     GtkWidget *chat = get_widget_by_name_r(main_window, "box_holder");
     clear_box(chat);

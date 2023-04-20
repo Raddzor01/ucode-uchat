@@ -33,7 +33,6 @@ static void structs_init()
 
 int main(int argc, char **argv)
 {
-    (void)argc;
     srand(time(NULL));
 
     structs_init();

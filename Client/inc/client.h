@@ -159,7 +159,7 @@ void add_class(GtkWidget *widget, char *class_name);
 void file_select(GtkWidget *widget, gpointer data);
 void build_users(GtkWidget *grid);
 void user_box(t_chat *chat, bool is_search);
-bool chech_fields(const gchar *username, const gchar *password);
+bool check_fields_size(const gchar *username, const gchar *password, GtkWidget *username_error_label, GtkWidget *password_error_label);
 void text_bubble(t_msg *message);
 void delete_msg(GtkButton *__attribute__((unused)) button, gpointer data);
 void delete_msg_id(GtkButton *__attribute__((unused)) button, gpointer msg_id);
@@ -174,7 +174,7 @@ void join_chat(GtkWidget *__attribute__((unused)) widget, gpointer id);
 void create_chat_menu();
 void display_users();
 char *get_send_time_str(time_t send_time);
-void build_edit_profile ();
+void build_edit_profile();
 void edit_username();
 void accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window);
 
