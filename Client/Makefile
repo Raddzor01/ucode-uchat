@@ -31,7 +31,6 @@ all: uninstall $(UCHAT)
 
 $(UCHAT):
 	mkdir $(OBJDIR)
-	mkdir data
 	$(CC) $(CFLAGS) $(GTK_FLAGS) -c $(SRC)
 	mv *.o $(OBJDIR)
 	$(CC) $(CFLAGS) $(GTK_LIBS_FLAGS) -o $(UCHAT) $(OBJS) $(LIB_FLAGS)
@@ -40,7 +39,6 @@ $(UCHAT):
 clean:
 	rm -f $(OBJS)
 	rm -rdf $(OBJDIR)
-	rm -rdf data
 
 uninstall:
 	make clean

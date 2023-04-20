@@ -67,7 +67,7 @@ t_user_info *get_user_info(sqlite3 *db, char *username)
             user_info->extension = mx_strdup((const char *)sqlite3_column_text(stmt, 6));
         }
     } else {
-        mx_logs((char *)sqlite3_errmsg(db), ERROR_LOG);
+        mx_logs((char *)sqlite3_errmsg(db), LOG_ERROR);
     }
 
     sqlite3_finalize(stmt);
@@ -108,5 +108,5 @@ void log_successful_login(int id, char *username)
 {
     char result_to_log[MAX_BUF_SIZE];
     sprintf(result_to_log, "Logged in id: %d, name: %s", id, username);
-    mx_logs(result_to_log, INFO_LOG);
+    mx_logs(result_to_log, LOG_INFO);
 }

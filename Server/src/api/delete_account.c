@@ -4,24 +4,6 @@ void delete_account(cJSON *__attribute__((unused)) json, t_client_info *client_i
 {
     char *query = NULL;
 
-    // query = sqlite3_mprintf("DELETE FROM users WHERE id = %d;",
-    //                         client_info->user->id);
-    // db_execute_query(query);
-
-    // sqlite3_free(query);
-
-    // query = sqlite3_mprintf("DELETE FROM messages WHERE user_id = %d;",
-    //                         client_info->user->id);
-    // db_execute_query(query);
-
-    // sqlite3_free(query);
-
-    // query = sqlite3_mprintf("DELETE FROM members WHERE user_id = %d;",
-    //                         client_info->user->id);
-    // db_execute_query(query);
-
-    // sqlite3_free(query);
-
     query = sqlite3_mprintf("DELETE users, messages, members "
                             "FROM users "
                             "LEFT JOIN messages ON messages.user_id = users.id "

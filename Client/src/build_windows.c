@@ -141,7 +141,7 @@ void chat_info() {
 
     GdkPixbuf *pixbuf;
 
-    pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", NULL);
+    pixbuf = gdk_pixbuf_new_from_file("Client/data/default_image.png", NULL);
     pixbuf = gdk_pixbuf_scale_simple(pixbuf, 40, 40, GDK_INTERP_BILINEAR);
 
     image = gtk_image_new_from_pixbuf(pixbuf);
@@ -245,13 +245,13 @@ void logout_event(GtkWidget *__attribute__((unused)) widget)
 char *get_user_image(int image_id)
 {
     if(image_id == 1)
-        return "Client/Ass/HOG.png";
+        return DEFAULT_IMAGE;
     if(access(account->image_path, F_OK) == 0)
         return account->image_path;
     
     if(!get_image_from_server(image_id))
         return account->image_path;
-    return "Client/Ass/HOG.png";
+    return DEFAULT_IMAGE;
 }
 
 void build_users(GtkWidget *grid)
@@ -396,7 +396,7 @@ void hog()
     gtk_container_set_border_width(GTK_CONTAINER(popup_window), 10);
 
     // Create an image widget and add it to the window
-    GtkWidget *image = gtk_image_new_from_file("Client/Ass/HOG.png");
+    GtkWidget *image = gtk_image_new_from_file("Client/data/default_image.png");
     gtk_container_add(GTK_CONTAINER(popup_window), image);
 
     // Show the window
@@ -498,7 +498,7 @@ void build_edit_profile () {
 
     GdkPixbuf *pixbuf;
 
-    pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", NULL);
+    pixbuf = gdk_pixbuf_new_from_file("Client/data/default_image.png", NULL);
     pixbuf = gdk_pixbuf_scale_simple(pixbuf, 60, 60, GDK_INTERP_BILINEAR);
 
     GtkWidget *image = gtk_image_new_from_pixbuf(pixbuf);

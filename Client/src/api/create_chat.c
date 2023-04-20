@@ -9,10 +9,29 @@ int check_chat_id_from_server()
 
     if (json == NULL)
     {
-        mx_printerr("Error getting new chat ID\ncJSON is NULL\n");
+        pop_up_window("Error while creating chat\n Try again\n");
         cJSON_Delete(json);
-        free(json_str);
+        mx_strdel(&json_str);
         return -1;
+    }
+
+    int error_code = cJSON_GetObjectItem(json, "error_code")->valueint;
+    if (error_code != ERR_SUCCESS)
+    {
+        if (error_code == ERR_CHAT_EXIST)
+        {
+            pop_up_window("Chat already exists!");
+            cJSON_Delete(json);
+            mx_strdel(&json_str);
+            return -1;
+        }
+        else
+        {
+            pop_up_window("Error while creating chat\n Try again\n");
+            cJSON_Delete(json);
+            mx_strdel(&json_str);
+            return -1;
+        }
     }
 
     int chat_id = cJSON_GetObjectItem(json, "chat_id")->valueint;

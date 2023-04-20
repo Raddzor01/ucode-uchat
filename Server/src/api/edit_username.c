@@ -11,7 +11,7 @@ void edit_username(cJSON *json, t_client_info *client_info)
         return;
     }
 
-    query = sqlite3_mprintf("UPDATE users SET username = '%s' WHERE id = '%d'; ",
+    query = sqlite3_mprintf("UPDATE users SET username = '%s' WHERE id = %d; ",
                             new_username, client_info->user->id);
     db_execute_query(query);
 

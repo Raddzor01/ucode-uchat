@@ -9,7 +9,7 @@ void connect_new_client(SSL *ssl, int client_socket)
 
     if (SSL_accept(ssl) == -1)
     {
-        mx_logs(strerror(errno), ERROR_LOG);
+        mx_logs(strerror(errno), LOG_ERROR);
         exit(EXIT_FAILURE);
     }
 

@@ -6,5 +6,5 @@ void client_exit(cJSON *__attribute__((unused)) json, t_client_info *client_info
     close(client_info->socket_info);
     free(client_info);
     client_info = NULL;
-    mx_logs("Client disconnected\n", INFO_LOG);
+    mx_logs("Client disconnected\n", LOG_INFO);
 }

@@ -3,8 +3,9 @@
 cJSON *get_chat_json(sqlite3_stmt *stmt)
 {
     cJSON *json = cJSON_CreateObject();
-    cJSON_AddNumberToObject(json, "chat_id", sqlite3_column_int64(stmt, 0));
+    cJSON_AddNumberToObject(json, "chat_id", sqlite3_column_int(stmt, 0));
     cJSON_AddStringToObject(json, "chat_name", (const char *)sqlite3_column_text(stmt, 1));
+    cJSON_AddNumberToObject(json, "chat_id", sqlite3_column_int(stmt, 2));
 
     return json;
 }
@@ -41,7 +42,7 @@ void search_chats(cJSON *client_json, t_client_info *client_info)
     //                         "AND (m2.id IS NULL OR c.type != 1) "
     //                         "ORDER BY c.date DESC; ";
 
-    query = sqlite3_mprintf("SELECT chats.id, chats.name FROM chats "
+    query = sqlite3_mprintf("SELECT chats.id, chats.name, chats.image_id FROM chats "
                             "WHERE chats.name LIKE '%s' "
                             "AND chats.id NOT IN (SELECT chat_id FROM members WHERE user_id = %d) "
                             "ORDER BY chats.date DESC; ",

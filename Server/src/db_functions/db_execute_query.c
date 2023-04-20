@@ -7,7 +7,7 @@ int db_execute_query(const char *sql_query)
     char *error;
     if (sqlite3_exec(db, sql_query, NULL, NULL, &error) != SQLITE_OK)
     {
-        mx_logs(error, ERROR_LOG);
+        mx_logs(error, LOG_ERROR);
         return 1;
     }
 

@@ -100,7 +100,7 @@ button {
     font-size: 14px;
     font-weight: bold;
     background-color: @fill-bg-color;
-    background-image: url("Client/Ass/HOG.png");
+    background-image: url("Client/data/default_image.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;

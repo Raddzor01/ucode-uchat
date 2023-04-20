@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
         client_socket = accept(server_socket, (struct sockaddr *)&client_address, &addr_size);
         if (client_socket == -1)
         {
-            mx_logs(strerror(errno), ERROR_LOG);
+            mx_logs(strerror(errno), LOG_ERROR);
             continue;
         }
 

@@ -9,7 +9,7 @@ t_req_type handle_request(t_client_info *client_info, char *request)
     json = cJSON_Parse(request);
     if (json == NULL)
     {
-        mx_logs("parse error", INFO_LOG);
+        mx_logs("parse error", LOG_INFO);
         cJSON_Delete(json);
         return 1;
     }
@@ -18,7 +18,7 @@ t_req_type handle_request(t_client_info *client_info, char *request)
     
     if (type > MAP_SIZE)
     {
-        mx_logs("Unknown request type", ERROR_LOG);
+        mx_logs("Unknown request type", LOG_ERROR);
         cJSON_Delete(json);
         return REQ_UNKNOWN;
     }

@@ -44,7 +44,7 @@ cJSON *get_chats_json(sqlite3 *db, int user_id)
 sqlite3_stmt *get_chats_stmt(sqlite3 *db, int user_id)
 {
     sqlite3_stmt *stmt;
-    sqlite3_prepare_v2(db, "SELECT chats.id, chats.name, chats.type, members.privilege FROM chats "
+    sqlite3_prepare_v2(db, "SELECT chats.id, chats.name, chats.type, chats.image_id, members.privilege FROM chats "
                            "INNER JOIN members ON members.chat_id = chats.id "
                            "WHERE chats.id IN (SELECT chat_id FROM members WHERE user_id = ?) AND members.user_id = ? "
                            "ORDER BY chats.date DESC; ",
@@ -58,10 +58,11 @@ sqlite3_stmt *get_chats_stmt(sqlite3 *db, int user_id)
 static cJSON *get_chat_json(sqlite3_stmt *stmt)
 {
     cJSON *json = cJSON_CreateObject();
-    cJSON_AddNumberToObject(json, "chat_id", sqlite3_column_int64(stmt, 0));
+    cJSON_AddNumberToObject(json, "chat_id", sqlite3_column_int(stmt, 0));
     cJSON_AddStringToObject(json, "chat_name", (const char *)sqlite3_column_text(stmt, 1));
-    cJSON_AddNumberToObject(json, "chat_type", sqlite3_column_int64(stmt, 2));
-    cJSON_AddNumberToObject(json, "chat_permissions", sqlite3_column_int64(stmt, 3));
+    cJSON_AddNumberToObject(json, "chat_type", sqlite3_column_int(stmt, 2));
+    cJSON_AddNumberToObject(json, "image_id", sqlite3_column_int(stmt, 3));
+    cJSON_AddNumberToObject(json, "chat_permissions", sqlite3_column_int(stmt, 3));
 
     return json;
 }

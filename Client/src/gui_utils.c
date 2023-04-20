@@ -160,7 +160,7 @@ void user_box(t_chat *chat, bool is_search)
     GError *error = NULL;
 
     // Load the image from a file
-    pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", &error);
+    pixbuf = gdk_pixbuf_new_from_file("Client/data/default_image.png", &error);
     if (error != NULL)
         g_error("Error loading image: %s", error->message);
 
@@ -234,7 +234,7 @@ void receive_bubble(t_msg *message)
         GdkPixbuf *pixbuf;
         GtkWidget *image;
 
-        pixbuf = gdk_pixbuf_new_from_file("Client/Ass/HOG.png", NULL);
+        pixbuf = gdk_pixbuf_new_from_file("Client/data/default_image.png", NULL);
         pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
         image = gtk_image_new_from_pixbuf(pixbuf);
         g_object_unref(pixbuf);
@@ -544,6 +544,9 @@ void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
     const char *text = gtk_entry_get_text(GTK_ENTRY(GTK_ENTRY(chatname)));
 
     int chat_id = create_chat_in_server(text, CHAT_NORMAL);
+
+    if(chat_id == -1)
+        return;
 
     t_chat *chat = (t_chat *)malloc(sizeof(t_chat));
     chat->name = mx_strdup(text);

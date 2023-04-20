@@ -23,7 +23,8 @@ int get_user_chats()
         temp_json = cJSON_GetArrayItem(json, i);
 
         t_chat *new_node = chat_prepare_node(cJSON_GetObjectItem(temp_json, "chat_id")->valueint,
-                                            cJSON_GetObjectItemCaseSensitive(temp_json, "chat_name")->valuestring);
+                                            cJSON_GetObjectItemCaseSensitive(temp_json, "chat_name")->valuestring,
+                                            cJSON_GetObjectItem(temp_json, "image_id")->valueint);
         chat_push_back(&account->chats, new_node);
     }
 

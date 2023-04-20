@@ -17,7 +17,7 @@ void read_from_server_to_logs()
 {
     char *json_str = read_from_server();
 
-    mx_logs(json_str, INFO_LOG);
+    mx_logs(json_str, LOG_INFO);
 
     free(json_str);
 }

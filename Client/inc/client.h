@@ -28,6 +28,8 @@
 
 #define DATA_DIR "Client/data/"
 
+#define DEFAULT_IMAGE "Client/data/default_image.png"
+
 #define MIN_NUMBER_OF_CHARACTERS 1
 #define MAX_NUMBER_OF_CHARACTERS 16
 
@@ -59,6 +61,7 @@ typedef struct s_chat
 {
     int id;
     char *name;
+    int image_id;
     t_msg *messages;
     struct s_chat *next;
 } t_chat;
@@ -96,7 +99,7 @@ void msg_pop_back(t_msg **head);
 void msg_pop_front(t_msg **head);
 t_msg *msg_get_last_message(t_msg *list);
 
-t_chat *chat_prepare_node(int id, char *name);
+t_chat *chat_prepare_node(int id, char *name, int image_id);
 void chat_push_back(t_chat **list, t_chat *new_node);
 void chat_push_front(t_chat **list, t_chat *new_node);
 t_chat *chat_get_chat_by_id(t_chat *list, int chat_id);

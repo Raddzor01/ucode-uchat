@@ -16,7 +16,7 @@ int server_init(char *port)
     {
         mx_printerr(strerror(errno));
         mx_printerr("\n");
-        mx_logs(strerror(errno), ERROR_LOG);
+        mx_logs(strerror(errno), LOG_ERROR);
         exit(EXIT_FAILURE);
     }
 
@@ -24,7 +24,7 @@ int server_init(char *port)
     {
         mx_printerr(strerror(errno));
         mx_printerr("\n");
-        mx_logs(strerror(errno), ERROR_LOG);
+        mx_logs(strerror(errno), LOG_ERROR);
         exit(EXIT_FAILURE);
     }
 
@@ -32,7 +32,7 @@ int server_init(char *port)
     {
         mx_printerr(strerror(errno));
         mx_printerr("\n");
-        mx_logs(strerror(errno), ERROR_LOG);
+        mx_logs(strerror(errno), LOG_ERROR);
         exit(EXIT_FAILURE);
     }
 
@@ -90,7 +90,7 @@ void log_client_conection(struct in_addr sa)
     inet_ntop(AF_INET, &sa, client_ip, INET_ADDRSTRLEN);
 
     log_message = mx_strjoin("Trying to connect client: ", client_ip);
-    mx_logs(log_message, INFO_LOG);
+    mx_logs(log_message, LOG_INFO);
 
     mx_strdel(&log_message);
 }

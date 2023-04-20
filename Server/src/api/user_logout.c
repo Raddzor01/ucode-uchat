@@ -4,7 +4,7 @@ void log_logout(const int id, const char *username)
 {
     char result_to_log[128];
     sprintf(result_to_log, "User logged out id: %d, name: %s", id, username);
-    mx_logs(result_to_log, INFO_LOG);
+    mx_logs(result_to_log, LOG_INFO);
 }
 
 void user_logout(cJSON *__attribute__((unused)) json, t_client_info *client_info)

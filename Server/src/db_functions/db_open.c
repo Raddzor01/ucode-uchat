@@ -6,7 +6,7 @@ sqlite3 *db_open()
 
     if (sqlite3_open(DB_NAME, &db) != SQLITE_OK)
     {
-        mx_logs(strerror(errno), ERROR_LOG);
+        mx_logs(strerror(errno), LOG_ERROR);
         return NULL;
     }
 

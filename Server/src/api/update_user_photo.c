@@ -13,7 +13,7 @@ bool write_file_to_data(char *file_path, long size, int socket_info)
         bytes_received = recv(socket_info, buffer, BUFSIZ, 0);
         if (bytes_received < 0)
         {
-            mx_logs("Getting file error", ERROR_LOG);
+            mx_logs("Getting file error", LOG_ERROR);
             return true;
         }
         fwrite(buffer, sizeof(char), bytes_received, image);
@@ -25,7 +25,7 @@ bool write_file_to_data(char *file_path, long size, int socket_info)
     int bytes_pending;
     if (ioctl(socket_info, FIONREAD, &bytes_pending) == -1)
     {
-        mx_logs("Ioctl error", ERROR_LOG);
+        mx_logs("Ioctl error", LOG_ERROR);
         return true;
     }
     if (bytes_pending > 0)
