@@ -5,7 +5,7 @@ cJSON *get_chat_json(sqlite3_stmt *stmt)
     cJSON *json = cJSON_CreateObject();
     cJSON_AddNumberToObject(json, "chat_id", sqlite3_column_int(stmt, 0));
     cJSON_AddStringToObject(json, "chat_name", (const char *)sqlite3_column_text(stmt, 1));
-    cJSON_AddNumberToObject(json, "chat_id", sqlite3_column_int(stmt, 2));
+    cJSON_AddNumberToObject(json, "image_id", sqlite3_column_int(stmt, 2));
 
     return json;
 }
