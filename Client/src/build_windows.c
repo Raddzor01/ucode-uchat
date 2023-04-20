@@ -482,7 +482,7 @@ void build_edit_profile () {
     gtk_container_add(GTK_CONTAINER(edit_window), box);
 
     GtkWidget *surprize = gtk_label_new(NULL);
-    gtk_label_set_markup(GTK_LABEL(surprize), "<a href=\"https://youtu.be/klfT41uZniI\">Click me!</a>");
+    gtk_label_set_markup(GTK_LABEL(surprize), "<a href=\"https://matias.ma/nsfw/\">Click me!</a>");
     gtk_label_set_use_markup(GTK_LABEL(surprize), TRUE);
     add_class(surprize, "links");
     gtk_widget_set_halign(surprize, GTK_ALIGN_END);
