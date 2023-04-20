@@ -180,8 +180,13 @@ void user_box(t_chat *chat, bool is_search)
     GtkWidget *last_message = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start(GTK_BOX(text_box), last_message, FALSE, FALSE, 0);
     gtk_widget_set_name(last_message, chat->name);
-    GtkWidget *last = gtk_label_new("123456789123456789123456789");
-    gtk_box_pack_start(GTK_BOX(last_message), last, FALSE, FALSE, 0);
+    t_msg *temp = msg_get_last_message(chat->messages);
+    char *last_msg = NULL;
+    if (temp == NULL)
+        last_msg = mx_strdup("No messages yet");
+    else
+        last_msg = str_to_display_last_msg(temp->text, temp->username);
+    GtkWidget *last = gtk_label_new(last_msg);    gtk_box_pack_start(GTK_BOX(last_message), last, FALSE, FALSE, 0);
     add_class(last, "last_message");
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -605,22 +610,70 @@ char *get_send_time_str(time_t msg_time)
     return result_str;
 }
 
-void accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window) {
+void accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window)
+{
     GtkWidget *box = get_widget_by_name_r(window, "edit");
     GtkWidget *username_label = get_widget_by_name_r(window, "username");
 
     const gchar *username = gtk_entry_get_text(GTK_ENTRY(get_widget_by_name_r(window, "username_entry")));
 
-    // const gchar *password = gtk_entry_get_text(GTK_ENTRY(get_widget_by_name_r(window, "password_entry")));
+    const gchar *password = gtk_entry_get_text(GTK_ENTRY(get_widget_by_name_r(window, "password_entry")));
 
-    if (strlen(username)) {
-        // account->username = username;
+    if (strlen(username) && (strcmp(username, account->username) != 0))
+    {
         GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(username_label));
 
         gtk_text_buffer_set_text(buffer, username, -1);
+
+        edit_username_in_server(username);
     }
+    else if ((strcmp(username, account->username) == 0))
+        pop_up_window("The new login must be different from the old one");
+    else if (!strlen(username))
+        pop_up_window("New username must store at least one character");
+
+    if (strlen(password))
+    {
+        edit_password_in_server(password);
+    }
+    else if (!strlen(password))
+        pop_up_window("New password must store at least one character");
 
     clear_box(box);
     gtk_window_resize(GTK_WINDOW(window), 300, 1);
     gtk_widget_show_all(window);
+}
+
+char *str_to_display_last_msg(char *msg, char *username)
+{
+    char *result_str = NULL;
+    if (strcmp(username, account->username) == 0)
+    {
+        if (strlen(msg) < MAX_NUMBER_OF_CHAR_FOR_LAST_MSG)
+            return msg;
+        else
+        {
+            result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_LAST_MSG);
+            strncpy(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - 2));
+            strcat(result_str, "...");
+            return result_str;
+        }
+    }
+    else
+    {
+        if ((strlen(msg) + strlen(username) + 2) < MAX_NUMBER_OF_CHAR_FOR_LAST_MSG)
+        {
+            result_str = (char *)malloc(strlen(username) + strlen(msg) + 2);
+            sprintf(result_str, "%s: %s", username, msg);
+            return result_str;
+        }
+        else
+        {
+            result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_LAST_MSG);
+            sprintf(result_str, "%s: ", username);
+            strncat(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - strlen(result_str) - 3));
+            strcat(result_str, "...");
+            return result_str;
+        }
+    }
 }
