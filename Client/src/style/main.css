@@ -70,7 +70,7 @@ grid box{
 
 .user-box  scrolledwindow button{
     font-family: Gill Sans;
-    font-size: 10px;
+    font-size: 14px;
     font-weight: bold;
     background-color: @main-bg-color;
     color: @fill-color;
@@ -183,4 +183,8 @@ button:hover {
     border-top: 2px solid @entry-bg-color;
     border-right: 2px solid @entry-bg-color;
     border-radius: 0px;
+}
+
+.last_message {
+    font-size: 8px;
 }
