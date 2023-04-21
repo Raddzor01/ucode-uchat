@@ -187,6 +187,7 @@ void edit_username();
 void accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window);
 void last_massage_display(char *chatname, char *message);
 char *str_to_display_last_msg(char *msg, char *username);
+void change_image (GtkWidget *button);
 
 // CSS part
 void load_css();

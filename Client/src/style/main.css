@@ -184,3 +184,8 @@ button:hover {
 .plus_button {
     border-radius: 10px;
  }
+
+.image {
+    background-color: @main-bg-color;
+    border-radius: 50%;
+}
