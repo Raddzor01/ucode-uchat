@@ -84,7 +84,7 @@ grid box{
 }
 
 .user-box button:hover{
-    background-color: @fill-hbg-color;
+    background-color: @fill-bg-color;
 }
 
 .user-box button:active{
@@ -186,6 +186,6 @@ button:hover {
  }
 
 .image {
-    background-color: @main-bg-color;
+    background-color: @fill-bg-color;
     border-radius: 50%;
 }

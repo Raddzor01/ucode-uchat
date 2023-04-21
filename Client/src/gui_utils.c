@@ -701,3 +701,23 @@ void change_image (GtkWidget *button) {
 
     gtk_widget_destroy(dialog);
 }
+
+void delete_account(GtkWidget *__attribute__((unused))button)
+{
+    GtkWidget *dialog;
+    dialog = gtk_message_dialog_new(GTK_WINDOW(main_window), GTK_DIALOG_MODAL,
+                                    GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+                                    "Are you sure?");
+    gint result = gtk_dialog_run(GTK_DIALOG(dialog));
+    if (result == GTK_RESPONSE_YES)
+    {
+        // Handle "yes" button clicked event
+        g_print("Yes button clicked.\n");
+    }
+    else if (result == GTK_RESPONSE_NO)
+    {
+        // Handle "no" button clicked event
+        g_print("No button clicked.\n");
+    }
+    gtk_widget_destroy(dialog);
+}

@@ -173,35 +173,56 @@ void build_signup()
     g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 }
 
+void confirm_window(GtkWidget *__attribute__((unused))button)
+{
+    GtkWidget *dialog;
+    dialog = gtk_message_dialog_new(GTK_WINDOW(main_window), GTK_DIALOG_MODAL,
+                                    GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+                                    "Are you sure?");
+    gint result = gtk_dialog_run(GTK_DIALOG(dialog));
+    if (result == GTK_RESPONSE_YES)
+    {
+        // Handle "yes" button clicked event
+        g_print("Yes button clicked.\n");
+    }
+    else if (result == GTK_RESPONSE_NO)
+    {
+        // Handle "no" button clicked event
+        g_print("No button clicked.\n");
+    }
+    gtk_widget_destroy(dialog);
+}
+
 void chat_info()
 {
     GtkWidget *box = get_widget_by_name_r(main_window, "chat_info");
     clear_box(box);
     GtkWidget *image;
     GtkWidget *chat_name;
-    GtkWidget *chat_info;
-    GtkWidget *text_box;
 
     GdkPixbuf *pixbuf;
 
     pixbuf = gdk_pixbuf_new_from_file("Client/data/default_image.png", NULL);
-    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 40, 40, GDK_INTERP_BILINEAR);
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
 
     image = gtk_image_new_from_pixbuf(pixbuf);
     g_object_unref(pixbuf);
 
     chat_name = gtk_label_new(account->current_chat->name);
 
-    chat_info = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_widget_set_size_request(chat_info, -1, 40);
-    gtk_widget_set_halign(chat_info, GTK_ALIGN_FILL);
-    gtk_box_pack_start(GTK_BOX(box), chat_info, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(chat_info), image, FALSE, FALSE, 0);
+    gtk_widget_set_halign(image, GTK_ALIGN_START);
+    gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
 
-    text_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    gtk_widget_set_halign(text_box, GTK_ALIGN_START);
-    gtk_box_pack_start(GTK_BOX(chat_info), text_box, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(text_box), chat_name, FALSE, FALSE, 0);
+    gtk_widget_set_halign(chat_name, GTK_ALIGN_START);
+    gtk_box_pack_start(GTK_BOX(box), chat_name, FALSE, FALSE, 0);
+
+    GtkWidget *cancel_button = create_image_button("Client/icons/trash.png", 30, 30);
+    add_class(cancel_button, "image");
+    gtk_widget_set_halign(cancel_button, GTK_ALIGN_END);
+    gtk_widget_set_valign(cancel_button, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(box), cancel_button, TRUE, TRUE, 0);
+
+    g_signal_connect(cancel_button, "clicked", G_CALLBACK(confirm_window), NULL);
 
     gtk_widget_show_all(box);
 }
@@ -231,6 +252,7 @@ void build_chat_window()
     gtk_grid_attach(GTK_GRID(grid), box, 1, 0, 1, 1);
 
     chat_info = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_widget_set_size_request(chat_info, 500, -1);
     gtk_widget_set_name(chat_info, "chat_info");
     gtk_box_pack_start(GTK_BOX(box), chat_info, FALSE, FALSE, 0);
 
@@ -294,13 +316,14 @@ char *get_user_image(int image_id)
     return get_image_from_server(image_id);
 }
 
-void build_users(GtkWidget *grid)
+void build_users()
 {
     GtkWidget *users_box;
     GtkWidget *scrolled_window;
     GtkWidget *box_for_users;
     GtkWidget *search_box;
     GtkWidget *create_chat;
+    GtkWidget *grid = get_widget_by_name_r(main_window, "chat_grid");
 
     users_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     add_class(users_box, "user-box");
@@ -546,6 +569,14 @@ void build_edit_profile()
 
     GtkWidget *text_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_box_pack_start(GTK_BOX(profile_info), text_box, FALSE, FALSE, 0);
+
+    GtkWidget *delete_button = create_image_button("Client/icons/trash.png", 20, 20);
+    add_class(delete_button, "image");
+    gtk_widget_set_halign(delete_button, GTK_ALIGN_END);
+    gtk_widget_set_valign(delete_button, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(box), delete_button, TRUE, TRUE, 0);
+
+    g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_account), NULL);
 
     GtkWidget *name = gtk_text_view_new();
     add_class(text_box, "edit");

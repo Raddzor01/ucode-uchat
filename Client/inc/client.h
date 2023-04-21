@@ -165,7 +165,7 @@ void pop_up_window(char *text);
 void chat_info();
 void add_class(GtkWidget *widget, char *class_name);
 void file_select(GtkWidget *widget, gpointer data);
-void build_users(GtkWidget *grid);
+void build_users();
 void user_box(t_chat *chat, bool is_search);
 bool check_fields_size(const gchar *username, const gchar *password, GtkWidget *username_error_label, GtkWidget *password_error_label);
 void text_bubble(t_msg *message);
@@ -188,6 +188,7 @@ void accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window
 void last_massage_display(char *chatname, char *message);
 char *str_to_display_last_msg(char *msg, char *username);
 void change_image (GtkWidget *button);
+void delete_account(GtkWidget *__attribute__((unused))button);
 
 // CSS part
 void load_css();

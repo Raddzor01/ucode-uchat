@@ -65,7 +65,7 @@ void chat_window()
     GtkWidget *grid = gtk_grid_new();
     gtk_widget_set_name(grid, "chat_grid");
     gtk_container_add(GTK_CONTAINER(main_window), grid);
-    build_users(grid);
+    build_users();
     
     // build_chat_window();
 
