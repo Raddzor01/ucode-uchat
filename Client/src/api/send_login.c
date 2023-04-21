@@ -38,7 +38,7 @@ bool check_account_from_server()
 
     account->is_busy = false;
 
-    return 1;
+    return ERR_SUCCESS;
 }
 
 int send_login_to_server(const char *username, const char *password)
