@@ -9,7 +9,7 @@ bool check_account_from_server()
 
     if (json == NULL)
     {
-        free(json_str);
+        mx_strdel(&json_str);
         return ERR_JSON;
     }
 
@@ -17,8 +17,11 @@ bool check_account_from_server()
 
     // add error checks
     if (error != 0)
+    {
+        cJSON_Delete(json);
+        mx_strdel(&json_str);
         return error;
-
+    }
 
     pthread_mutex_lock(&account->mutex);
     account->id = cJSON_GetObjectItem(json, "id")->valueint;

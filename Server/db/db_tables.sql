@@ -14,7 +14,6 @@ CREATE TABLE chats (
 );
 
 CREATE TABLE members (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
     chat_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
     privilege INTEGER NOT NULL
