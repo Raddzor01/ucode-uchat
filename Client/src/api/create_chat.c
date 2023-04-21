@@ -3,7 +3,7 @@
 int check_chat_id_from_server()
 {
     char *json_str = read_from_server();
-    pthread_mutex_unlock(&account->mutex);
+    sem_post(&account->semaphore);
 
     cJSON *json = cJSON_Parse(json_str);
 
@@ -56,7 +56,7 @@ int create_chat_in_server(const char *chat_name, int chat_type)
     cJSON_AddNumberToObject(json, "time", time(NULL));
     char *json_str = cJSON_PrintUnformatted(json);
 
-    pthread_mutex_lock(&account->mutex);
+    sem_wait(&account->semaphore);
     SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
     cJSON_Delete(json);

@@ -7,7 +7,7 @@ bool db_check_chat_membership(int chat_id, int user_id)
     char *query = NULL;
     bool check = false;
 
-    query = sqlite3_mprintf("SELECT EXISTS (SELECT id FROM members WHERE user_id = '%d' AND chat_id = '%d'); ", 
+    query = sqlite3_mprintf("SELECT EXISTS (SELECT 1 FROM members WHERE user_id = %d AND chat_id = %d); ", 
                             user_id, chat_id);
     
     db = db_open();

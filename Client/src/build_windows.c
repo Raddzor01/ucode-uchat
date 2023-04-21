@@ -106,6 +106,7 @@ void build_login()
     gtk_box_pack_start(GTK_BOX(box), username_label, FALSE, FALSE, 0);
 
     username_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(username_entry), "Enter username");
     gtk_box_pack_start(GTK_BOX(box), username_entry, FALSE, FALSE, 0);
 
     GtkWidget *username_error_label = gtk_label_new(" ");
@@ -117,6 +118,7 @@ void build_login()
     gtk_box_pack_start(GTK_BOX(box), password_label, FALSE, FALSE, 0);
 
     password_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(password_entry), "Enter password");
     gtk_entry_set_visibility(GTK_ENTRY(password_entry), FALSE);
     gtk_box_pack_start(GTK_BOX(box), password_entry, FALSE, FALSE, 0);
 
@@ -144,6 +146,7 @@ void build_signup()
     gtk_box_pack_start(GTK_BOX(box), username_label, FALSE, FALSE, 0);
 
     username_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(username_entry), "Enter username");
     gtk_box_pack_start(GTK_BOX(box), username_entry, FALSE, FALSE, 0);
 
     GtkWidget *username_error_label = gtk_label_new(" ");
@@ -155,6 +158,7 @@ void build_signup()
     gtk_box_pack_start(GTK_BOX(box), password_label, FALSE, FALSE, 0);
 
     password_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(password_entry), "Enter password");
     gtk_entry_set_visibility(GTK_ENTRY(password_entry), FALSE);
     gtk_box_pack_start(GTK_BOX(box), password_entry, FALSE, FALSE, 0);
 
@@ -163,12 +167,26 @@ void build_signup()
     add_class(password_error_label, "error-label");
     gtk_box_pack_start(GTK_BOX(box), password_error_label, FALSE, FALSE, 0);
 
-    GtkWidget *login_button = gtk_button_new_with_label("Back");
+    GtkWidget *confirm_password_label = gtk_label_new("Repeat password:");
+    gtk_box_pack_start(GTK_BOX(box), confirm_password_label, FALSE, FALSE, 0);
+
+    GtkWidget *confirm_password_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(confirm_password_entry), "Enter username one more time...");
+    gtk_entry_set_visibility(GTK_ENTRY(confirm_password_entry), FALSE);
+    gtk_box_pack_start(GTK_BOX(box), confirm_password_entry, FALSE, FALSE, 0);
+
+    GtkWidget *confirm_password_error_label = gtk_label_new(" ");
+    gtk_widget_set_name(confirm_password_error_label, "password_error_label");
+    add_class(confirm_password_error_label, "error-label");
+    gtk_box_pack_start(GTK_BOX(box), confirm_password_error_label, FALSE, FALSE, 0);
+
     GtkWidget *signup_button = gtk_button_new_with_label("Sign up");
-    gtk_box_pack_start(GTK_BOX(box), login_button, FALSE, FALSE, 0);
+    GtkWidget *login_button = gtk_button_new_with_label("Back");
     gtk_box_pack_start(GTK_BOX(box), signup_button, FALSE, FALSE, 0);
-    g_signal_connect(login_button, "clicked", G_CALLBACK(log_menu), NULL);
+    gtk_box_pack_start(GTK_BOX(box), login_button, FALSE, FALSE, 0);
+    
     g_signal_connect(signup_button, "clicked", G_CALLBACK(signup_clicked), NULL);
+    g_signal_connect(login_button, "clicked", G_CALLBACK(log_menu), NULL);
 
     g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 }
@@ -278,6 +296,10 @@ void build_chat_window()
     g_signal_connect(send_button, "clicked", G_CALLBACK(send_message), NULL);
 
     g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
+    gtk_adjustment_set_value(adjustment, gtk_adjustment_get_upper(adjustment) - gtk_adjustment_get_page_size(adjustment));
+    
     gtk_widget_show_all(box);
 }
 

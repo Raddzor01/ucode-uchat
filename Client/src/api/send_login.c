@@ -3,7 +3,7 @@
 bool check_account_from_server()
 {
     char *json_str = read_from_server();
-    pthread_mutex_unlock(&account->mutex);
+    sem_post(&account->semaphore);
 
     cJSON *json = cJSON_Parse(json_str);
 
@@ -27,13 +27,6 @@ bool check_account_from_server()
     account->id = cJSON_GetObjectItem(json, "id")->valueint;
     account->username = mx_strdup(cJSON_GetObjectItemCaseSensitive(json, "username")->valuestring);
     account->image_id = cJSON_GetObjectItem(json, "image_id")->valueint;
-    // if (account->image_id > 1)
-    // {
-    //     char *user_image_name = mx_strjoin(cJSON_GetObjectItemCaseSensitive(json, "filename")->valuestring, cJSON_GetObjectItemCaseSensitive(json, "extension")->valuestring);
-    //     char *user_image_path = mx_strjoin(DATA_DIR, user_image_name);
-    //     account->image_path = user_image_path;
-    //     mx_strdel(&user_image_name);
-    // }
     pthread_mutex_unlock(&account->mutex);
 
     cJSON_Delete(json);
@@ -55,7 +48,7 @@ int send_login_to_server(const char *username, const char *password)
     cJSON_AddStringToObject(json, "password", password);
     char *json_str = cJSON_PrintUnformatted(json);
 
-    pthread_mutex_lock(&account->mutex);
+    sem_wait(&account->semaphore);
     SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
     cJSON_Delete(json);

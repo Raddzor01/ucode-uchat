@@ -41,21 +41,20 @@ void *server_update_thread()
                 
                 if(is_current)
                     g_idle_add(update_chatlist_from_thread, (gpointer)server_message);
-                // if (server_message->user_id == account->id)
-                //     text_bubble(server_message->text, server_message->msg_id);
-                // else
-                //     receive_bubble(server_message->text, server_message->username);
-                // if (chat->id != account->current_chat->id)
+
                 last_msg_str = str_to_display_last_msg(server_message->text, server_message->username);
                 last_massage_display(chat->name, last_msg_str);
+
+                mx_strdel(&last_msg_str);
+
                 g_usleep(10000);
             }
+
             g_usleep(500000);
             chat = chat->next;
         }
         g_usleep(500000);
     }
-    free(last_msg_str);
 
     return NULL;
 }

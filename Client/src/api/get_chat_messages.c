@@ -8,12 +8,14 @@ t_msg *get_chat_messages_from_server(int chat_id)
     cJSON_AddNumberToObject(json, "chat_id", chat_id);
     char *json_str = cJSON_PrintUnformatted(json);
 
+    sem_wait(&account->semaphore);
     SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
     cJSON_Delete(json);
     mx_strdel(&json_str);
 
     json_str = read_from_server();
+    sem_post(&account->semaphore);
     json = cJSON_Parse(json_str);
 
     cJSON *messages_arr = cJSON_GetObjectItemCaseSensitive(json, "messages");

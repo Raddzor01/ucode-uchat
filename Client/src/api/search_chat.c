@@ -11,14 +11,14 @@ t_chat *find_chats_from_server(const char *search_pattern)
     cJSON_AddStringToObject(json, "search_pattern", search_pattern);
     char *json_str = cJSON_PrintUnformatted(json);
 
-    pthread_mutex_lock(&account->mutex);
+    sem_wait(&account->semaphore);
     SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
     cJSON_Delete(json);
     mx_strdel(&json_str);
 
     json_str = read_from_server();
-    pthread_mutex_unlock(&account->mutex);
+    sem_post(&account->semaphore);
 
     json = cJSON_Parse(json_str);
 

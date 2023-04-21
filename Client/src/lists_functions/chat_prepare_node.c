@@ -1,6 +1,6 @@
 #include "../../inc/client.h"
 
-t_chat *chat_prepare_node(int id, char *name, int image_id)
+t_chat *chat_prepare_node(const int id, const char *name, const int image_id)
 {
     t_chat *new_node = (t_chat *)malloc(sizeof(t_chat));
 

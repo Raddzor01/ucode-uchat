@@ -14,6 +14,7 @@ time_t send_message_to_server(const char *message)
     cJSON_AddNumberToObject(json, "time", current_time);
     char *json_str = cJSON_PrintUnformatted(json);
 
+    sem_wait(&account->semaphore);
     SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
     cJSON_Delete(json);
@@ -25,6 +26,7 @@ time_t send_message_to_server(const char *message)
 int get_msg_id()
 {
     char *json_str = read_from_server();
+    sem_post(&account->semaphore);
     cJSON *json = cJSON_Parse(json_str);
     int msg_id;
 

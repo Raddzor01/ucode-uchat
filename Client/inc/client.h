@@ -92,7 +92,7 @@ extern t_info *info;
 extern t_account *account;
 
 // msg list part
-t_msg *msg_prepare_node(int id, char *message, time_t time, int user_id, char *username);
+t_msg *msg_prepare_node(const int id, const char *message, const time_t time, const int user_id, const char *username);
 void msg_push_back(t_msg **list, t_msg *new_node);
 void msg_clear_list(t_msg **list);
 void msg_clear_single_node(t_msg **node);
@@ -105,7 +105,7 @@ void msg_pop_front(t_msg **head);
 t_msg *msg_get_last_message(t_msg *list);
 
 // chat list part
-t_chat *chat_prepare_node(int id, char *name, int image_id);
+t_chat *chat_prepare_node(const int id, const char *name, const int image_id);
 void chat_push_back(t_chat **list, t_chat *new_node);
 void chat_push_front(t_chat **list, t_chat *new_node);
 t_chat *chat_get_chat_by_id(t_chat *list, int chat_id);
@@ -186,7 +186,7 @@ void build_edit_profile();
 void edit_username();
 void accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window);
 void last_massage_display(char *chatname, char *message);
-char *str_to_display_last_msg(char *msg, char *username);
+char *str_to_display_last_msg(const char *msg, const char *username);
 void change_image (GtkWidget *button);
 
 // CSS part

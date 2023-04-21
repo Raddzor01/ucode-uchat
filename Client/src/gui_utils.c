@@ -219,6 +219,11 @@ void change_chat_id(GtkWidget *__attribute__((unused)) widget, gpointer user_dat
             receive_bubble(message);
         message = message->next;
     }
+
+    // GtkWidget *scrolled_window = get_widget_by_name_r(main_window, "scroll");
+    // GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
+    // gtk_adjustment_set_value(adjustment, gtk_adjustment_get_upper(adjustment) - gtk_adjustment_get_page_size(adjustment));
+
     gtk_widget_show_all(chat);
 }
 
@@ -639,24 +644,24 @@ void accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window
     gtk_widget_show_all(window);
 }
 
-char *str_to_display_last_msg(char *msg, char *username)
+char *str_to_display_last_msg(const char *msg, const char *username)
 {
     char *result_str = NULL;
-    if (strcmp(username, account->username) == 0)
+    if (mx_strcmp(username, account->username) == 0)
     {
-        if (strlen(msg) < MAX_NUMBER_OF_CHAR_FOR_LAST_MSG)
-            return msg;
+        if (mx_strlen(msg) < MAX_NUMBER_OF_CHAR_FOR_LAST_MSG)
+            return (char *)msg;
         else
         {
             result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_LAST_MSG);
-            strncpy(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - 2));
-            strcat(result_str, "...");
+            mx_strncpy(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - 2));
+            mx_strcat(result_str, "...");
             return result_str;
         }
     }
     else
     {
-        if ((strlen(msg) + strlen(username) + 2) < MAX_NUMBER_OF_CHAR_FOR_LAST_MSG)
+        if ((mx_strlen(msg) + mx_strlen(username) + 2) < MAX_NUMBER_OF_CHAR_FOR_LAST_MSG)
         {
             result_str = (char *)malloc(strlen(username) + strlen(msg) + 2);
             sprintf(result_str, "%s: %s", username, msg);
@@ -667,7 +672,7 @@ char *str_to_display_last_msg(char *msg, char *username)
             result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_LAST_MSG);
             sprintf(result_str, "%s: ", username);
             strncat(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - strlen(result_str) - 3));
-            strcat(result_str, "...");
+            mx_strcat(result_str, "...");
             return result_str;
         }
     }

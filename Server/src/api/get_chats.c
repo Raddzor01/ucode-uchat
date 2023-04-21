@@ -49,8 +49,8 @@ sqlite3_stmt *get_chats_stmt(sqlite3 *db, int user_id)
                            "WHERE chats.id IN (SELECT chat_id FROM members WHERE user_id = ?) AND members.user_id = ? "
                            "ORDER BY chats.date DESC; ",
                        -1, &stmt, NULL);
-    sqlite3_bind_int64(stmt, 1, user_id);
-    sqlite3_bind_int64(stmt, 2, user_id);
+    sqlite3_bind_int(stmt, 1, user_id);
+    sqlite3_bind_int(stmt, 2, user_id);
 
     return stmt;
 }

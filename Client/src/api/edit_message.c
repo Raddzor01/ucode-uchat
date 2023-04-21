@@ -2,8 +2,6 @@
 
 int edit_msg_in_server(int msg_id, const char *new_text)
 {
-    account->is_busy = true;
-
     cJSON *json = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(json, "type", REQ_EDIT_MESSAGE);

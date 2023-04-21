@@ -3,7 +3,7 @@
 int check_account_exists()
 {
     char *json_str = read_from_server();
-    pthread_mutex_unlock(&account->mutex);
+    sem_post(&account->semaphore);
     cJSON *json = cJSON_Parse(json_str);
 
     if (json == NULL)
@@ -37,7 +37,7 @@ int send_sign_up_to_server(const char *username, const char *password)
     cJSON_AddStringToObject(json, "password", password);
     char *json_str = cJSON_PrintUnformatted(json);
 
-    pthread_mutex_lock(&account->mutex);
+    sem_wait(&account->semaphore);
     SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
     cJSON_Delete(json);

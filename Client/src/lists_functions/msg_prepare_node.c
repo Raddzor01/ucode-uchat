@@ -1,6 +1,6 @@
 #include "../../inc/client.h"
 
-t_msg *msg_prepare_node(int id, char *message, time_t time, int user_id, char *username)
+t_msg *msg_prepare_node(const int id, const char *message, const time_t time, const int user_id, const char *username)
 {
     t_msg *new_node = (t_msg *)malloc(sizeof(t_msg));
 
