@@ -9,23 +9,16 @@ bool check_account_from_server()
 
     if (json == NULL)
     {
-        mx_printerr("Error getting user information for login\ncJSON is NULL\n");
-        cJSON_Delete(json);
         free(json_str);
-        return 0;
+        return ERR_JSON;
     }
 
-    t_error_type error = cJSON_GetObjectItem(json, "error_code")->valueint;
-    // t_req_type type = cJSON_GetObjectItem(json, "type")->valueint;
+    int error = cJSON_GetObjectItem(json, "error_code")->valueint;
 
     // add error checks
     if (error != 0)
-    {
-        mx_printerr("Error getting user information for login\nError in account cJSON\n");
-        cJSON_Delete(json);
-        free(json_str);
-        return 0;
-    }
+        return error;
+
 
     pthread_mutex_lock(&account->mutex);
     account->id = cJSON_GetObjectItem(json, "id")->valueint;

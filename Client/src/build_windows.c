@@ -50,10 +50,15 @@ void login_clicked(GtkWidget *__attribute__((unused)) widget)
     if (check_fields_size(username, password,  username_error_label, password_error_label) == true)
         return;
 
-    if (send_login_to_server(username, password) == 1)
+    int error_code = send_login_to_server(username, password);
+    if (error_code == ERR_SUCCESS)
     {
         gtk_label_set_text(GTK_LABEL(username_error_label), "Login successful");
         chat_window();
+    }
+    else if(error_code == ERR_JSON)
+    {
+        gtk_label_set_text(GTK_LABEL(username_error_label), "Error while trying to login. Try again!");
     }
     else
     {
