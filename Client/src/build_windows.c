@@ -18,7 +18,7 @@ bool check_fields_size(const gchar *username, const gchar *password, GtkWidget *
         error = true;
     }
 
-    if(error)
+    if (error)
         return true;
 
     if (mx_strlen(username) > MAX_NUMBER_OF_CHARACTERS)
@@ -47,8 +47,20 @@ void login_clicked(GtkWidget *__attribute__((unused)) widget)
     gtk_label_set_text(GTK_LABEL(username_error_label), " ");
     gtk_label_set_text(GTK_LABEL(password_error_label), " ");
 
-    if (check_fields_size(username, password,  username_error_label, password_error_label) == true)
+    if (check_fields_size(username, password, username_error_label, password_error_label) == true)
         return;
+
+    if (check_str_for_spec_char(username) == false)
+    {
+        gtk_label_set_text(GTK_LABEL(username_error_label), "Login contains special characters");
+        return;
+    }
+
+    if (check_str_for_spec_char(password) == false)
+    {
+        gtk_label_set_text(GTK_LABEL(password_error_label), "Password contains special characters");
+        return;
+    }
 
     int error_code = send_login_to_server(username, password);
     if (error_code == ERR_SUCCESS)
@@ -56,7 +68,7 @@ void login_clicked(GtkWidget *__attribute__((unused)) widget)
         gtk_label_set_text(GTK_LABEL(username_error_label), "Login successful");
         chat_window();
     }
-    else if(error_code == ERR_JSON)
+    else if (error_code == ERR_JSON)
     {
         gtk_label_set_text(GTK_LABEL(username_error_label), "Error while trying to login. Try again!");
     }
@@ -78,21 +90,34 @@ void signup_clicked(GtkWidget *__attribute__((unused)) widget)
     gtk_label_set_text(GTK_LABEL(username_error_label), " ");
     gtk_label_set_text(GTK_LABEL(password_error_label), " ");
 
-    if (check_fields_size(username, password,  username_error_label, password_error_label) == true)
+    if (check_fields_size(username, password, username_error_label, password_error_label) == true)
         return;
+    
+    if (check_str_for_spec_char(username) == false)
+    {
+        gtk_label_set_text(GTK_LABEL(username_error_label), "Login contains special characters");
+        return;
+    }
+
+    if (check_str_for_spec_char(password) == false)
+    {
+        gtk_label_set_text(GTK_LABEL(password_error_label), "Password contains special characters");
+        return;
+    }
 
     int error_code = send_sign_up_to_server(username, password);
     if (error_code == ERR_SUCCESS)
     {
         pop_up_window("Sign up successful");
         log_menu(main_window);
-    } else if (error_code == ERR_USER_EXISTS)
+    }
+    else if (error_code == ERR_USER_EXISTS)
     {
         gtk_label_set_text(GTK_LABEL(username_error_label), "This user already exists");
     }
     else
     {
-        gtk_label_set_text(GTK_LABEL(username_error_label),"Error while sending sign up request");
+        gtk_label_set_text(GTK_LABEL(username_error_label), "Error while sending sign up request");
     }
 }
 
