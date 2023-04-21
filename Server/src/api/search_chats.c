@@ -30,7 +30,6 @@ void search_chats(cJSON *client_json, t_client_info *client_info)
     char *search_str = mx_strnew(mx_strlen(search_pattern) + 3);
     sprintf(search_str, "%%%s%%", search_pattern);
 
-    // cJSON *users_json = cJSON_CreateArray();
     cJSON *chats_json = cJSON_CreateArray();
 
     // const char *query = "SELECT c.id, c.name, u.id AS user_id, u.username "

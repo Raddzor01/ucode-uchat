@@ -136,7 +136,8 @@ void file_select(GtkWidget *widget, gpointer data)
     gtk_widget_destroy(dialog);
 }
 
-void last_massage_display(char *chatname, char *message) {
+void last_massage_display(char *chatname, char *message)
+{
     GtkWidget *box = get_widget_by_name_r(main_window, chatname);
     clear_box(box);
 
@@ -158,6 +159,9 @@ void user_box(t_chat *chat, bool is_search)
     GdkPixbuf *pixbuf;
     GError *error = NULL;
 
+    char *chat_name = str_to_display_chat_name(chat->name);
+    char *last_msg = NULL;
+
     pixbuf = gdk_pixbuf_new_from_file("Client/data/default_image.png", &error);
     // pixbuf = gdk_pixbuf_new_from_file(get_user_image(chat->image_id), &error);
     if (error != NULL)
@@ -166,7 +170,7 @@ void user_box(t_chat *chat, bool is_search)
     pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
     image = gtk_image_new_from_pixbuf(pixbuf);
 
-    label = gtk_label_new(chat->name);
+    label = gtk_label_new(chat_name);
     gtk_widget_set_halign(label, GTK_ALIGN_START);
 
     GtkWidget *text_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -176,12 +180,12 @@ void user_box(t_chat *chat, bool is_search)
     gtk_box_pack_start(GTK_BOX(text_box), last_message, FALSE, FALSE, 0);
     gtk_widget_set_name(last_message, chat->name);
     t_msg *temp = msg_get_last_message(chat->messages);
-    char *last_msg = NULL;
     if (temp == NULL)
         last_msg = mx_strdup("No messages yet");
     else
         last_msg = str_to_display_last_msg(temp->text, temp->username);
-    GtkWidget *last = gtk_label_new(last_msg);    gtk_box_pack_start(GTK_BOX(last_message), last, FALSE, FALSE, 0);
+    GtkWidget *last = gtk_label_new(last_msg);
+    gtk_box_pack_start(GTK_BOX(last_message), last, FALSE, FALSE, 0);
     add_class(last, "last_message");
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -197,6 +201,9 @@ void user_box(t_chat *chat, bool is_search)
     if (is_search)
         g_signal_connect(button, "clicked", G_CALLBACK(join_chat), (gpointer)chat);
     g_signal_connect(button, "clicked", G_CALLBACK(change_chat_id), (gpointer)chat);
+
+    free(last_msg);
+    free(chat_name);
 }
 
 void change_chat_id(GtkWidget *__attribute__((unused)) widget, gpointer user_data)
@@ -418,9 +425,18 @@ void delete_msg(GtkButton *__attribute__((unused)) button, gpointer data)
     gtk_widget_destroy(box);
 }
 
-void delete_msg_id(GtkButton *__attribute__((unused)) button, gpointer msg_id)
+void delete_msg_id(GtkButton *__attribute__((unused)) button, gpointer data)
 {
-    delete_msg_in_server(GPOINTER_TO_INT(msg_id));
+    int message_id = GPOINTER_TO_INT(data);
+    delete_msg_in_server(message_id);
+    pthread_mutex_lock(&account->mutex);
+    msg_pop_by_message_id(&account->current_chat->messages, message_id);
+    pthread_mutex_unlock(&account->mutex);
+
+    char *last_msg_str = str_to_display_last_msg((msg_list_size(account->current_chat->messages) != 0) ? msg_get_last_message(account->current_chat->messages)->text : mx_strdup("No message yet"), account->username);
+    last_massage_display(account->current_chat->name, last_msg_str);
+    mx_strdel(&last_msg_str);
+
 }
 
 void cancel_edit(GtkButton *__attribute__((unused)) button, gpointer data)
@@ -521,7 +537,7 @@ void edit_accept(GtkButton *__attribute__((unused)) button, gpointer data)
     GtkWidget *text_view = GTK_WIDGET(data);
     const gchar *text = gtk_entry_get_text(GTK_ENTRY(info->entry));
 
-    if (strlen(text) == 0)
+    if (mx_strlen(text) == 0)
         return;
 
     PangoLayout *layout = gtk_widget_create_pango_layout(text_view, text);
@@ -559,7 +575,7 @@ void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
 
     int chat_id = create_chat_in_server(text, CHAT_NORMAL);
 
-    if(chat_id == -1)
+    if (chat_id == -1)
         return;
 
     t_chat *chat = (t_chat *)malloc(sizeof(t_chat));
@@ -578,11 +594,11 @@ void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
 void join_chat(GtkWidget *__attribute__((unused)) widget, gpointer user_data)
 {
     t_chat *chat = (t_chat *)user_data;
+    join_to_found_chat(chat->id);
     pthread_mutex_lock(&account->mutex);
     chat->messages = get_chat_messages_from_server(chat->id);
-    pthread_mutex_unlock(&account->mutex);
     chat_push_front(&account->chats, chat);
-    join_to_found_chat(chat->id);
+    pthread_mutex_unlock(&account->mutex);
 }
 
 char *get_send_time_str(time_t msg_time)
@@ -627,17 +643,14 @@ void accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window
 
         edit_username_in_server(username);
     }
-    else if ((strcmp(username, account->username) == 0))
-        pop_up_window("The new login must be different from the old one");
     else if (!strlen(username))
         pop_up_window("New username must store at least one character");
 
     if (strlen(password))
-    {
         edit_password_in_server(password);
-    }
-    else if (!strlen(password))
-        pop_up_window("New password must store at least one character");
+
+    if ((strcmp(username, account->username) != 0) && strlen(password))
+        pop_up_window("You didn't change anything");
 
     clear_box(box);
     gtk_window_resize(GTK_WINDOW(window), 300, 1);
@@ -650,7 +663,7 @@ char *str_to_display_last_msg(const char *msg, const char *username)
     if (mx_strcmp(username, account->username) == 0)
     {
         if (mx_strlen(msg) < MAX_NUMBER_OF_CHAR_FOR_LAST_MSG)
-            return (char *)msg;
+            return mx_strdup(msg);
         else
         {
             result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_LAST_MSG);
@@ -671,14 +684,29 @@ char *str_to_display_last_msg(const char *msg, const char *username)
         {
             result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_LAST_MSG);
             sprintf(result_str, "%s: ", username);
-            strncat(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - strlen(result_str) - 3));
+            strncat(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - strlen(result_str) - 2));
             mx_strcat(result_str, "...");
             return result_str;
         }
     }
 }
 
-void change_image (GtkWidget *button) {
+char *str_to_display_chat_name(char *chat_name)
+{
+    char *result_str = NULL;
+    if (strlen(chat_name) < MAX_NUMBER_OF_CHAR_FOR_CHAT_NAME)
+        return mx_strdup(chat_name);
+    else
+    {
+        result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_CHAT_NAME);
+        strncpy(result_str, chat_name, (MAX_NUMBER_OF_CHAR_FOR_CHAT_NAME - 2));
+        strcat(result_str, "...");
+        return result_str;
+    }
+}
+
+void change_image(GtkWidget *button)
+{
     GtkWidget *dialog;
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
     gint res;
@@ -705,4 +733,38 @@ void change_image (GtkWidget *button) {
     }
 
     gtk_widget_destroy(dialog);
+}
+
+void delete_account(GtkWidget *__attribute__((unused)) button)
+{
+    GtkWidget *dialog;
+    dialog = gtk_message_dialog_new(GTK_WINDOW(main_window), GTK_DIALOG_MODAL,
+                                    GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
+                                    "Are you sure?");
+    gint result = gtk_dialog_run(GTK_DIALOG(dialog));
+    if (result == GTK_RESPONSE_YES)
+    {
+        // Handle "yes" button clicked event
+        g_print("Yes button clicked.\n");
+    }
+    else if (result == GTK_RESPONSE_NO)
+    {
+        // Handle "no" button clicked event
+        g_print("No button clicked.\n");
+    }
+    gtk_widget_destroy(dialog);
+}
+
+bool check_str_for_spec_char(const char *str)
+{
+    if (!str)
+        return false;
+
+    for (unsigned long i = 0; i < strlen(str); i++)
+    {
+        if (str[i] < 48 || (str[i] > 57 && str[i] < 65) || (str[i] > 90 && str[i] < 97) || (str[i] > 122 && str[i] < 127))
+            return false;
+    }
+
+    return true;
 }

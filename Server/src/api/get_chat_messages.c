@@ -21,10 +21,10 @@ static cJSON *get_messages_array(int chat_id)
     cJSON *messages_array = cJSON_CreateArray();
 
     db = db_open();
-    query = sqlite3_mprintf("SELECT messages.id, messages.user_id, messages.chat_id, users.username, messages.message, messages.time FROM messages "
+    query = sqlite3_mprintf("SELECT messages.id, messages.user_id, messages.chat_id, users.username, messages.message, messages.date FROM messages "
                             "INNER JOIN users ON users.id = messages.user_id "
                             "WHERE messages.chat_id = %d "
-                            "ORDER BY messages.time; ",
+                            "ORDER BY messages.date; ",
                             chat_id);
     sqlite3_prepare_v2(db, query, -1, &stmt, NULL);
 

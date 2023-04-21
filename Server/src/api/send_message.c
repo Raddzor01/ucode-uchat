@@ -44,13 +44,18 @@ void insert_message_into_db(cJSON *json)
     message = cJSON_GetObjectItemCaseSensitive(json, "message")->valuestring;
     time = cJSON_GetObjectItemCaseSensitive(json, "time")->valueint;
 
-    query = sqlite3_mprintf("INSERT INTO messages (user_id, chat_id, message, time) VALUES(%d, %d, ?, %ld); ",
+    query = sqlite3_mprintf("INSERT INTO messages (user_id, chat_id, message, date) VALUES(%d, %d, ?, %ld); ",
                             user_id, chat_id, time);
     sqlite3_prepare_v2(db, query, -1, &stmt, NULL);
     sqlite3_bind_text(stmt, 1, message, -1, SQLITE_STATIC);
     sqlite3_step(stmt);
+    sqlite3_free(query);
 
+    query = sqlite3_mprintf("UPDATE chats SET date = %ld WHERE id = %d ; ",
+                            time, chat_id);
+    db_execute_query(query);
+    
+    sqlite3_free(query);
     sqlite3_finalize(stmt);
     sqlite3_close(db);
-    sqlite3_free(query);
 }

@@ -24,7 +24,7 @@ CREATE TABLE messages (
     user_id INTEGER NOT NULL,
     chat_id INTEGER NOT NULL,
     message TEXT,
-    time INTEGER NOT NULL
+    date INTEGER NOT NULL
 );
 
 CREATE TABLE files (

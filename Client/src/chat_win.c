@@ -2,17 +2,21 @@
 
 void send_message(GtkButton *__attribute__((unused)) button)
 {
-    const char *text;
+    time_t timer = 0;
+    int server_msg_id = 0;
+    char *last_msg_str = NULL;
+    char *text = NULL;
+    t_msg *new_node = NULL;
 
-    text = gtk_entry_get_text(GTK_ENTRY(info->entry));
+    text = (char *)gtk_entry_get_text(GTK_ENTRY(info->entry));
 
-    if (strlen(text) == 0)
+    if (mx_strlen(text) == 0)
         return;
 
-    time_t timer = send_message_to_server(text);
-    int server_msg_id = get_msg_id();
+    timer = send_message_to_server(text);
+    server_msg_id = get_msg_id();
 
-    t_msg *new_node = msg_prepare_node(server_msg_id, text, timer, account->id, account->username);
+    new_node = msg_prepare_node(server_msg_id, text, timer, account->id, account->username);
 
     pthread_mutex_lock(&account->mutex);
     msg_push_back(&account->current_chat->messages, new_node);
@@ -20,12 +24,12 @@ void send_message(GtkButton *__attribute__((unused)) button)
 
     text_bubble(new_node);
 
-    char *last_msg_str = str_to_display_last_msg(text, account->username);
+    last_msg_str = str_to_display_last_msg(text, account->username);
     last_massage_display(account->current_chat->name, last_msg_str);
 
     gtk_entry_set_text(GTK_ENTRY(info->entry), "");
 
-    mx_strdel(&);
+    mx_strdel(&last_msg_str);
 }
 
 void find_chats(GtkWidget *entry)
@@ -64,7 +68,7 @@ void chat_window()
     GtkWidget *grid = gtk_grid_new();
     gtk_widget_set_name(grid, "chat_grid");
     gtk_container_add(GTK_CONTAINER(main_window), grid);
-    build_users(grid);
+    build_users();
     
     // build_chat_window();
 
