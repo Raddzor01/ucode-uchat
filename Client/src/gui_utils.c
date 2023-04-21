@@ -672,3 +672,32 @@ char *str_to_display_last_msg(char *msg, char *username)
         }
     }
 }
+
+void change_image (GtkWidget *button) {
+    GtkWidget *dialog;
+    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+    gint res;
+
+    dialog = gtk_file_chooser_dialog_new("Choose avatar", NULL, action, "_Cancel",
+                                         GTK_RESPONSE_CANCEL, "_Select", GTK_RESPONSE_ACCEPT, NULL);
+    res = gtk_dialog_run(GTK_DIALOG(dialog));
+    if (res == GTK_RESPONSE_ACCEPT)
+    {
+        char *filename;
+        GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
+        filename = gtk_file_chooser_get_filename(chooser);
+
+        // Do something with the selected file...
+        GdkPixbuf *pixbuf;
+
+        pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+        pixbuf = gdk_pixbuf_scale_simple(pixbuf, 60, 60, GDK_INTERP_BILINEAR);
+
+        GtkWidget *new_image = gtk_image_new_from_pixbuf(pixbuf);
+        gtk_button_set_image(GTK_BUTTON(button), new_image);
+        g_free(filename);
+        g_object_unref(pixbuf);
+    }
+
+    gtk_widget_destroy(dialog);
+}
