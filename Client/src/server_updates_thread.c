@@ -10,7 +10,7 @@ gboolean update_chatlist_from_thread(gpointer user_data)
 
 void *server_update_thread()
 {
-    char *last_msg_str;
+    char *last_msg_str = NULL;
     while (true)
     {
         if (!account)

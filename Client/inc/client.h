@@ -33,7 +33,8 @@
 #define MIN_NUMBER_OF_CHARACTERS 1
 #define MAX_NUMBER_OF_CHARACTERS 16
 
-#define MAX_NUMBER_OF_CHAR_FOR_LAST_MSG 32
+#define MAX_NUMBER_OF_CHAR_FOR_CHAT_NAME 15
+#define MAX_NUMBER_OF_CHAR_FOR_LAST_MSG 22
 
 // struct for sending to server
 typedef struct s_info
@@ -187,8 +188,10 @@ void edit_username();
 void accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window);
 void last_massage_display(char *chatname, char *message);
 char *str_to_display_last_msg(char *msg, char *username);
+char *str_to_display_chat_name(char *chat_name);
 void change_image (GtkWidget *button);
 void delete_account(GtkWidget *__attribute__((unused))button);
+bool check_str_for_spec_char(const char *str);
 
 // CSS part
 void load_css();
