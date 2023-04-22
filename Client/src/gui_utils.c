@@ -760,10 +760,17 @@ bool check_str_for_spec_char(const char *str)
     if (!str)
         return false;
 
-    for (unsigned long i = 0; i < strlen(str); i++)
-    {
-        if (str[i] < 48 || (str[i] > 57 && str[i] < 65) || (str[i] > 90 && str[i] < 97) || (str[i] > 122 && str[i] < 127))
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (!((str[i] >= '0' && str[i] <= '9')
+           || (str[i] >= 'A' && str[i] <= 'Z') 
+           || (str[i] >= 'a' && str[i] <= 'z') 
+           || (str[i] >= 32 && str[i] <= 47) 
+           || (str[i] >= 58 && str[i] <= 64) 
+           || (str[i] >= 91 && str[i] <= 96) 
+           || (str[i] >= 123 && str[i] <= 126)))
+        {
             return false;
+        }
     }
 
     return true;

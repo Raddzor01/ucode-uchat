@@ -113,6 +113,7 @@ t_chat *chat_get_chat_by_id(t_chat *list, int chat_id);
 void chat_clear_single_node(t_chat **list);
 void chat_clear_list(t_chat **list);
 int chat_list_size(t_chat *list);
+void chat_move_node_to_head(t_chat **head, int node_id);
 
 void *server_update_thread();
 char *get_user_image(int image_id);
@@ -168,7 +169,7 @@ void add_class(GtkWidget *widget, char *class_name);
 void file_select(GtkWidget *widget, gpointer data);
 void build_users();
 void user_box(t_chat *chat, bool is_search);
-bool check_fields_size(const gchar *username, const gchar *password, GtkWidget *username_error_label, GtkWidget *password_error_label);
+bool check_field_size(const gchar *field, GtkWidget *field_widget);
 void text_bubble(t_msg *message);
 void delete_msg(GtkButton *__attribute__((unused)) button, gpointer data);
 void delete_msg_id(GtkButton *__attribute__((unused)) button, gpointer msg_id);

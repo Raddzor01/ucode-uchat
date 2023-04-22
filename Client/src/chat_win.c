@@ -18,18 +18,27 @@ void send_message(GtkButton *__attribute__((unused)) button)
 
     new_node = msg_prepare_node(server_msg_id, text, timer, account->id, account->username);
 
-    pthread_mutex_lock(&account->mutex);
-    msg_push_back(&account->current_chat->messages, new_node);
-    pthread_mutex_unlock(&account->mutex);
-
     text_bubble(new_node);
-
-    last_msg_str = str_to_display_last_msg(text, account->username);
-    last_massage_display(account->current_chat->name, last_msg_str);
 
     gtk_entry_set_text(GTK_ENTRY(info->entry), "");
 
-    mx_strdel(&last_msg_str);
+    pthread_mutex_lock(&account->mutex);
+    msg_push_back(&account->current_chat->messages, new_node);
+
+    if (account->current_chat->id == account->chats->id)
+    {
+        last_msg_str = str_to_display_last_msg(text, account->username);
+        last_massage_display(account->current_chat->name, last_msg_str);
+        mx_strdel(&last_msg_str);
+    }
+    else
+    {
+        chat_move_node_to_head(&account->chats, account->current_chat->id);
+        GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
+        clear_box(box);
+        display_users();
+    }
+    pthread_mutex_unlock(&account->mutex);
 }
 
 void find_chats(GtkWidget *entry)
@@ -69,7 +78,7 @@ void chat_window()
     gtk_widget_set_name(grid, "chat_grid");
     gtk_container_add(GTK_CONTAINER(main_window), grid);
     build_users();
-    
+
     // build_chat_window();
 
     pthread_create(&account->server_update_thread, NULL, server_update_thread, NULL);
