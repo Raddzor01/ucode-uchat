@@ -240,13 +240,12 @@ void confirm_window(GtkWidget *__attribute__((unused))button)
     gint result = gtk_dialog_run(GTK_DIALOG(dialog));
     if (result == GTK_RESPONSE_YES)
     {
-        // Handle "yes" button clicked event
         g_print("Yes button clicked.\n");
+        delete_chat_in_server();
     }
     else if (result == GTK_RESPONSE_NO)
     {
-        // Handle "no" button clicked event
-        g_print("No button clicked.\n");
+        pop_up_window("Something went wrong\nTry again");
     }
     gtk_widget_destroy(dialog);
 }

@@ -745,7 +745,7 @@ void delete_account(GtkWidget *__attribute__((unused)) button)
     if (result == GTK_RESPONSE_YES)
     {
         delete_account_in_server();
-        // send_logout_to_server();
+        send_logout_to_server();
     }
     else if (result == GTK_RESPONSE_NO)
     {

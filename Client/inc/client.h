@@ -145,6 +145,7 @@ char *get_image_from_server(int image_id);
 int edit_username_in_server(const char *new_username);
 int edit_password_in_server(const char *new_password);
 int delete_account_in_server();
+int delete_chat_in_server();
 
 // Conection to the server
 void init_ssl(SSL_CTX **ctx);

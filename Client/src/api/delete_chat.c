@@ -1,11 +1,11 @@
 #include "../../inc/client.h"
 
-int delete_account_in_server()
+int delete_chat_in_server()
 {
     cJSON *json = cJSON_CreateObject();
 
-    cJSON_AddNumberToObject(json, "type", REQ_DEL_ACCOUNT);
-    cJSON_AddNumberToObject(json, "account_id", account->id);
+    cJSON_AddNumberToObject(json, "type", REQ_DEL_CHAT);
+    cJSON_AddNumberToObject(json, "chat_id", account->current_chat->id);
     char *json_str = cJSON_PrintUnformatted(json);
 
     sem_wait(&account->semaphore);
@@ -20,14 +20,7 @@ int delete_account_in_server()
 
     if (cJSON_GetObjectItem(json, "error_code")->valueint != 0)
     {
-        pop_up_window("Error deleting account");
-    }
-    else
-    {
-        // mx_strdel(&account->username);
-        // pthread_cancel(account->server_update_thread);
-        // chat_clear_list(&account->chats);
-        // pthread_create(&account->server_update_thread, NULL, server_update_thread, NULL);
+        pop_up_window("Error deleting chat");
     }
 
     mx_strdel(&json_str);
