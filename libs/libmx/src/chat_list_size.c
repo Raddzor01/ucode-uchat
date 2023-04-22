@@ -1,18 +1,17 @@
-#include "../../inc/client.h"
+#include "../inc/libmx.h"
 
-int msg_list_size(t_msg *list)
+int chat_list_size(t_chat *list)
 {
     int size = 0;
-
+    
     if (list == NULL)
         return 0;
 
-    t_msg *head = list;
+    t_chat *head = list;
     while (head != NULL)
     {
         head = head->next;
         size++;
     }
-    
     return size;
 }

@@ -1,4 +1,4 @@
-#include "../../inc/client.h"
+#include "../inc/libmx.h"
 
 void chat_push_front(t_chat **list, t_chat *new_node)
 {

@@ -1,4 +1,4 @@
-#include "../../inc/client.h"
+#include "../inc/libmx.h"
 
 void chat_move_node_to_head(t_chat **head, int node_id)
 {

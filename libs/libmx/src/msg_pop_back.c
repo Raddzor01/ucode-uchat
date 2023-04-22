@@ -1,4 +1,4 @@
-#include "../../inc/client.h"
+#include "../inc/libmx.h"
 
 void msg_pop_back(t_msg **head)
 {

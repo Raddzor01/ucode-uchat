@@ -1,6 +1,6 @@
-#include "../../inc/client.h"
+#include "../inc/libmx.h"
 
-void msg_push_back(t_msg **list, t_msg *new_node)
+void chat_push_back(t_chat **list, t_chat *new_node)
 {
     if (list != NULL && *list == NULL)
     {
@@ -8,7 +8,7 @@ void msg_push_back(t_msg **list, t_msg *new_node)
         return;
     }
 
-    t_msg *last = *list;
+    t_chat *last = *list;
     while (last->next != NULL)
         last = last->next;
 

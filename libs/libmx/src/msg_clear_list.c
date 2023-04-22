@@ -1,4 +1,4 @@
-#include "../../inc/client.h"
+#include "../inc/libmx.h"
 
 void msg_clear_list(t_msg **list)
 {

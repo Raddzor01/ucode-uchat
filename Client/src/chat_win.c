@@ -4,7 +4,6 @@ void send_message(GtkButton *__attribute__((unused)) button)
 {
     time_t timer = 0;
     int server_msg_id = 0;
-    char *last_msg_str = NULL;
     char *text = NULL;
     t_msg *new_node = NULL;
 
@@ -24,21 +23,12 @@ void send_message(GtkButton *__attribute__((unused)) button)
 
     pthread_mutex_lock(&account->mutex);
     msg_push_back(&account->current_chat->messages, new_node);
-
-    if (account->current_chat->id == account->chats->id)
-    {
-        last_msg_str = str_to_display_last_msg(text, account->username);
-        last_massage_display(account->current_chat->name, last_msg_str);
-        mx_strdel(&last_msg_str);
-    }
-    else
-    {
-        chat_move_node_to_head(&account->chats, account->current_chat->id);
-        GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
-        clear_box(box);
-        display_users();
-    }
     pthread_mutex_unlock(&account->mutex);
+
+    chat_move_node_to_head(&account->chats, account->current_chat->id);
+    GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
+    clear_box(box);
+    display_users();
 }
 
 void find_chats(GtkWidget *entry)

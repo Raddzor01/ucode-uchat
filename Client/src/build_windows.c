@@ -231,6 +231,28 @@ void build_signup()
     g_signal_connect(main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 }
 
+void delete_chat_confirm()
+{
+    if(delete_chat_in_server() != 0)
+        return;
+
+    pthread_mutex_lock(&account->mutex);
+    chat_pop_by_id(&account->chats, account->current_chat->id);
+    pthread_mutex_unlock(&account->mutex);
+
+    GtkWidget *chat = get_widget_by_name_r(main_window, "box_holder");
+    GtkWidget *chat_bar = get_widget_by_name_r(main_window, "chat_info");
+    GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
+
+    clear_box(chat);
+    clear_box(box);
+    clear_box(chat_bar);
+
+    display_users();
+
+    gtk_widget_show_all(chat);
+}
+
 void confirm_window(GtkWidget *__attribute__((unused))button)
 {
     GtkWidget *dialog;
@@ -239,14 +261,9 @@ void confirm_window(GtkWidget *__attribute__((unused))button)
                                     "Are you sure?");
     gint result = gtk_dialog_run(GTK_DIALOG(dialog));
     if (result == GTK_RESPONSE_YES)
-    {
-        g_print("Yes button clicked.\n");
-        delete_chat_in_server();
-    }
+        delete_chat_confirm();
     else if (result == GTK_RESPONSE_NO)
-    {
         pop_up_window("Something went wrong\nTry again");
-    }
     gtk_widget_destroy(dialog);
 }
 
@@ -334,7 +351,7 @@ void build_chat_window()
     gtk_widget_set_name(box_container, "box_holder");
 
     entry = gtk_entry_new();
-    gtk_entry_set_placeholder_text(GTK_ENTRY(entry), "Message");
+    gtk_entry_set_placeholder_text(GTK_ENTRY(entry), "Write message...");
     gtk_box_pack_start(GTK_BOX(input_box), entry, TRUE, TRUE, 0);
     gtk_widget_set_size_request(entry, 400, 10);
     gtk_widget_set_hexpand(entry, TRUE);

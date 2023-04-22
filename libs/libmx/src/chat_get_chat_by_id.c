@@ -1,4 +1,4 @@
-#include "../../inc/client.h"
+#include "../inc/libmx.h"
 
 t_chat *chat_get_chat_by_id(t_chat *list, int chat_id)
 {

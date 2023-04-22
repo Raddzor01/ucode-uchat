@@ -37,8 +37,8 @@ void *server_update_thread()
         chat = account ? account->chats : NULL;
         while (chat)
         {
-            last_server_msg_id = get_last_msg_id_from_server(chat->id);
-            last_message_node = msg_get_last_message(chat->messages);
+            last_server_msg_id = chat ? get_last_msg_id_from_server(chat->id) : 0;
+            last_message_node = chat ? msg_get_last_message(chat->messages) : 0;
             last_client_msg_id = last_message_node ? last_message_node->msg_id : 0;
             is_current = account->current_chat && account->current_chat->id == chat->id;
             if ((last_server_msg_id <= 0) || (last_server_msg_id <= last_client_msg_id && !is_current))

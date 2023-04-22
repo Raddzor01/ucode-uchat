@@ -1,4 +1,4 @@
-#include "../../inc/client.h"
+#include "../inc/libmx.h"
 
 t_chat *chat_prepare_node(const int id, const char *name, const int image_id)
 {
@@ -7,7 +7,6 @@ t_chat *chat_prepare_node(const int id, const char *name, const int image_id)
     new_node->id = id;
     new_node->name = mx_strdup(name);
     new_node->image_id = image_id;
-    new_node->messages = get_chat_messages_from_server(id);
     new_node->next = NULL;
 
     return new_node;

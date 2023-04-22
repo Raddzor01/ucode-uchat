@@ -34,7 +34,7 @@ clean:
 	rm -f $(OBJS)
 	rm -df $(OBJDIR)
 	rm -rdf $(SRVR_INFO_DIR)
-	# rm -rdf $(DATA_DIR)
+	rm -f 
 
 uninstall:
 	make clean

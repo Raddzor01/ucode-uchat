@@ -28,7 +28,9 @@ $(CLIENT):
 
 clean:
 	rm -f $(OBJS)
-	rm -df $(OBJDIR) 
+	rm -df $(OBJDIR)
+	rm -f $(CLIENT)
+	rm -f $(SERVER)
 
 uninstall:
 	make -sC $(SERVER_DIR) $@

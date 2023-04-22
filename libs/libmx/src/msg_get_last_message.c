@@ -1,4 +1,4 @@
-#include "../../inc/client.h"
+#include "../inc/libmx.h"
 
 t_msg *msg_get_last_message(t_msg *list)
 {

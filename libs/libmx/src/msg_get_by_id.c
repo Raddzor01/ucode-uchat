@@ -1,4 +1,4 @@
-#include "../../inc/client.h"
+#include "../inc/libmx.h"
 
 t_msg *msg_get_by_id(t_msg *list, int id)
 {
