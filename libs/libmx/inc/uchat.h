@@ -17,6 +17,7 @@ typedef enum e_req_type
     REQ_SEARCH_CHATS,
     REQ_EDIT_MESSAGE,
     REQ_DEL_MESSAGE,
+    REQ_DEL_CHAT,
     REQ_JOIN_CHAT,
     REQ_LEAVE_CHAT,
     REQ_EDIT_USERNAME,
