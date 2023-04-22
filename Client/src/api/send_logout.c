@@ -10,6 +10,7 @@ int send_logout_to_server()
     SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
     cJSON_Delete(json);
+    mx_strdel(&json_str);
 
     mx_strdel(&account->username);
     pthread_cancel(account->server_update_thread);

@@ -144,6 +144,7 @@ gboolean update_chatlist_from_thread(gpointer user_data);
 char *get_image_from_server(int image_id);
 int edit_username_in_server(const char *new_username);
 int edit_password_in_server(const char *new_password);
+int delete_account_in_server();
 
 // Conection to the server
 void init_ssl(SSL_CTX **ctx);
