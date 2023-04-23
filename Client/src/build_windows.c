@@ -288,6 +288,9 @@ void build_chat_window()
     if (get_widget_by_name_r(main_window, "chat"))
         return;
 
+    if (get_widget_by_name_r(main_window, "empty_right_bar"))
+        gtk_widget_destroy(get_widget_by_name_r(main_window, "empty_right_bar"));
+
     GtkWidget *box;
     GtkWidget *chat_box;
     GtkWidget *input_box;
@@ -417,6 +420,7 @@ void build_users()
     gtk_widget_set_name(box_for_users, "box_for_users");
 
     display_users();
+    empty_left_bar();
 
     // chert moment
     GError *error = NULL;
@@ -565,7 +569,7 @@ void create_chat_menu()
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_container_add(GTK_CONTAINER(window), box);
 
-    GtkWidget *chatname_label = gtk_label_new("Username:");
+    GtkWidget *chatname_label = gtk_label_new("Chatname:");
     gtk_box_pack_start(GTK_BOX(box), chatname_label, FALSE, FALSE, 0);
 
     GtkWidget *chatname_entry = gtk_entry_new();
@@ -636,7 +640,7 @@ void build_edit_profile()
     gtk_widget_set_valign(delete_button, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(box), delete_button, TRUE, TRUE, 0);
 
-    g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_account), NULL);
+    g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_account), edit_window);
 
     GtkWidget *name = gtk_text_view_new();
     add_class(text_box, "edit");

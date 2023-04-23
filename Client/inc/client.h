@@ -151,8 +151,10 @@ void last_massage_display(char *chatname, char *message);
 char *str_to_display_last_msg(const char *msg, const char *username);
 char *str_to_display_chat_name(char *chat_name);
 void change_image (GtkWidget *button);
-void delete_account(GtkWidget *__attribute__((unused))button);
+void delete_account(GtkWidget *__attribute__((unused)) button, GtkWidget *window);
 bool check_str_for_spec_char(const char *str);
+void empty_right_bar();
+void empty_left_bar();
 
 // CSS part
 void load_css();
