@@ -245,7 +245,7 @@ void receive_bubble(t_msg *message)
     GtkTextBuffer *buffer;
     GtkWidget *time_label;
 
-    box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
     gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
     gtk_widget_set_halign(box, GTK_ALIGN_START);
 
@@ -317,6 +317,20 @@ void receive_bubble(t_msg *message)
     gtk_widget_set_valign(time_label, GTK_ALIGN_START);
     add_class(time_label, "time");
     gtk_box_pack_start(GTK_BOX(username_box), time_label, FALSE, TRUE, 0);
+
+    if ((account->current_chat->user_privilege == PRIV_ADMIN)
+    || (account->current_chat->user_privilege == PRIV_MODERATOR))
+    {
+        GtkWidget *delete_button;
+
+        delete_button = create_image_button("Client/icons/trash.png", 12, 12);
+        gtk_widget_set_vexpand(delete_button, FALSE);
+        gtk_widget_set_valign(delete_button, GTK_ALIGN_CENTER);
+        gtk_box_pack_start(GTK_BOX(username_box), delete_button, FALSE, FALSE, 0);
+
+        g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg_id), GINT_TO_POINTER(message->msg_id));
+        g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg), box);
+    }
 
     gtk_widget_show_all(box_container);
     gtk_widget_queue_draw(main_window);
@@ -436,7 +450,6 @@ void delete_msg_id(GtkButton *__attribute__((unused)) button, gpointer data)
     char *last_msg_str = str_to_display_last_msg((msg_list_size(account->current_chat->messages) != 0) ? msg_get_last_message(account->current_chat->messages)->text : mx_strdup("No message yet"), account->username);
     last_massage_display(account->current_chat->name, last_msg_str);
     mx_strdel(&last_msg_str);
-
 }
 
 void cancel_edit(GtkButton *__attribute__((unused)) button, gpointer data)
@@ -578,12 +591,11 @@ void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
     if (chat_id == -1)
         return;
 
-    t_chat *chat = (t_chat *)malloc(sizeof(t_chat));
-    chat->name = mx_strdup(text);
-    chat->id = chat_id;
-    chat->messages = NULL;
-    chat->next = NULL;
+    t_chat *chat = chat_prepare_node(chat_id, text, 1, PRIV_ADMIN);
+
+    pthread_mutex_lock(&account->mutex);
     chat_push_front(&account->chats, chat);
+    pthread_mutex_unlock(&account->mutex);
 
     GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
     clear_box(box);
@@ -759,14 +771,9 @@ bool check_str_for_spec_char(const char *str)
     if (!str)
         return false;
 
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (!((str[i] >= '0' && str[i] <= '9')
-           || (str[i] >= 'A' && str[i] <= 'Z') 
-           || (str[i] >= 'a' && str[i] <= 'z') 
-           || (str[i] >= 32 && str[i] <= 47) 
-           || (str[i] >= 58 && str[i] <= 64) 
-           || (str[i] >= 91 && str[i] <= 96) 
-           || (str[i] >= 123 && str[i] <= 126)))
+    for (int i = 0; str[i] != '\0'; i++)
+    {
+        if (!((str[i] >= '0' && str[i] <= '9') || (str[i] >= 'A' && str[i] <= 'Z') || (str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 32 && str[i] <= 47) || (str[i] >= 58 && str[i] <= 64) || (str[i] >= 91 && str[i] <= 96) || (str[i] >= 123 && str[i] <= 126)))
         {
             return false;
         }

@@ -37,7 +37,7 @@ void login_clicked(GtkWidget *__attribute__((unused)) widget)
     if (check_field_size(username, username_error_label))
         error = true;
 
-    if(check_field_size(password, password_error_label))
+    if (check_field_size(password, password_error_label))
         error = true;
 
     if (check_str_for_spec_char(username) == false)
@@ -52,7 +52,7 @@ void login_clicked(GtkWidget *__attribute__((unused)) widget)
         error = true;
     }
 
-    if(error)
+    if (error)
         return;
 
     int error_code = send_login_to_server(username, password);
@@ -91,12 +91,12 @@ void signup_clicked(GtkWidget *__attribute__((unused)) widget)
     if (check_field_size(username, username_error_label))
         error = true;
 
-    if(check_field_size(password, password_error_label))
+    if (check_field_size(password, password_error_label))
         error = true;
 
-    if(check_field_size(confirm_password, confirm_password_error_label))
+    if (check_field_size(confirm_password, confirm_password_error_label))
         error = true;
-    
+
     if (check_str_for_spec_char(username) == false)
     {
         gtk_label_set_text(GTK_LABEL(username_error_label), "Special characters not allowed. Please try again.");
@@ -109,10 +109,10 @@ void signup_clicked(GtkWidget *__attribute__((unused)) widget)
         error = true;
     }
 
-    if(error)
+    if (error)
         return;
 
-    if(mx_strcmp(password, confirm_password))
+    if (mx_strcmp(password, confirm_password))
     {
         gtk_label_set_text(GTK_LABEL(confirm_password_error_label), "The passwords you entered do not match. Please try again.");
         return;
@@ -224,7 +224,7 @@ void build_signup()
     GtkWidget *login_button = gtk_button_new_with_label("Back");
     gtk_box_pack_start(GTK_BOX(signup_window), signup_button, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(signup_window), login_button, FALSE, FALSE, 0);
-    
+
     g_signal_connect(signup_button, "clicked", G_CALLBACK(signup_clicked), NULL);
     g_signal_connect(login_button, "clicked", G_CALLBACK(log_menu), NULL);
 
@@ -233,7 +233,7 @@ void build_signup()
 
 void delete_chat_confirm()
 {
-    if(delete_chat_in_server() != 0)
+    if (delete_chat_in_server() != 0)
         return;
 
     pthread_mutex_lock(&account->mutex);
@@ -253,7 +253,7 @@ void delete_chat_confirm()
     gtk_widget_show_all(chat);
 }
 
-void confirm_window(GtkWidget *__attribute__((unused))button)
+void confirm_window(GtkWidget *__attribute__((unused)) button)
 {
     GtkWidget *dialog;
     dialog = gtk_message_dialog_new(GTK_WINDOW(main_window), GTK_DIALOG_MODAL,
@@ -290,13 +290,16 @@ void chat_info()
     gtk_widget_set_halign(chat_name, GTK_ALIGN_START);
     gtk_box_pack_start(GTK_BOX(box), chat_name, FALSE, FALSE, 0);
 
-    GtkWidget *cancel_button = create_image_button("Client/icons/trash.png", 30, 30);
-    add_class(cancel_button, "image");
-    gtk_widget_set_halign(cancel_button, GTK_ALIGN_END);
-    gtk_widget_set_valign(cancel_button, GTK_ALIGN_CENTER);
-    gtk_box_pack_start(GTK_BOX(box), cancel_button, TRUE, TRUE, 0);
+    if (account->current_chat->user_privilege == PRIV_ADMIN)
+    {
+        GtkWidget *cancel_button = create_image_button("Client/icons/trash.png", 30, 30);
+        add_class(cancel_button, "image");
+        gtk_widget_set_halign(cancel_button, GTK_ALIGN_END);
+        gtk_widget_set_valign(cancel_button, GTK_ALIGN_CENTER);
+        gtk_box_pack_start(GTK_BOX(box), cancel_button, TRUE, TRUE, 0);
 
-    g_signal_connect(cancel_button, "clicked", G_CALLBACK(confirm_window), NULL);
+        g_signal_connect(cancel_button, "clicked", G_CALLBACK(confirm_window), NULL);
+    }
 
     gtk_widget_show_all(box);
 }
@@ -377,7 +380,7 @@ void build_chat_window()
 
     GtkAdjustment *adjustment = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scrolled_window));
     gtk_adjustment_set_value(adjustment, gtk_adjustment_get_upper(adjustment) - gtk_adjustment_get_page_size(adjustment));
-    
+
     gtk_widget_show_all(box);
 }
 

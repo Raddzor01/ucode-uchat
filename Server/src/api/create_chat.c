@@ -50,7 +50,7 @@ void create_chat(cJSON *json, t_client_info *client_info)
     sqlite3_free(query);
 
     query = sqlite3_mprintf("INSERT INTO members (chat_id, user_id, privilege) VALUES(%d, %d, %d); ",
-                            chat_id, client_info->user->id, USERTYPE_ADMIN);
+                            chat_id, client_info->user->id, PRIV_ADMIN);
     db_execute_query(query);
 
     cJSON *responde = cJSON_CreateObject();

@@ -1,11 +1,4 @@
-
 #include <time.h>
-
-#define USERTYPE_NORMAL 0
-#define USERTYPE_ADMIN 1
-
-#define CHAT_NORMAL 0
-#define CHAT_PRIVATE 1
 
 // message list structure, functions starting with chat_
 typedef struct s_msg
@@ -25,6 +18,7 @@ typedef struct s_chat
     int id;
     char *name;
     int image_id;
+    int user_privilege;
 
     t_msg *messages;
     struct s_chat *next;
@@ -71,6 +65,22 @@ typedef enum e_error_type
     ERR_USER_NOT_IN_CHAT
 } t_error_type;
 
+// enumeration of user privilege
+typedef enum e_privilege_type
+{
+    PRIV_USER,
+    PRIV_MODERATOR,
+    PRIV_ADMIN
+}   t_privilege_type;
+
+// enumaration of chat types
+typedef enum e_chat_type
+{
+    CHAT_NORMAL,
+    CHAT_PRIVATE,
+    CHAT_SAVED
+}   t_chat_type;
+
 // message list functions
 t_msg *msg_prepare_node(const int id, const char *message, const time_t time, const int user_id, const char *username);
 void msg_push_back(t_msg **list, t_msg *new_node);
@@ -85,7 +95,7 @@ void msg_pop_front(t_msg **head);
 t_msg *msg_get_last_message(t_msg *list);
 
 // chat list functions
-t_chat *chat_prepare_node(const int id, const char *name, const int image_id);
+t_chat *chat_prepare_node(const int id, const char *name, const int image_id, const int user_privilege);
 void chat_push_back(t_chat **list, t_chat *new_node);
 void chat_push_front(t_chat **list, t_chat *new_node);
 t_chat *chat_get_chat_by_id(t_chat *list, int chat_id);

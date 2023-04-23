@@ -32,7 +32,7 @@ t_chat *find_chats_from_server(const char *search_pattern)
                                 
         int chat_id = cJSON_GetObjectItem(temp_json, "chat_id")->valueint;
         int image_id = cJSON_GetObjectItem(temp_json, "image_id")->valueint;
-        t_chat *new_node = chat_prepare_node(chat_id, cJSON_GetObjectItemCaseSensitive(temp_json, "chat_name")->valuestring, image_id);
+        t_chat *new_node = chat_prepare_node(chat_id, cJSON_GetObjectItemCaseSensitive(temp_json, "chat_name")->valuestring, image_id, PRIV_USER);
         new_node->messages = get_chat_messages_from_server(chat_id);
         chat_push_back(&chats, new_node);
     }

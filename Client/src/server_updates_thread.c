@@ -28,12 +28,6 @@ void *server_update_thread()
 
     while (true)
     {
-        if (!account)
-            break;
-
-        if (account && account->is_busy)
-            continue;
-
         chat = account ? account->chats : NULL;
         while (chat)
         {
@@ -43,7 +37,7 @@ void *server_update_thread()
             is_current = account->current_chat && account->current_chat->id == chat->id;
             if ((last_server_msg_id <= 0) || (last_server_msg_id <= last_client_msg_id && !is_current))
             {
-                chat = chat->next;
+                chat = chat ? chat->next : NULL;
                 continue;
             }
 

@@ -14,7 +14,7 @@ void join_chat(cJSON *chat_info, t_client_info *client_info)
     }
 
     query = sqlite3_mprintf("INSERT INTO members (user_id, chat_id, privilege) VALUES(%d, %d, %d); ",
-                            client_info->user->id, chat_id, USERTYPE_NORMAL);
+                            client_info->user->id, chat_id, PRIV_USER);
     db_execute_query(query);
 
     send_responde(client_info->ssl, REQ_JOIN_CHAT, ERR_SUCCESS);
