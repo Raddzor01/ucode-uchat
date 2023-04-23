@@ -673,12 +673,17 @@ char *str_to_display_last_msg(const char *msg, const char *username)
     char *result_str = NULL;
     if (mx_strcmp(username, account->username) == 0)
     {
-        if (mx_strlen(msg) < MAX_NUMBER_OF_CHAR_FOR_LAST_MSG)
-            return mx_strdup(msg);
+        if ((mx_strlen(msg) + 5) < MAX_NUMBER_OF_CHAR_FOR_LAST_MSG)
+        {
+            result_str = (char *)malloc(strlen(msg) + 5);
+            sprintf(result_str, "You: %s", msg);
+            return result_str;
+        }
         else
         {
             result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_LAST_MSG);
-            mx_strncpy(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - 2));
+            sprintf(result_str, "You: ");
+            strncat(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - 7));
             mx_strcat(result_str, "...");
             return result_str;
         }
