@@ -35,6 +35,9 @@
 #define MAX_NUMBER_OF_CHAR_FOR_CHAT_NAME 15
 #define MAX_NUMBER_OF_CHAR_FOR_LAST_MSG 22
 
+#define CHAT_DIDNT_EXISTS -2
+#define CHAT_ERROR -1
+
 // struct for sending to server
 typedef struct s_info
 {

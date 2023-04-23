@@ -20,10 +20,12 @@ int get_last_msg_id_from_server(int chat_id)
     json = cJSON_Parse(json_str);
 
     int error_code = cJSON_GetObjectItem(json, "error_code")->valueint;
-    if (error_code != 0)
+    if (error_code != ERR_SUCCESS)
     {
         printf("Error getting last message, error code - %d\n", error_code);
-        return -1;
+        if (error_code == ERR_CHAT_NONEXIST)
+            return CHAT_DIDNT_EXISTS;
+        return CHAT_ERROR;
     }
 
     msg_id = cJSON_GetObjectItem(json, "message_id")->valueint;

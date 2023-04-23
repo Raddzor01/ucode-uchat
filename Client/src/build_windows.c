@@ -17,6 +17,13 @@ bool check_field_size(const gchar *field, GtkWidget *field_widget)
         gtk_label_set_text(GTK_LABEL(field), "Password has more than 32 characters");
         error = true;
     }
+
+    if (check_str_for_spec_char(field) == false)
+    {
+        gtk_label_set_text(GTK_LABEL(field_widget), "Special characters not allowed. Please try again.");
+        error = true;
+    }
+
     return error;
 }
 
@@ -39,18 +46,6 @@ void login_clicked(GtkWidget *__attribute__((unused)) widget)
 
     if (check_field_size(password, password_error_label))
         error = true;
-
-    if (check_str_for_spec_char(username) == false)
-    {
-        gtk_label_set_text(GTK_LABEL(username_error_label), "Special characters not allowed. Please try again.");
-        error = true;
-    }
-
-    if (check_str_for_spec_char(password) == false)
-    {
-        gtk_label_set_text(GTK_LABEL(password_error_label), "Special characters not allowed. Please try again.");
-        error = true;
-    }
 
     if (error)
         return;
@@ -96,18 +91,6 @@ void signup_clicked(GtkWidget *__attribute__((unused)) widget)
 
     if (check_field_size(confirm_password, confirm_password_error_label))
         error = true;
-
-    if (check_str_for_spec_char(username) == false)
-    {
-        gtk_label_set_text(GTK_LABEL(username_error_label), "Special characters not allowed. Please try again.");
-        error = true;
-    }
-
-    if (check_str_for_spec_char(password) == false)
-    {
-        gtk_label_set_text(GTK_LABEL(password_error_label), "Special characters not allowed. Please try again.");
-        error = true;
-    }
 
     if (error)
         return;
@@ -240,17 +223,13 @@ void delete_chat_confirm()
     chat_pop_by_id(&account->chats, account->current_chat->id);
     pthread_mutex_unlock(&account->mutex);
 
-    GtkWidget *chat = get_widget_by_name_r(main_window, "box_holder");
-    GtkWidget *chat_bar = get_widget_by_name_r(main_window, "chat_info");
+    GtkWidget *chat = get_widget_by_name_r(main_window, "chat");
     GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
 
-    clear_box(chat);
+    gtk_widget_destroy(chat);
     clear_box(box);
-    clear_box(chat_bar);
 
     display_users();
-
-    gtk_widget_show_all(chat);
 }
 
 void confirm_window(GtkWidget *__attribute__((unused)) button)

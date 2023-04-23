@@ -318,8 +318,7 @@ void receive_bubble(t_msg *message)
     add_class(time_label, "time");
     gtk_box_pack_start(GTK_BOX(username_box), time_label, FALSE, TRUE, 0);
 
-    if ((account->current_chat->user_privilege == PRIV_ADMIN)
-    || (account->current_chat->user_privilege == PRIV_MODERATOR))
+    if ((account->current_chat->user_privilege == PRIV_ADMIN) || (account->current_chat->user_privilege == PRIV_MODERATOR))
     {
         GtkWidget *delete_button;
 
@@ -757,7 +756,8 @@ void delete_account(GtkWidget *__attribute__((unused)) button)
     if (result == GTK_RESPONSE_YES)
     {
         delete_account_in_server();
-        send_logout_to_server();
+        // send_logout_to_server();
+        log_menu(NULL);
     }
     else if (result == GTK_RESPONSE_NO)
     {
@@ -772,12 +772,8 @@ bool check_str_for_spec_char(const char *str)
         return false;
 
     for (int i = 0; str[i] != '\0'; i++)
-    {
-        if (!((str[i] >= '0' && str[i] <= '9') || (str[i] >= 'A' && str[i] <= 'Z') || (str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 32 && str[i] <= 47) || (str[i] >= 58 && str[i] <= 64) || (str[i] >= 91 && str[i] <= 96) || (str[i] >= 123 && str[i] <= 126)))
-        {
+        if (str[i] < 48 || (str[i] > 57 && str[i] < 65) || (str[i] > 90 && str[i] < 97) || (str[i] > 122 && str[i] < 127))
             return false;
-        }
-    }
 
     return true;
 }

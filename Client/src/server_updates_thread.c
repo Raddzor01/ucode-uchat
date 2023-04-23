@@ -32,6 +32,14 @@ void *server_update_thread()
         while (chat)
         {
             last_server_msg_id = chat ? get_last_msg_id_from_server(chat->id) : 0;
+            // if(last_client_msg_id == CHAT_DIDNT_EXISTS)
+            // {
+            //     pthread_mutex_lock(&account->mutex);
+            //     chat_pop_by_id(&account->chats, chat->id);
+            //     pthread_mutex_unlock(&account->mutex);
+            //     g_idle_add(update_chatlist_from_thread, NULL);
+            //     g_usleep(10000);
+            // }
             last_message_node = chat ? msg_get_last_message(chat->messages) : 0;
             last_client_msg_id = last_message_node ? last_message_node->msg_id : 0;
             is_current = account->current_chat && account->current_chat->id == chat->id;
