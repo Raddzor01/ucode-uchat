@@ -807,7 +807,7 @@ void empty_left_bar() {
     if(!is_box_empty(GTK_BOX(out_box)))
         return;
     
-    GtkWidget *label = gtk_label_new("don't have chat?\njoin or create one");
+    GtkWidget *label = gtk_label_new("Don't have chat?\nJoin or create one");
     gtk_widget_set_name(label, "empty_left_bar");
     gtk_widget_set_vexpand(label, TRUE);
     gtk_widget_set_halign(label, GTK_ALIGN_CENTER);
@@ -828,7 +828,7 @@ void empty_right_bar() {
     gtk_grid_attach(GTK_GRID(grid), box, 1, 0, 1, 1);
     gtk_widget_set_size_request(box, 500, -1);
 
-    GtkWidget *label = gtk_label_new("select chat");
+    GtkWidget *label = gtk_label_new("Select a chat to start messaging");
     gtk_widget_set_vexpand(label, TRUE);
     gtk_widget_set_halign(label, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(label, GTK_ALIGN_CENTER);

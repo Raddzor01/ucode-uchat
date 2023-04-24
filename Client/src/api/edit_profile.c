@@ -2,8 +2,6 @@
 
 int edit_username_in_server(const char *new_username)
 {
-    account->is_busy = true;
-
     cJSON *json = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(json, "type", REQ_EDIT_USERNAME);
@@ -41,15 +39,11 @@ int edit_username_in_server(const char *new_username)
     cJSON_Delete(json);
     free(json_str);
 
-    account->is_busy = false;
-
     return 0;
 }
 
 int edit_password_in_server(const char *new_password)
 {
-    account->is_busy = true;
-
     cJSON *json = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(json, "type", REQ_EDIT_PASSWORD);
@@ -78,8 +72,6 @@ int edit_password_in_server(const char *new_password)
 
     cJSON_Delete(json);
     free(json_str);
-
-    account->is_busy = false;
 
     return 0;
 }

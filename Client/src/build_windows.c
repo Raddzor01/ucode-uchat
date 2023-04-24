@@ -233,8 +233,11 @@ void delete_chat_confirm()
 
     gtk_widget_destroy(chat);
     clear_box(box);
-
+    empty_left_bar();
+    empty_right_bar();
     display_users();
+
+    gtk_widget_show_all(main_window);
 }
 
 void confirm_window(GtkWidget *__attribute__((unused)) button)
@@ -264,6 +267,7 @@ void chat_info()
     pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
 
     image = gtk_image_new_from_pixbuf(pixbuf);
+    gtk_widget_set_name(image, "chat_pfp_image");
     g_object_unref(pixbuf);
 
     chat_name = gtk_label_new(account->current_chat->name);
@@ -593,6 +597,12 @@ void create_chat_menu()
 
 void display_users()
 {
+    // if(chat_list_size(account->chats) == 0)
+    // {
+    //     empty_left_bar();
+    //     return;   
+    // }
+
     t_chat *chat = account->chats;
     while (chat != NULL)
     {

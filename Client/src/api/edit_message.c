@@ -22,7 +22,5 @@ int edit_msg_in_server(int msg_id, const char *new_text)
     cJSON_Delete(json);
     free(json_str);
 
-    account->is_busy = false;
-
     return 0;
 }

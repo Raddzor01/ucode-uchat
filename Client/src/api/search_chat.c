@@ -2,9 +2,6 @@
 
 t_chat *find_chats_from_server(const char *search_pattern)
 {
-
-    account->is_busy = true;
-
     cJSON *json = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(json, "type", REQ_SEARCH_CHATS);
@@ -40,8 +37,6 @@ t_chat *find_chats_from_server(const char *search_pattern)
 
     cJSON_Delete(json);
     mx_strdel(&json_str);
-
-    account->is_busy = false;
 
     return chats;
 }

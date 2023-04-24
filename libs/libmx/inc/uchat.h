@@ -27,6 +27,7 @@ typedef struct s_chat
 // enumeration of server request types
 typedef enum e_req_type
 {
+    REQ_SERVER_ONLINE,
     REQ_USER_SIGNUP,
     REQ_USER_LOGIN,
     REQ_SEND_MSG,

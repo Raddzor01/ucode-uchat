@@ -16,6 +16,9 @@ OBJS = $(OBJDIR)/*.o
 
 all: clean $(LIBMX) $(CJSON) $(SERVER) $(CLIENT)
 
+install:
+	sudo apt update && sudo apt install libsqlite3-dev libssl-dev
+
 $(LIBMX):
 	make -sC $(LIBMX_DIR)
 $(CJSON):

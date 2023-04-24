@@ -22,11 +22,16 @@
 *.la
 *.lo
 
+!local_lib/lib/*.a
+
 # Shared objects (inc. Windows DLLs)
 *.dll
 *.so
 *.so.*
 *.dylib
+
+!local_lib/lib/*.dylib
+!local_lib/lib/engines-1.1/*.dylib
 
 # Executables
 *.exe

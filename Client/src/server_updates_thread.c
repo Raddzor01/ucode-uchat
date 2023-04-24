@@ -13,6 +13,10 @@ gboolean update_chatlist_from_thread(gpointer __attribute__((unused)) data)
     GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
     clear_box(box);
     display_users();
+    empty_left_bar();
+    empty_right_bar();
+
+    gtk_widget_show_all(main_window);
     return FALSE;
 }
 
@@ -25,14 +29,52 @@ gboolean update_chatbox_from_thread(gpointer __attribute__((unused)) data)
     clear_box(box);
 
     display_users();
+    empty_left_bar();
+    empty_right_bar();
+
+    gtk_widget_show_all(main_window);
     return FALSE;
+}
+
+void delete_chat_from_thread(int id)
+{
+    pthread_mutex_lock(&account->mutex);
+    chat_pop_by_id(&account->chats, id);
+    pthread_mutex_unlock(&account->mutex);
+    g_idle_add(update_chatbox_from_thread, NULL);
+    g_usleep(10000);
+}
+
+void update_message(t_msg *server_message_node, t_chat *chat, bool is_current)
+{
+    char *last_message_str = NULL;
+    if (chat->id == account->chats->id)
+    {
+        // this will burn down gtk bruh, change it
+        last_message_str = str_to_display_last_msg(server_message_node->text, server_message_node->username);
+        last_massage_display(chat->name, last_message_str);
+        mx_strdel(&last_message_str);
+    }
+    else
+    {
+        g_idle_add(update_chatlist_from_thread, NULL);
+    }
+
+    if (is_current)
+        g_idle_add(update_messages_from_thread, (gpointer)server_message_node);
+
+    pthread_mutex_lock(&account->mutex);
+    msg_push_back(&chat->messages, server_message_node);
+    chat_move_node_to_head(&account->chats, chat->id);
+    pthread_mutex_unlock(&account->mutex);
+
+    g_usleep(10000);
 }
 
 void *server_update_thread()
 {
     int last_server_msg_id = 0;
     int last_client_msg_id = 0;
-    char *last_message_str = NULL;
     t_chat *chat = NULL;
     t_msg *last_message_node = NULL;
     t_msg *server_message_node = NULL;
@@ -46,13 +88,8 @@ void *server_update_thread()
             last_server_msg_id = chat ? get_last_msg_id_from_server(chat->id) : 0;
             if (last_server_msg_id == -2)
             {
-                pthread_mutex_lock(&account->mutex);
-                chat_pop_by_id(&account->chats, chat->id);
-                pthread_mutex_unlock(&account->mutex);
-                g_idle_add(update_chatlist_from_thread, NULL);
-                g_idle_add(update_chatbox_from_thread, NULL);
-                g_usleep(10000);
-                if(chat_list_size(account->chats) == 0)
+                delete_chat_from_thread(chat->id);
+                if (chat_list_size(account->chats) == 0)
                     chat = NULL;
                 else
                     chat = chat ? chat->next : NULL;
@@ -69,29 +106,7 @@ void *server_update_thread()
 
             server_message_node = get_msg_by_id_from_server(last_server_msg_id, chat->id);
             if (last_server_msg_id > last_client_msg_id)
-            {
-                if (chat->id == account->chats->id)
-                {
-                    // this will burn down gtk bruh, change it
-                    last_message_str = str_to_display_last_msg(server_message_node->text, server_message_node->username);
-                    last_massage_display(chat->name, last_message_str);
-                    mx_strdel(&last_message_str);
-                }
-                else
-                {
-                    g_idle_add(update_chatlist_from_thread, NULL);
-                }
-
-                if (is_current)
-                    g_idle_add(update_messages_from_thread, (gpointer)server_message_node);
-
-                pthread_mutex_lock(&account->mutex);
-                msg_push_back(&chat->messages, server_message_node);
-                chat_move_node_to_head(&account->chats, chat->id);
-                pthread_mutex_unlock(&account->mutex);
-
-                g_usleep(10000);
-            }
+                update_message(server_message_node, chat, is_current);
 
             g_usleep(500000);
             chat = chat ? chat->next : NULL;

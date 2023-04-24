@@ -4,6 +4,7 @@
 #include "../../libs/cjson/inc/cJSON.h"
 #include "../../libs/openssl/openssl/ssl.h"
 #include "../../libs/openssl/openssl/err.h"
+#include "../../libs/Sqlite3/sqlite3.h"
 
 #include <stdlib.h>
 #include <sys/socket.h>
@@ -20,7 +21,6 @@
 #include <netinet/in.h>
 #include <stdbool.h>
 #include <pthread.h>
-#include <sqlite3.h>
 #include <time.h>
 
 #define LISTEN_BACKLOG 10

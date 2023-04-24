@@ -24,11 +24,12 @@ static void structs_init()
     account->chats = NULL;
     account->username = NULL;
     account->current_chat = NULL;
-    account->is_busy = true;
     set_start_of_current_day();
 
     info->ctx = NULL;
     info->ssl = NULL;
+    info->ip_address = NULL;
+    info->port = 0;
     info->server_socket = 0;
 }
 
@@ -39,7 +40,11 @@ int main(int argc, char **argv)
     structs_init();
 
     // server part
-    connect_to_server(argv[1], atoi(argv[2]));
+    if (connect_to_server(argv[1], atoi(argv[2])) == true)
+    {
+        mx_printerr("Error: Server is not online\n");
+        exit(1);
+    }
 
     // gtk part
     gtk_init(&argc, &argv);
@@ -72,8 +77,6 @@ void set_start_of_current_day()
     u->tm_hour = 0;
 
     info->current_day_time = mktime(u);
-    // char *f = settime(u);
-    // printf("%ld соответствует %s", timer, f);
 
     // free(f);
     // free(u);
@@ -82,7 +85,9 @@ void set_start_of_current_day()
 void free_memory()
 {
     pthread_mutex_destroy(&account->mutex);
+    sem_destroy(&account->semaphore);
 
+    mx_strdel(&info->ip_address);
     SSL_free(info->ssl);
     SSL_CTX_free(info->ctx);
     free(info);
@@ -91,4 +96,3 @@ void free_memory()
     free(account);
     account = NULL;
 }
-

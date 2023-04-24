@@ -89,6 +89,7 @@ void send_login_response(SSL *ssl, t_user_info *user_info)
     cJSON_AddStringToObject(json, "username", user_info->username);
     cJSON_AddNumberToObject(json, "id", user_info->id);
     cJSON_AddNumberToObject(json, "image_id", user_info->image_id);
+    cJSON_AddStringToObject(json, "password", user_info->password);
 
     json_str = cJSON_PrintUnformatted(json);
 

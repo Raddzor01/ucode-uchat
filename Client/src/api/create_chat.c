@@ -39,15 +39,11 @@ int check_chat_id_from_server()
     cJSON_Delete(json);
     free(json_str);
 
-    account->is_busy = false;
-
     return chat_id;
 }
 
 int create_chat_in_server(const char *chat_name, int chat_type)
 {
-    account->is_busy = true;
-
     cJSON *json = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(json, "type", REQ_CREATE_CHAT);

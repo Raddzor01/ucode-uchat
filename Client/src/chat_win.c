@@ -54,8 +54,6 @@ void find_chats(GtkWidget *entry)
 
 void chat_window()
 {
-    account->is_busy = true;
-
     hog();
 
     get_user_chats();
@@ -72,9 +70,8 @@ void chat_window()
 
     // build_chat_window();
 
+    pthread_create(&account->server_online_thread, NULL, server_online_check_thread, NULL);
     pthread_create(&account->server_update_thread, NULL, server_update_thread, NULL);
-
-    account->is_busy = false;
 
     gtk_widget_show_all(main_window);
 }

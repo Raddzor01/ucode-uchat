@@ -45,6 +45,9 @@ typedef struct s_info
     SSL_CTX *ctx;
     SSL *ssl;
 
+    int port;
+    char *ip_address;
+
     GtkWidget *entry;
     // GtkTextView *text_view;
 
@@ -56,13 +59,14 @@ typedef struct s_info
 typedef struct s_account
 {
     char *username;
+    char *password;
     int id;
     int image_id;
 
     pthread_t server_update_thread;
+    pthread_t server_online_thread;
     pthread_mutex_t mutex;
     sem_t semaphore;
-    bool is_busy;
 
     t_chat *chats;
     t_chat *current_chat;
@@ -75,6 +79,8 @@ extern t_account *account;
 
 void *server_update_thread();
 char *get_user_image(int image_id);
+bool check_server_online();
+void *server_online_check_thread();
 
 
 // Interaction with the server
@@ -106,9 +112,9 @@ int delete_account_in_server();
 int delete_chat_in_server();
 
 // Conection to the server
-void init_ssl(SSL_CTX **ctx);
-void connect_ssl(SSL **ssl, int server_fd, SSL_CTX **ctx);
-void connect_to_server(const char *ip_address, int port);
+bool init_ssl(SSL_CTX **ctx);
+bool connect_ssl(SSL **ssl, int server_fd, SSL_CTX **ctx);
+bool connect_to_server(const char *ip_address, int port);
 
 // GTK part
 void clear_box(GtkWidget *box);
