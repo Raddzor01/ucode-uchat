@@ -3,7 +3,11 @@
 int check_account_exists()
 {
     char *json_str = read_from_server();
+#ifdef MACOS_VER
+    sem_post(account->semaphore);
+#else
     sem_post(&account->semaphore);
+#endif
     cJSON *json = cJSON_Parse(json_str);
 
     if (json == NULL)
@@ -37,7 +41,11 @@ int send_sign_up_to_server(const char *username, const char *password)
     cJSON_AddStringToObject(json, "password", password);
     char *json_str = cJSON_PrintUnformatted(json);
 
+#ifdef MACOS_VER
+    sem_wait(account->semaphore);
+#else
     sem_wait(&account->semaphore);
+#endif
     SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
     cJSON_Delete(json);

@@ -1,4 +1,4 @@
-#include "../inc/libmx.h"
+#include "../../inc/client.h"
 
 void chat_clear_list(t_chat **list)
 {

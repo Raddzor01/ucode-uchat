@@ -1,4 +1,4 @@
-#include "../inc/libmx.h"
+#include "../../inc/client.h"
 
 void chat_pop_index(t_chat **list, int id)
 {

@@ -3,7 +3,11 @@
 int check_chat_id_from_server()
 {
     char *json_str = read_from_server();
-    sem_post(&account->semaphore);
+#ifdef MACOS_VER
+            sem_post(account->semaphore);
+#else
+            sem_post(&account->semaphore);
+#endif
 
     cJSON *json = cJSON_Parse(json_str);
 
@@ -52,7 +56,11 @@ int create_chat_in_server(const char *chat_name, int chat_type)
     cJSON_AddNumberToObject(json, "time", time(NULL));
     char *json_str = cJSON_PrintUnformatted(json);
 
+#ifdef MACOS_VER
+    sem_wait(account->semaphore);
+#else
     sem_wait(&account->semaphore);
+#endif
     SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
     cJSON_Delete(json);

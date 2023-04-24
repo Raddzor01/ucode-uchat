@@ -1,4 +1,4 @@
-#include "../inc/libmx.h"
+#include "../../inc/client.h"
 
 void msg_pop_index(t_msg **list, int id)
 {

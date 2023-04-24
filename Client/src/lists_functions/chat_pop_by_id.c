@@ -1,4 +1,4 @@
-#include "../inc/libmx.h"
+#include "../../inc/client.h"
 
 void chat_pop_by_id(t_chat **head, int id)
 {

@@ -1,4 +1,4 @@
-#include "../inc/libmx.h"
+#include "../../inc/client.h"
 
 t_chat *chat_prepare_node(const int id, const char *name, const int image_id, const int user_privilege)
 {

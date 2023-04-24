@@ -19,7 +19,11 @@ static void structs_init()
     info = malloc(sizeof(*info));
     account = malloc(sizeof(*account));
 
+#ifdef MACOS_VER
+    semaphore = sem_open("/my_semaphore", O_CREAT, 0644, 1);
+#else
     pthread_mutex_init(&account->mutex, NULL);
+#endif
     sem_init(&account->semaphore, 0, 1);
     account->chats = NULL;
     account->username = NULL;
@@ -85,8 +89,11 @@ void set_start_of_current_day()
 void free_memory()
 {
     pthread_mutex_destroy(&account->mutex);
+#ifdef MAC_VER
+    sem_unlink("/my_semaphore");
+#else
     sem_destroy(&account->semaphore);
-
+#endif
     mx_strdel(&info->ip_address);
     SSL_free(info->ssl);
     SSL_CTX_free(info->ctx);

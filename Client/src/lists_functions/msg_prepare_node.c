@@ -1,4 +1,4 @@
-#include "../inc/libmx.h"
+#include "../../inc/client.h"
 
 t_msg *msg_prepare_node(const int id, const char *message, const time_t time, const int user_id, const char *username)
 {

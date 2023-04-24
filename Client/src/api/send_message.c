@@ -14,7 +14,11 @@ time_t send_message_to_server(const char *message)
     cJSON_AddNumberToObject(json, "time", current_time);
     char *json_str = cJSON_PrintUnformatted(json);
 
+#ifdef MACOS_VER
+    sem_wait(account->semaphore);
+#else
     sem_wait(&account->semaphore);
+#endif
     SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
     cJSON_Delete(json);
@@ -26,7 +30,11 @@ time_t send_message_to_server(const char *message)
 int get_msg_id()
 {
     char *json_str = read_from_server();
+#ifdef MACOS_VER
+    sem_post(account->semaphore);
+#else
     sem_post(&account->semaphore);
+#endif
     cJSON *json = cJSON_Parse(json_str);
     int msg_id;
 
@@ -45,4 +53,3 @@ int get_msg_id()
 
     return msg_id;
 }
-

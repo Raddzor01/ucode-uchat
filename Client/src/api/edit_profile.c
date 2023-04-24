@@ -8,14 +8,22 @@ int edit_username_in_server(const char *new_username)
     cJSON_AddStringToObject(json, "new_username", new_username);
     char *json_str = cJSON_PrintUnformatted(json);
 
-    sem_post(&account->semaphore);
+#ifdef MACOS_VER
+    sem_wait(account->semaphore);
+#else
+    sem_wait(&account->semaphore);
+#endif
     SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
     cJSON_Delete(json);
     free(json_str);
 
     json_str = read_from_server();
+#ifdef MACOS_VER
+    sem_post(account->semaphore);
+#else
     sem_post(&account->semaphore);
+#endif
     json = cJSON_Parse(json_str);
 
     t_error_type error = cJSON_GetObjectItem(json, "error_code")->valueint;

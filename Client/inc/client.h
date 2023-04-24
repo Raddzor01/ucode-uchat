@@ -66,7 +66,12 @@ typedef struct s_account
     pthread_t server_update_thread;
     pthread_t server_online_thread;
     pthread_mutex_t mutex;
-    sem_t semaphore;
+
+    #ifdef MACOS_VER
+        sem_t *semaphore;
+    #else
+        sem_t semaphore;
+    #endif
 
     t_chat *chats;
     t_chat *current_chat;
