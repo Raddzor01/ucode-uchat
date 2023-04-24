@@ -156,6 +156,9 @@ void user_box(t_chat *chat, bool is_search)
     GtkWidget *box;
     GtkWidget *out_box = get_widget_by_name_r(main_window, "box_for_users");
 
+    if (get_widget_by_name_r(main_window, "empty_left_bar"))
+        gtk_widget_destroy(get_widget_by_name_r(main_window, "empty_left_bar"));
+
     GdkPixbuf *pixbuf;
     GError *error = NULL;
 
@@ -680,12 +683,17 @@ char *str_to_display_last_msg(const char *msg, const char *username)
     char *result_str = NULL;
     if (mx_strcmp(username, account->username) == 0)
     {
-        if (mx_strlen(msg) < MAX_NUMBER_OF_CHAR_FOR_LAST_MSG)
-            return mx_strdup(msg);
+        if ((mx_strlen(msg) + 5) < MAX_NUMBER_OF_CHAR_FOR_LAST_MSG)
+        {
+            result_str = (char *)malloc(strlen(msg) + 5);
+            sprintf(result_str, "You: %s", msg);
+            return result_str;
+        }
         else
         {
             result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_LAST_MSG);
-            mx_strncpy(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - 2));
+            sprintf(result_str, "You: ");
+            strncat(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - 7));
             mx_strcat(result_str, "...");
             return result_str;
         }
@@ -753,7 +761,7 @@ void change_image(GtkWidget *button)
     gtk_widget_destroy(dialog);
 }
 
-void delete_account(GtkWidget *__attribute__((unused)) button)
+void delete_account(GtkWidget *__attribute__((unused)) button, GtkWidget *window)
 {
     GtkWidget *dialog;
     dialog = gtk_message_dialog_new(GTK_WINDOW(main_window), GTK_DIALOG_MODAL,
@@ -765,6 +773,7 @@ void delete_account(GtkWidget *__attribute__((unused)) button)
         delete_account_in_server();
         // send_logout_to_server();
         log_menu(NULL);
+        gtk_widget_destroy(window);
     }
     else if (result == GTK_RESPONSE_NO)
     {
@@ -783,4 +792,45 @@ bool check_str_for_spec_char(const char *str)
             return false;
 
     return true;
+}
+
+int is_box_empty(GtkBox *box) {
+    GList *children = gtk_container_get_children(GTK_CONTAINER(box));
+    int is_empty = g_list_length(children) == 0;
+    g_list_free(children);
+    return is_empty;
+}
+
+void empty_left_bar() {
+    GtkWidget *out_box = get_widget_by_name_r(main_window, "box_for_users");
+
+    if(!is_box_empty(GTK_BOX(out_box)))
+        return;
+    
+    GtkWidget *label = gtk_label_new("don't have chat?\njoin or create one");
+    gtk_widget_set_name(label, "empty_left_bar");
+    gtk_widget_set_vexpand(label, TRUE);
+    gtk_widget_set_halign(label, GTK_ALIGN_CENTER);
+    gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(out_box), label, FALSE, FALSE, 0); 
+}
+
+void empty_right_bar() {
+
+    GtkWidget *grid = get_widget_by_name_r(main_window, "chat_grid");
+
+    GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_widget_set_name(box, "empty_right_bar");
+    gtk_widget_set_hexpand(box, TRUE);
+    gtk_widget_set_vexpand(box, TRUE);
+    gtk_widget_set_halign(box, GTK_ALIGN_FILL);
+    gtk_widget_set_valign(box, GTK_ALIGN_FILL);
+    gtk_grid_attach(GTK_GRID(grid), box, 1, 0, 1, 1);
+    gtk_widget_set_size_request(box, 500, -1);
+
+    GtkWidget *label = gtk_label_new("select chat");
+    gtk_widget_set_vexpand(label, TRUE);
+    gtk_widget_set_halign(label, GTK_ALIGN_CENTER);
+    gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
 }

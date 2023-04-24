@@ -68,6 +68,7 @@ void chat_window()
     gtk_widget_set_name(grid, "chat_grid");
     gtk_container_add(GTK_CONTAINER(main_window), grid);
     build_users();
+    empty_right_bar();
 
     // build_chat_window();
 
