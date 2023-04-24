@@ -16,6 +16,18 @@ gboolean update_chatlist_from_thread(gpointer __attribute__((unused)) data)
     return FALSE;
 }
 
+gboolean update_chatbox_from_thread(gpointer __attribute__((unused)) data)
+{
+    GtkWidget *chat = get_widget_by_name_r(main_window, "chat");
+    GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
+
+    gtk_widget_destroy(chat);
+    clear_box(box);
+
+    display_users();
+    return FALSE;
+}
+
 void *server_update_thread()
 {
     int last_server_msg_id = 0;
@@ -32,15 +44,21 @@ void *server_update_thread()
         while (chat)
         {
             last_server_msg_id = chat ? get_last_msg_id_from_server(chat->id) : 0;
-            // if(last_client_msg_id == CHAT_DIDNT_EXISTS)
-            // {
-            //     pthread_mutex_lock(&account->mutex);
-            //     chat_pop_by_id(&account->chats, chat->id);
-            //     pthread_mutex_unlock(&account->mutex);
-            //     g_idle_add(update_chatlist_from_thread, NULL);
-            //     g_usleep(10000);
-            // }
-            last_message_node = chat ? msg_get_last_message(chat->messages) : 0;
+            if (last_server_msg_id == -2)
+            {
+                pthread_mutex_lock(&account->mutex);
+                chat_pop_by_id(&account->chats, chat->id);
+                pthread_mutex_unlock(&account->mutex);
+                g_idle_add(update_chatlist_from_thread, NULL);
+                g_idle_add(update_chatbox_from_thread, NULL);
+                g_usleep(10000);
+                if(chat_list_size(account->chats) == 0)
+                    chat = NULL;
+                else
+                    chat = chat ? chat->next : NULL;
+                continue;
+            }
+            last_message_node = chat ? msg_get_last_message(chat->messages) : NULL;
             last_client_msg_id = last_message_node ? last_message_node->msg_id : 0;
             is_current = account->current_chat && account->current_chat->id == chat->id;
             if ((last_server_msg_id <= 0) || (last_server_msg_id <= last_client_msg_id && !is_current))
@@ -76,7 +94,7 @@ void *server_update_thread()
             }
 
             g_usleep(500000);
-            chat = chat->next;
+            chat = chat ? chat->next : NULL;
         }
         g_usleep(500000);
     }

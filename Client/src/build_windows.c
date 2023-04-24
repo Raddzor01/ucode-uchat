@@ -221,6 +221,11 @@ void delete_chat_confirm()
 
     pthread_mutex_lock(&account->mutex);
     chat_pop_by_id(&account->chats, account->current_chat->id);
+    if(chat_list_size(account->chats) == 0)
+    {
+        pthread_cancel(account->server_update_thread);
+        pthread_create(&account->server_update_thread, NULL, server_update_thread, NULL);
+    }
     pthread_mutex_unlock(&account->mutex);
 
     GtkWidget *chat = get_widget_by_name_r(main_window, "chat");
@@ -396,6 +401,7 @@ void build_users()
     gtk_box_pack_start(GTK_BOX(users_box), search_box, FALSE, FALSE, 0);
 
     GtkWidget *entry = gtk_entry_new();
+    gtk_widget_set_name(entry, "Search_entry");
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry), "Search");
     gtk_box_pack_start(GTK_BOX(search_box), entry, TRUE, TRUE, 0);
     g_signal_connect(entry, "changed", G_CALLBACK(find_chats), NULL);

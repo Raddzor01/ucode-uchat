@@ -610,6 +610,13 @@ void join_chat(GtkWidget *__attribute__((unused)) widget, gpointer user_data)
     chat->messages = get_chat_messages_from_server(chat->id);
     chat_push_front(&account->chats, chat);
     pthread_mutex_unlock(&account->mutex);
+
+    GtkWidget *search_entry = get_widget_by_name_r(main_window, "Search_entry");
+    gtk_entry_set_text(GTK_ENTRY(search_entry), "");
+
+    GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
+    clear_box(box);
+    display_users();
 }
 
 char *get_send_time_str(time_t msg_time)

@@ -42,3 +42,8 @@ uninstall:
 reinstall:
 	make uninstall
 	make all
+
+run: all
+	./$(SERVER) 8000
+	./$(CLIENT) 127.0.0.1 8000
+	
