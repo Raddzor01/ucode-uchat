@@ -785,8 +785,8 @@ void change_image(GtkWidget *button)
         g_object_unref(pixbuf);
     }
 
-    gtk_widget_destroy(dialog);
-}
+        gtk_widget_destroy(dialog);
+    }
 
 void delete_account(GtkWidget *__attribute__((unused)) button, GtkWidget *window)
 {

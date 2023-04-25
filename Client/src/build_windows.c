@@ -273,7 +273,7 @@ void chat_info()
 
     GdkPixbuf *pixbuf;
 
-    pixbuf = gdk_pixbuf_new_from_file(get_user_image(account->current_chat->chat_type), NULL);
+    pixbuf = gdk_pixbuf_new_from_file("Client/data/default_avatar.png", NULL);
     pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
 
     image = gtk_image_new_from_pixbuf(pixbuf);
