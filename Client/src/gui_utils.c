@@ -706,6 +706,10 @@ void accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window
     clear_box(box);
     gtk_window_resize(GTK_WINDOW(window), 300, 1);
     gtk_widget_show_all(window);
+
+    GtkWidget *widget_to_remove = gtk_grid_get_child_at (GTK_GRID(get_widget_by_name_r(main_window, "chat_grid")), 0, 0);
+    gtk_container_remove(GTK_CONTAINER(get_widget_by_name_r(main_window, "chat_grid")), widget_to_remove);
+    build_users();
 }
 
 char *str_to_display_last_msg(const char *msg, const char *username)
