@@ -3,6 +3,19 @@
 GtkWidget *password_entry;
 GtkWidget *username_entry;
 
+char *get_user_image(int image_id)
+{
+    if (image_id == 1)
+        return DEFAULT_IMAGE;
+
+    if (image_id == 2)
+        return SAVED_IMAGE;
+
+    // return get_image_from_server(image_id);
+    return DEFAULT_IMAGE;
+}
+
+
 bool check_field_size(const gchar *field, GtkWidget *field_widget)
 {
     bool error = false;
@@ -221,11 +234,8 @@ void delete_chat_confirm()
 
     pthread_mutex_lock(&account->mutex);
     chat_pop_by_id(&account->chats, account->current_chat->id);
-    if(chat_list_size(account->chats) == 0)
-    {
-        pthread_cancel(account->server_update_thread);
-        pthread_create(&account->server_update_thread, NULL, server_update_thread, NULL);
-    }
+    pthread_cancel(account->server_update_thread);
+    pthread_create(&account->server_update_thread, NULL, server_update_thread, NULL);
     pthread_mutex_unlock(&account->mutex);
 
     GtkWidget *chat = get_widget_by_name_r(main_window, "chat");
@@ -263,7 +273,7 @@ void chat_info()
 
     GdkPixbuf *pixbuf;
 
-    pixbuf = gdk_pixbuf_new_from_file("Client/data/default_image.png", NULL);
+    pixbuf = gdk_pixbuf_new_from_file(get_user_image(account->current_chat->chat_type), NULL);
     pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
 
     image = gtk_image_new_from_pixbuf(pixbuf);
@@ -378,14 +388,6 @@ void build_chat_window()
 void logout_event(GtkWidget *__attribute__((unused)) widget)
 {
     send_logout_to_server();
-}
-
-char *get_user_image(int image_id)
-{
-    if (image_id == 1)
-        return DEFAULT_IMAGE;
-
-    return get_image_from_server(image_id);
 }
 
 void build_users()
@@ -591,18 +593,19 @@ void create_chat_menu()
     g_signal_connect(make_chat_button, "clicked", G_CALLBACK(create_chat), chatname_entry);
     g_signal_connect(make_chat_button, "clicked", G_CALLBACK(close_window_by_button), window);
 
+    if(!chat_get_chat_by_type(account->chats, CHAT_SAVED))
+    {
+        GtkWidget *make_saved_button = gtk_button_new_with_label("created saved chat");
+        gtk_box_pack_start(GTK_BOX(box), make_saved_button, FALSE, FALSE, 0);
+        g_signal_connect(make_saved_button, "clicked", G_CALLBACK(create_saved), NULL);
+        g_signal_connect(make_saved_button, "clicked", G_CALLBACK(close_window_by_button), window);
+    }
     gtk_widget_show_all(window);
     window_check = true;
 }
 
 void display_users()
 {
-    // if(chat_list_size(account->chats) == 0)
-    // {
-    //     empty_left_bar();
-    //     return;   
-    // }
-
     t_chat *chat = account->chats;
     while (chat != NULL)
     {

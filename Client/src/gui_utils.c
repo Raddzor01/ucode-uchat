@@ -165,8 +165,8 @@ void user_box(t_chat *chat, bool is_search)
     char *chat_name = str_to_display_chat_name(chat->name);
     char *last_msg = NULL;
 
-    pixbuf = gdk_pixbuf_new_from_file("Client/data/default_image.png", &error);
-    // pixbuf = gdk_pixbuf_new_from_file(get_user_image(chat->image_id), &error);
+    // pixbuf = gdk_pixbuf_new_from_file(get_image_from_server(chat->id), &error);
+    pixbuf = gdk_pixbuf_new_from_file(get_user_image(chat->image_id), &error);
     if (error != NULL)
         g_error("Error loading image: %s", error->message);
 
@@ -593,7 +593,28 @@ void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
     if (chat_id == -1)
         return;
 
-    t_chat *chat = chat_prepare_node(chat_id, text, 1, PRIV_ADMIN);
+    t_chat *chat = chat_prepare_node(chat_id, text, 1, PRIV_ADMIN, CHAT_NORMAL);
+
+    pthread_mutex_lock(&account->mutex);
+    chat_push_front(&account->chats, chat);
+    pthread_mutex_unlock(&account->mutex);
+
+    GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
+    clear_box(box);
+
+    display_users();
+}
+
+void create_saved(GtkButton *__attribute__((unused)) button)
+{
+    char *chat_name = mx_strjoin(SAVED_NAME, account->username);
+
+    int chat_id = create_chat_in_server(chat_name, CHAT_SAVED);
+
+    if (chat_id == -1)
+        return;
+
+    t_chat *chat = chat_prepare_node(chat_id, SAVED_NAME, 2, PRIV_ADMIN, CHAT_SAVED);
 
     pthread_mutex_lock(&account->mutex);
     chat_push_front(&account->chats, chat);

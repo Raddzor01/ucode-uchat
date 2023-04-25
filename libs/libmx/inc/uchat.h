@@ -18,6 +18,7 @@ typedef struct s_chat
     int id;
     char *name;
     int image_id;
+    int chat_type;
     int user_privilege;
 
     t_msg *messages;
@@ -96,10 +97,11 @@ void msg_pop_front(t_msg **head);
 t_msg *msg_get_last_message(t_msg *list);
 
 // chat list functions
-t_chat *chat_prepare_node(const int id, const char *name, const int image_id, const int user_privilege);
+t_chat *chat_prepare_node(const int id, const char *name, const int image_id, const int user_privilege, int chat_type);
 void chat_push_back(t_chat **list, t_chat *new_node);
 void chat_push_front(t_chat **list, t_chat *new_node);
 t_chat *chat_get_chat_by_id(t_chat *list, int chat_id);
+t_chat *chat_get_chat_by_type(t_chat *list, int type);
 void chat_clear_single_node(t_chat **list);
 void chat_clear_list(t_chat **list);
 int chat_list_size(t_chat *list);

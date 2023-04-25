@@ -28,6 +28,7 @@
 #define DATA_DIR "Client/data/"
 
 #define DEFAULT_IMAGE "Client/data/default_image.png"
+#define SAVED_IMAGE "Client/icons/saved.png"
 
 #define MIN_NUMBER_OF_CHARACTERS 1
 #define MAX_NUMBER_OF_CHARACTERS 16
@@ -36,7 +37,9 @@
 #define MAX_NUMBER_OF_CHAR_FOR_LAST_MSG 22
 
 #define CHAT_DIDNT_EXISTS -2
-#define CHAT_ERROR -1
+#define CHAT_ERROR -13
+
+#define SAVED_NAME "Saved"
 
 // struct for sending to server
 typedef struct s_info
@@ -151,6 +154,7 @@ void change_msg_id_for_edit(GtkButton *__attribute__((unused)) button, gpointer 
 GtkWidget *create_image_button(char *image_path, int width, int height);
 void receive_bubble(t_msg *message);
 void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname);
+void create_saved(GtkButton *__attribute__((unused)) button);
 void join_chat(GtkWidget *__attribute__((unused)) widget, gpointer id);
 void create_chat_menu();
 void display_users();

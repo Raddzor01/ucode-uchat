@@ -35,7 +35,7 @@ void create_chat(cJSON *json, t_client_info *client_info)
     sqlite3_finalize(stmt);
 
     query = sqlite3_mprintf("INSERT INTO chats (name, type, image_id, date) VALUES('%s', %d, %d, %d); ",
-                            chat_name, type, 1, date);
+                            chat_name, type, type == CHAT_SAVED ? 2 : 1, date);
     db_execute_query(query);
 
     sqlite3_free(query);

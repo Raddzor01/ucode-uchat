@@ -41,11 +41,12 @@ void search_chats(cJSON *client_json, t_client_info *client_info)
     //                         "AND (m2.id IS NULL OR c.type != 1) "
     //                         "ORDER BY c.date DESC; ";
 
-    query = sqlite3_mprintf("SELECT chats.id, chats.name, chats.image_id FROM chats "
-                            "WHERE chats.name LIKE '%s' "
-                            "AND chats.id NOT IN (SELECT chat_id FROM members WHERE user_id = %d) "
+    query = sqlite3_mprintf("SELECT id, name, image_id FROM chats "
+                            "WHERE name LIKE '%s' "
+                            "AND id NOT IN (SELECT chat_id FROM members WHERE user_id = %d) "
+                            "AND type NOT IN (%d, %d) "
                             "ORDER BY chats.date DESC; ",
-                            search_str, client_info->user->id);
+                            search_str, client_info->user->id, CHAT_PRIVATE, CHAT_SAVED);
     
     db = db_open();
     sqlite3_prepare_v2(db, query, -1, &stmt, NULL);
