@@ -28,8 +28,9 @@
 
 #define DATA_DIR "Client/data/"
 
-#define DEFAULT_IMAGE "Client/data/default_image.png"
+#define DEFAULT_IMAGE "Client/data/default_user.png"
 #define SAVED_IMAGE "Client/icons/saved.png"
+#define DEFAULT_CHAT_IMAGE "Client/data/default_chat.png"
 
 #define MIN_NUMBER_OF_CHARACTERS 1
 #define MAX_NUMBER_OF_CHARACTERS 16
@@ -85,6 +86,7 @@ int send_file_to_server(char *filedir);
 extern GtkWidget *main_window;
 extern t_info *info;
 extern t_account *account;
+extern bool username_display;
 
 void *server_update_thread();
 char *get_user_image(int image_id);

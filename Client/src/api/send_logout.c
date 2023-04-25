@@ -1,7 +1,5 @@
 #include "../../inc/client.h"
 
-extern bool username_display;
-
 int send_logout_to_server()
 {
     cJSON *json = cJSON_CreateObject();

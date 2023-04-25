@@ -166,7 +166,7 @@ void user_box(t_chat *chat, bool is_search)
     char *last_msg = NULL;
 
     // pixbuf = gdk_pixbuf_new_from_file(get_image_from_server(chat->id), &error);
-    pixbuf = gdk_pixbuf_new_from_file("Client/data/default_avatar.png", &error);
+    pixbuf = gdk_pixbuf_new_from_file(get_user_image(chat->image_id), &error);
     if (error != NULL)
         g_error("Error loading image: %s", error->message);
 
@@ -258,7 +258,7 @@ void receive_bubble(t_msg *message)
         GdkPixbuf *pixbuf;
         GtkWidget *image;
 
-        pixbuf = gdk_pixbuf_new_from_file("Client/data/default_image.png", NULL);
+        pixbuf = gdk_pixbuf_new_from_file("Client/data/default_reverse_user.png", NULL);
         pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
         image = gtk_image_new_from_pixbuf(pixbuf);
         g_object_unref(pixbuf);
@@ -798,7 +798,7 @@ void change_image(GtkWidget *button)
         filename = gtk_file_chooser_get_filename(chooser);
 
         // Do something with the selected file...
-        copy_image(filename, "Client/data/default_image.png");
+        copy_image(filename, "Client/data/default_user.png");
 
         GtkWidget *widget_to_remove = gtk_grid_get_child_at (GTK_GRID(get_widget_by_name_r(main_window, "chat_grid")), 0, 0);
         gtk_container_remove(GTK_CONTAINER(get_widget_by_name_r(main_window, "chat_grid")), widget_to_remove);

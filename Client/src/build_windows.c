@@ -11,6 +11,9 @@ char *get_user_image(int image_id)
     if (image_id == 2)
         return SAVED_IMAGE;
 
+    if (image_id == 3)
+        return DEFAULT_CHAT_IMAGE;
+
     // return get_image_from_server(image_id);
     return DEFAULT_IMAGE;
 }
@@ -295,7 +298,7 @@ void chat_info()
 
     GdkPixbuf *pixbuf;
 
-    pixbuf = gdk_pixbuf_new_from_file("Client/data/default_avatar.png", NULL);
+    pixbuf = gdk_pixbuf_new_from_file(get_user_image(account->current_chat->image_id), NULL);
     pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
 
     image = gtk_image_new_from_pixbuf(pixbuf);
