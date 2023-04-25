@@ -26,8 +26,8 @@
 #define LISTEN_BACKLOG 10
 #define MAX_BUF_SIZE 4000
 
-#define SSL_CRT "Server/ssl/server_certificate.crt"
-#define SSL_KEY "Server/ssl/server_key.key"
+#define SSL_CRT "Server/ssl/key.pem"
+#define SSL_KEY "Server/ssl/key.pem"
 
 #define DB_NAME "Server/db/database.db"
 #define SQL_NAME "Server/db/db_tables.sql"
