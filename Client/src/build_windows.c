@@ -645,7 +645,7 @@ void build_edit_profile()
     gtk_box_pack_start(GTK_BOX(box), edit_box, FALSE, FALSE, 0);
     gtk_widget_set_name(edit_box, "edit");
 
-    GtkWidget *image = create_image_button("Client/data/default_image.png", 60, 60);
+    GtkWidget *image = create_image_button(get_user_image(account->image_id), 60, 60);
     gtk_box_pack_start(GTK_BOX(profile_info), image, FALSE, FALSE, 0);
     add_class(image, "image");
     g_signal_connect(image, "clicked", G_CALLBACK(change_image), NULL);
