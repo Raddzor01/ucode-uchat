@@ -295,7 +295,7 @@ void chat_info()
 
     GdkPixbuf *pixbuf;
 
-    pixbuf = gdk_pixbuf_new_from_file(get_user_image(account->current_chat->chat_type), NULL);
+    pixbuf = gdk_pixbuf_new_from_file("Client/data/default_avatar.png", NULL);
     pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
 
     image = gtk_image_new_from_pixbuf(pixbuf);
@@ -506,6 +506,8 @@ void build_users()
 
     g_signal_connect(log_out_box, "button_press_event", G_CALLBACK(logout_event), NULL);
     g_signal_connect(log_out_box, "button_press_event", G_CALLBACK(log_menu), NULL);
+
+    gtk_widget_show_all(users_box);
 }
 
 void pop_up_window(char *text)
@@ -641,7 +643,7 @@ GtkWidget *edit_window;
 void build_edit_profile()
 {
     if (window_check == true)
-        return;
+        gtk_widget_destroy(edit_window);
 
     // GtkWidget *window;
 
@@ -667,7 +669,7 @@ void build_edit_profile()
     gtk_box_pack_start(GTK_BOX(box), edit_box, FALSE, FALSE, 0);
     gtk_widget_set_name(edit_box, "edit");
 
-    GtkWidget *image = create_image_button("Client/data/default_image.png", 60, 60);
+    GtkWidget *image = create_image_button(get_user_image(account->image_id), 60, 60);
     gtk_box_pack_start(GTK_BOX(profile_info), image, FALSE, FALSE, 0);
     add_class(image, "image");
     g_signal_connect(image, "clicked", G_CALLBACK(change_image), NULL);

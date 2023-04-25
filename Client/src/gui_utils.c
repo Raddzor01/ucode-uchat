@@ -166,7 +166,7 @@ void user_box(t_chat *chat, bool is_search)
     char *last_msg = NULL;
 
     // pixbuf = gdk_pixbuf_new_from_file(get_image_from_server(chat->id), &error);
-    pixbuf = gdk_pixbuf_new_from_file(get_user_image(chat->image_id), &error);
+    pixbuf = gdk_pixbuf_new_from_file("Client/data/default_avatar.png", &error);
     if (error != NULL)
         g_error("Error loading image: %s", error->message);
 
@@ -273,8 +273,11 @@ void receive_bubble(t_msg *message)
     }
 
     // text bubble
+
+    GtkWidget *button_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_pack_start(GTK_BOX(box), button_box, FALSE, FALSE, 0);
     username_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    add_class(username_box, "receive");
+    add_class(button_box, "receive");
     if (username_display)
     {
         username = gtk_label_new(message->username);
@@ -284,7 +287,7 @@ void receive_bubble(t_msg *message)
         gtk_box_pack_start(GTK_BOX(username_box), username, FALSE, FALSE, 0);
     }
     gtk_widget_set_halign(username_box, GTK_ALIGN_START);
-    gtk_box_pack_start(GTK_BOX(box), username_box, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(button_box), username_box, FALSE, FALSE, 0);
 
     // text
     text_view = gtk_text_view_new();
@@ -326,9 +329,10 @@ void receive_bubble(t_msg *message)
         GtkWidget *delete_button;
 
         delete_button = create_image_button("Client/icons/trash.png", 12, 12);
+        add_class(delete_button, "bubble_button");
         gtk_widget_set_vexpand(delete_button, FALSE);
         gtk_widget_set_valign(delete_button, GTK_ALIGN_CENTER);
-        gtk_box_pack_start(GTK_BOX(username_box), delete_button, FALSE, FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(button_box), delete_button, FALSE, FALSE, 0);
 
         g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg_id), GINT_TO_POINTER(message->msg_id));
         g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_msg), box);
@@ -409,6 +413,7 @@ void text_bubble(t_msg *message)
     GtkWidget *edit_button;
 
     edit_button = create_image_button("Client/icons/pen.png", 12, 12);
+    add_class(edit_button, "bubble_button");
     gtk_widget_set_vexpand(edit_button, FALSE);
     gtk_widget_set_valign(edit_button, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(box), edit_button, FALSE, FALSE, 0);
@@ -420,6 +425,7 @@ void text_bubble(t_msg *message)
     GtkWidget *delete_button;
 
     delete_button = create_image_button("Client/icons/trash.png", 12, 12);
+    add_class(delete_button, "bubble_button");
     gtk_widget_set_vexpand(delete_button, FALSE);
     gtk_widget_set_valign(delete_button, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(box), delete_button, FALSE, FALSE, 0);
@@ -755,6 +761,27 @@ char *str_to_display_chat_name(char *chat_name)
     }
 }
 
+void copy_image(char* original_path, char* new_path) {
+    FILE* original_file = fopen(original_path, "rb");
+    FILE* new_file = fopen(new_path, "wb");
+
+    if (original_file == NULL || new_file == NULL) {
+        printf("Error: failed to open file.\n");
+        return;
+    }
+
+    // Copy the contents of the original file to the new file
+    int c;
+    while ((c = fgetc(original_file)) != EOF) {
+        fputc(c, new_file);
+    }
+
+    fclose(original_file);
+    fclose(new_file);
+
+    printf("Image copied to %s\n", new_path);
+}
+
 void change_image(GtkWidget *button)
 {
     GtkWidget *dialog;
@@ -771,6 +798,11 @@ void change_image(GtkWidget *button)
         filename = gtk_file_chooser_get_filename(chooser);
 
         // Do something with the selected file...
+        copy_image(filename, "Client/data/default_image.png");
+
+        GtkWidget *widget_to_remove = gtk_grid_get_child_at (GTK_GRID(get_widget_by_name_r(main_window, "chat_grid")), 0, 0);
+        gtk_container_remove(GTK_CONTAINER(get_widget_by_name_r(main_window, "chat_grid")), widget_to_remove);
+        build_users();
         GdkPixbuf *pixbuf;
 
         pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
@@ -779,11 +811,12 @@ void change_image(GtkWidget *button)
         GtkWidget *new_image = gtk_image_new_from_pixbuf(pixbuf);
         gtk_button_set_image(GTK_BUTTON(button), new_image);
         g_free(filename);
+        gtk_widget_queue_draw(main_window);
         g_object_unref(pixbuf);
     }
 
-    gtk_widget_destroy(dialog);
-}
+        gtk_widget_destroy(dialog);
+    }
 
 void delete_account(GtkWidget *__attribute__((unused)) button, GtkWidget *window)
 {

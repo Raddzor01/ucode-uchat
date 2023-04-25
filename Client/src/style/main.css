@@ -128,7 +128,7 @@ button:hover {
     margin: 2px;
 }
 
-.bubble button {
+.bubble_button {
     padding:0px;
     border-radius: 20px;
     /* border-color: @fill-bg-color; */
