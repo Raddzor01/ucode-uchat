@@ -602,7 +602,7 @@ void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
     if (chat_id == -1)
         return;
 
-    t_chat *chat = chat_prepare_node(chat_id, text, 1, PRIV_ADMIN, CHAT_NORMAL);
+    t_chat *chat = chat_prepare_node(chat_id, text, 3, PRIV_ADMIN, CHAT_NORMAL);
 
     pthread_mutex_lock(&account->mutex);
     chat_push_front(&account->chats, chat);

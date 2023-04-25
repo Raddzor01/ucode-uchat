@@ -26,8 +26,17 @@
 #define LISTEN_BACKLOG 10
 #define MAX_BUF_SIZE 4000
 
+#ifdef MACOS_VER
 #define SSL_CRT "Server/ssl/key.pem"
+#else
+#define SSL_CRT "Server/ssl/server_certificate.crt"
+#endif
+
+#ifdef MACOS_VER
 #define SSL_KEY "Server/ssl/key.pem"
+#else
+#define SSL_KEY "Server/ssl/server_key.key"
+#endif
 
 #define DB_NAME "Server/db/database.db"
 #define SQL_NAME "Server/db/db_tables.sql"
