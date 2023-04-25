@@ -2,12 +2,12 @@
 
 void *server_online_check_thread()
 {
-    bool is_connected;
+    bool is_connected = false;
     while (true)
     {
         if (check_server_online() == true)
         {
-            pop_up_window("Lost connection to the server! Trying to reconnect...");
+            mx_printerr("Lost connection to the server! Trying to reconnect...");
 #ifdef MACOS_VER
             sem_wait(account->semaphore);
 #else

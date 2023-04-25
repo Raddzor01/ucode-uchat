@@ -25,7 +25,7 @@ bool check_account_from_server()
     pthread_mutex_lock(&account->mutex);
     account->id = cJSON_GetObjectItem(json, "id")->valueint;
     account->username = mx_strdup(cJSON_GetObjectItemCaseSensitive(json, "username")->valuestring);
-    account->password = mx_strdup(cJSON_GetObjectItemCaseSensitive(json, "password")->valuestring);
+    account->password = (unsigned char *)mx_strdup(cJSON_GetObjectItemCaseSensitive(json, "password")->valuestring);
     account->image_id = cJSON_GetObjectItem(json, "image_id")->valueint;
     pthread_mutex_unlock(&account->mutex);
 
@@ -35,13 +35,13 @@ bool check_account_from_server()
     return ERR_SUCCESS;
 }
 
-int send_login_to_server(const char *username, const char *password)
+int send_login_to_server(const char *username, const unsigned char *password)
 {
     cJSON *json = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(json, "type", REQ_USER_LOGIN);
     cJSON_AddStringToObject(json, "username", username);
-    cJSON_AddStringToObject(json, "password", password);
+    cJSON_AddStringToObject(json, "password", (char *)password);
     char *json_str = cJSON_PrintUnformatted(json);
 
     SSL_write(info->ssl, json_str, mx_strlen(json_str));

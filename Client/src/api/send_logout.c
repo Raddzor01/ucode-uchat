@@ -1,5 +1,7 @@
 #include "../../inc/client.h"
 
+extern bool username_display;
+
 int send_logout_to_server()
 {
     cJSON *json = cJSON_CreateObject();
@@ -12,10 +14,12 @@ int send_logout_to_server()
     cJSON_Delete(json);
     mx_strdel(&json_str);
 
+    username_display = TRUE;
+
     mx_strdel(&account->username);
     pthread_cancel(account->server_update_thread);
+    pthread_cancel(account->server_online_thread);
     chat_clear_list(&account->chats);
-    pthread_create(&account->server_update_thread, NULL, server_update_thread, NULL);
     
     return 0;
 }

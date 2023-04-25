@@ -24,7 +24,7 @@ int get_user_chats()
         int chat_id = cJSON_GetObjectItem(temp_json, "chat_id")->valueint;
         int image_id = chat_type == CHAT_SAVED ? 2 : cJSON_GetObjectItem(temp_json, "image_id")->valueint;
         int user_privilege = cJSON_GetObjectItem(temp_json, "user_privilege")->valueint;
-        t_chat *new_node = chat_prepare_node(chat_id, chat_type == CHAT_SAVED ? "Saved" : cJSON_GetObjectItemCaseSensitive(temp_json, "chat_name")->valuestring, image_id, user_privilege, chat_type);
+        t_chat *new_node = chat_prepare_node(chat_id, chat_type == CHAT_SAVED ? "Saved messages" : cJSON_GetObjectItemCaseSensitive(temp_json, "chat_name")->valuestring, image_id, user_privilege, chat_type);
         new_node->messages = get_chat_messages_from_server(chat_id);
         chat_push_back(&account->chats, new_node);
     }

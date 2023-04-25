@@ -15,7 +15,6 @@ char *get_user_image(int image_id)
     return DEFAULT_IMAGE;
 }
 
-
 bool check_field_size(const gchar *field, GtkWidget *field_widget)
 {
     bool error = false;
@@ -63,7 +62,9 @@ void login_clicked(GtkWidget *__attribute__((unused)) widget)
     if (error)
         return;
 
-    int error_code = send_login_to_server(username, password);
+    unsigned char hash_password[SHA256_DIGEST_LENGTH];
+    SHA256((unsigned char *)password, mx_strlen(password), hash_password);
+    int error_code = send_login_to_server(username, hash_password);
     if (error_code == ERR_SUCCESS)
     {
         gtk_label_set_text(GTK_LABEL(username_error_label), "Login successful");
@@ -114,7 +115,9 @@ void signup_clicked(GtkWidget *__attribute__((unused)) widget)
         return;
     }
 
-    int error_code = send_sign_up_to_server(username, password);
+    unsigned char hash_password[SHA256_DIGEST_LENGTH];
+    SHA256((unsigned char *)password, mx_strlen(password), hash_password);
+    int error_code = send_sign_up_to_server(username, hash_password);
     if (error_code == ERR_SUCCESS)
     {
         pop_up_window("Sign up successful");
@@ -135,6 +138,15 @@ void build_login()
     GtkWidget *login_window = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_widget_set_name(login_window, "login_window");
     gtk_container_add(GTK_CONTAINER(main_window), login_window);
+
+    GtkWidget *above = gtk_label_new(" ");
+    gtk_box_pack_start(GTK_BOX(login_window), above, FALSE, FALSE, 0);
+
+    GtkWidget *greeting_label = gtk_label_new("Welcome to Chat!");
+    gtk_box_pack_start(GTK_BOX(login_window), greeting_label, FALSE, FALSE, 0);
+
+    GtkWidget *under = gtk_label_new(" ");
+    gtk_box_pack_start(GTK_BOX(login_window), under, FALSE, FALSE, 0);
 
     GtkWidget *username_label = gtk_label_new("Username:");
     gtk_box_pack_start(GTK_BOX(login_window), username_label, FALSE, FALSE, 0);
@@ -165,6 +177,7 @@ void build_login()
     GtkWidget *signup_button = gtk_button_new_with_label("Sign up");
     gtk_box_pack_start(GTK_BOX(login_window), login_button, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(login_window), signup_button, FALSE, FALSE, 0);
+
     g_signal_connect(login_button, "clicked", G_CALLBACK(login_clicked), NULL);
     g_signal_connect(signup_button, "clicked", G_CALLBACK(sign_up_menu), NULL);
 
@@ -176,6 +189,15 @@ void build_signup()
     GtkWidget *signup_window = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_widget_set_name(signup_window, "signup_window");
     gtk_container_add(GTK_CONTAINER(main_window), signup_window);
+
+    GtkWidget *above = gtk_label_new(" ");
+    gtk_box_pack_start(GTK_BOX(signup_window), above, FALSE, FALSE, 0);
+
+    GtkWidget *greeting_label = gtk_label_new("Register to Chat");
+    gtk_box_pack_start(GTK_BOX(signup_window), greeting_label, FALSE, FALSE, 0);
+
+    GtkWidget *under = gtk_label_new(" ");
+    gtk_box_pack_start(GTK_BOX(signup_window), under, FALSE, FALSE, 0);
 
     GtkWidget *username_label = gtk_label_new("Username:");
     gtk_box_pack_start(GTK_BOX(signup_window), username_label, FALSE, FALSE, 0);

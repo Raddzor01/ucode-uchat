@@ -4,6 +4,7 @@
 #include "../../libs/libmx/inc/libmx.h"
 #include "../../libs/openssl/openssl/err.h"
 #include "../../libs/openssl/openssl/ssl.h"
+#include "../../libs/openssl/openssl/sha.h"
 
 #include <arpa/inet.h>
 #include <errno.h>
@@ -62,7 +63,7 @@ typedef struct s_info
 typedef struct s_account
 {
     char *username;
-    char *password;
+    unsigned char *password;
     int id;
     int image_id;
 
@@ -92,8 +93,8 @@ void *server_online_check_thread();
 
 
 // Interaction with the server
-int send_sign_up_to_server(const char *username, const char *password);
-int send_login_to_server(const char *username, const char *password);
+int send_sign_up_to_server(const char *username, const unsigned char *password);
+int send_login_to_server(const char *username, const unsigned char *password);
 time_t send_message_to_server(const char *str);
 int send_exit_to_server();
 int send_logout_to_server();

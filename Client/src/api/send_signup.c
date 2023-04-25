@@ -32,13 +32,13 @@ int check_account_exists()
     return error;
 }
 
-int send_sign_up_to_server(const char *username, const char *password)
+int send_sign_up_to_server(const char *username, const unsigned char *password)
 {
     cJSON *json = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(json, "type", REQ_USER_SIGNUP);
     cJSON_AddStringToObject(json, "username", username);
-    cJSON_AddStringToObject(json, "password", password);
+    cJSON_AddStringToObject(json, "password", (char *)password);
     char *json_str = cJSON_PrintUnformatted(json);
 
 #ifdef MACOS_VER

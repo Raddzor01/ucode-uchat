@@ -11,14 +11,14 @@ static int check_signup_errors(char *username)
 void user_signup(cJSON *json, t_client_info *client_info)
 {
     char *username;
-    char *password;
+    unsigned char *password;
     int error_type;
     char *query;
 
     db_init();
 
     username = cJSON_GetObjectItemCaseSensitive(json, "username")->valuestring;
-    password = cJSON_GetObjectItemCaseSensitive(json, "password")->valuestring;
+    password = (unsigned char *)cJSON_GetObjectItemCaseSensitive(json, "password")->valuestring;
 
     error_type = check_signup_errors(username);
     if (error_type != 0)

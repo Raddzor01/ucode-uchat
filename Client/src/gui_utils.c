@@ -588,6 +588,9 @@ void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
 {
     const char *text = gtk_entry_get_text(GTK_ENTRY(GTK_ENTRY(chatname)));
 
+    if (!mx_strcmp(text, ""))
+        return;
+
     int chat_id = create_chat_in_server(text, CHAT_NORMAL);
 
     if (chat_id == -1)
@@ -815,28 +818,31 @@ bool check_str_for_spec_char(const char *str)
     return true;
 }
 
-int is_box_empty(GtkBox *box) {
+int is_box_empty(GtkBox *box)
+{
     GList *children = gtk_container_get_children(GTK_CONTAINER(box));
     int is_empty = g_list_length(children) == 0;
     g_list_free(children);
     return is_empty;
 }
 
-void empty_left_bar() {
+void empty_left_bar()
+{
     GtkWidget *out_box = get_widget_by_name_r(main_window, "box_for_users");
 
-    if(!is_box_empty(GTK_BOX(out_box)))
+    if (!is_box_empty(GTK_BOX(out_box)))
         return;
-    
+
     GtkWidget *label = gtk_label_new("Don't have chat?\nJoin or create one");
     gtk_widget_set_name(label, "empty_left_bar");
     gtk_widget_set_vexpand(label, TRUE);
     gtk_widget_set_halign(label, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
-    gtk_box_pack_start(GTK_BOX(out_box), label, FALSE, FALSE, 0); 
+    gtk_box_pack_start(GTK_BOX(out_box), label, FALSE, FALSE, 0);
 }
 
-void empty_right_bar() {
+void empty_right_bar()
+{
 
     GtkWidget *grid = get_widget_by_name_r(main_window, "chat_grid");
 

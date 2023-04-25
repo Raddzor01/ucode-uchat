@@ -40,7 +40,7 @@ typedef struct s_user_info
 {
     int id;
     char *username;
-    char *password;
+    unsigned char *password;
     int image_id;
     char *filename;
     char *extension;

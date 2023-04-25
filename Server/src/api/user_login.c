@@ -9,13 +9,13 @@ void user_login(cJSON *json, t_client_info *client_info)
 {
     sqlite3 *db;
     char *username;
-    char *password;
+    unsigned char *password;
     t_user_info *user_info;
 
     db_init();
 
     username = cJSON_GetObjectItemCaseSensitive(json, "username")->valuestring;
-    password = cJSON_GetObjectItemCaseSensitive(json, "password")->valuestring;
+    password = (unsigned char *)cJSON_GetObjectItemCaseSensitive(json, "password")->valuestring;
 
     db = db_open();
 
@@ -29,7 +29,7 @@ void user_login(cJSON *json, t_client_info *client_info)
         return;
     }
 
-    if (mx_strcmp(user_info->password, password) != 0)
+    if (memcmp(user_info->password, password, SHA256_DIGEST_LENGTH) != 0)
     {
         send_responde(client_info->ssl, REQ_USER_LOGIN, ERR_INVALID_PASSWORD);
 
@@ -62,7 +62,7 @@ t_user_info *get_user_info(sqlite3 *db, char *username)
         user_info = (t_user_info *)malloc(sizeof(t_user_info));
         user_info->id = sqlite3_column_int64(stmt, 0);
         user_info->username = mx_strdup((const char *)sqlite3_column_text(stmt, 1));
-        user_info->password = mx_strdup((const char *)sqlite3_column_text(stmt, 2));
+        user_info->password = (unsigned char *)mx_strdup((const char *)sqlite3_column_text(stmt, 2));
         user_info->image_id = sqlite3_column_int(stmt, 3);
         // if(user_info->image_id > 1)
         // {
@@ -89,7 +89,7 @@ void send_login_response(SSL *ssl, t_user_info *user_info)
     cJSON_AddStringToObject(json, "username", user_info->username);
     cJSON_AddNumberToObject(json, "id", user_info->id);
     cJSON_AddNumberToObject(json, "image_id", user_info->image_id);
-    cJSON_AddStringToObject(json, "password", user_info->password);
+    cJSON_AddStringToObject(json, "password", (char *)user_info->password);
 
     json_str = cJSON_PrintUnformatted(json);
 
