@@ -484,6 +484,8 @@ void build_users()
 
     g_signal_connect(log_out_box, "button_press_event", G_CALLBACK(logout_event), NULL);
     g_signal_connect(log_out_box, "button_press_event", G_CALLBACK(log_menu), NULL);
+
+    gtk_widget_show_all(users_box);
 }
 
 void pop_up_window(char *text)
@@ -619,7 +621,7 @@ GtkWidget *edit_window;
 void build_edit_profile()
 {
     if (window_check == true)
-        return;
+        gtk_widget_destroy(edit_window);
 
     // GtkWidget *window;
 

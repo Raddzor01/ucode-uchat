@@ -758,6 +758,27 @@ char *str_to_display_chat_name(char *chat_name)
     }
 }
 
+void copy_image(char* original_path, char* new_path) {
+    FILE* original_file = fopen(original_path, "rb");
+    FILE* new_file = fopen(new_path, "wb");
+
+    if (original_file == NULL || new_file == NULL) {
+        printf("Error: failed to open file.\n");
+        return;
+    }
+
+    // Copy the contents of the original file to the new file
+    int c;
+    while ((c = fgetc(original_file)) != EOF) {
+        fputc(c, new_file);
+    }
+
+    fclose(original_file);
+    fclose(new_file);
+
+    printf("Image copied to %s\n", new_path);
+}
+
 void change_image(GtkWidget *button)
 {
     GtkWidget *dialog;
@@ -774,6 +795,11 @@ void change_image(GtkWidget *button)
         filename = gtk_file_chooser_get_filename(chooser);
 
         // Do something with the selected file...
+        copy_image(filename, "Client/data/default_image.png");
+
+        GtkWidget *widget_to_remove = gtk_grid_get_child_at (GTK_GRID(get_widget_by_name_r(main_window, "chat_grid")), 0, 0);
+        gtk_container_remove(GTK_CONTAINER(get_widget_by_name_r(main_window, "chat_grid")), widget_to_remove);
+        build_users();
         GdkPixbuf *pixbuf;
 
         pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
@@ -782,6 +808,7 @@ void change_image(GtkWidget *button)
         GtkWidget *new_image = gtk_image_new_from_pixbuf(pixbuf);
         gtk_button_set_image(GTK_BUTTON(button), new_image);
         g_free(filename);
+        gtk_widget_queue_draw(main_window);
         g_object_unref(pixbuf);
     }
 
