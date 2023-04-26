@@ -81,6 +81,7 @@ void daemon();
 t_req_type handle_request(t_client_info *client_info, char *request);
 void usage_error_check(int argc);
 void log_client_conection(struct in_addr sa);
+bool write_file_to_data(char *filename, long file_size, SSL *ssl);
 
 sqlite3 *db_open();
 int db_init();

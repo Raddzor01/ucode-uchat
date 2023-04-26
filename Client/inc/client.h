@@ -95,7 +95,7 @@ void *server_online_check_thread();
 void change_chat_image(GtkWidget *button);
 char *get_file_extension(char *url);
 void change_chat_image(GtkWidget *button);
-
+time_t update_chat_photo(char *str, int chat_id);
 // Interaction with the server
 int send_sign_up_to_server(const char *username, const unsigned char *password);
 int send_login_to_server(const char *username, const unsigned char *password);

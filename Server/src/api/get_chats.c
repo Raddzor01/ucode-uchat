@@ -44,8 +44,9 @@ cJSON *get_chats_json(sqlite3 *db, int user_id)
 sqlite3_stmt *get_chats_stmt(sqlite3 *db, int user_id)
 {
     sqlite3_stmt *stmt;
-    sqlite3_prepare_v2(db, "SELECT chats.id, chats.name, chats.type, chats.image_id, members.privilege FROM chats "
+    sqlite3_prepare_v2(db, "SELECT chats.id, chats.name, chats.type, chats.image_id, members.privilege, files.filename FROM chats "
                            "INNER JOIN members ON members.chat_id = chats.id "
+                           "INNER JOIN files ON files.id = chats.image_id "
                            "WHERE chats.id IN (SELECT chat_id FROM members WHERE user_id = ?) AND members.user_id = ? "
                            "ORDER BY chats.date DESC; ",
                        -1, &stmt, NULL);
@@ -63,6 +64,7 @@ static cJSON *get_chat_json(sqlite3_stmt *stmt)
     cJSON_AddNumberToObject(json, "chat_type", sqlite3_column_int(stmt, 2));
     cJSON_AddNumberToObject(json, "image_id", sqlite3_column_int(stmt, 3));
     cJSON_AddNumberToObject(json, "user_privilege", sqlite3_column_int(stmt, 4));
+    cJSON_AddStringToObject(json, "filename", (const char *)sqlite3_column_text(stmt, 5));
 
     return json;
 }

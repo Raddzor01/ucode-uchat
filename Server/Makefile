@@ -30,6 +30,7 @@ all: clean $(UCHAT)
 $(UCHAT):
 	mkdir $(SRVR_INFO_DIR)
 	mkdir $(OBJDIR)
+	mkdir $(DATA_DIR)
 	# mkdir $(DATA_DIR)
 	$(CC) $(CFLAGS) -c $(SRC)
 	mv *.o $(OBJDIR)
@@ -39,7 +40,7 @@ clean:
 	rm -f $(OBJS)
 	rm -df $(OBJDIR)
 	rm -rdf $(SRVR_INFO_DIR)
-	rm -f 
+	rm -rdf $(DATA_DIR)
 
 uninstall:
 	make clean

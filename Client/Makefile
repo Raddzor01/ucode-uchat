@@ -41,11 +41,11 @@ $(UCHAT):
 clean:
 	rm -f $(OBJS)
 	rm -rdf $(OBJDIR)
+	rm -rdf $(DATA_DIR)
 
 uninstall:
 	make clean
 	rm -f $(UCHAT)
-	rm -rdf $(DATA_DIR)
 
 reinstall:
 	make uninstall

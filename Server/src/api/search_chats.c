@@ -6,6 +6,7 @@ cJSON *get_chat_json(sqlite3_stmt *stmt)
     cJSON_AddNumberToObject(json, "chat_id", sqlite3_column_int(stmt, 0));
     cJSON_AddStringToObject(json, "chat_name", (const char *)sqlite3_column_text(stmt, 1));
     cJSON_AddNumberToObject(json, "image_id", sqlite3_column_int(stmt, 2));
+    cJSON_AddStringToObject(json, "filename", (const char *)sqlite3_column_text(stmt, 3));
 
     return json;
 }
@@ -41,10 +42,11 @@ void search_chats(cJSON *client_json, t_client_info *client_info)
     //                         "AND (m2.id IS NULL OR c.type != 1) "
     //                         "ORDER BY c.date DESC; ";
 
-    query = sqlite3_mprintf("SELECT id, name, image_id FROM chats "
+    query = sqlite3_mprintf("SELECT chats.id, chats.name, chats.image_id, files.filename FROM chats "
+                            "INNER JOIN files ON files.id = chats.image_id "
                             "WHERE name LIKE '%s' "
-                            "AND id NOT IN (SELECT chat_id FROM members WHERE user_id = %d) "
-                            "AND type NOT IN (%d, %d) "
+                            "AND chats.id NOT IN (SELECT chat_id FROM members WHERE user_id = %d) "
+                            "AND chats.type NOT IN (%d, %d) "
                             "ORDER BY chats.date DESC; ",
                             search_str, client_info->user->id, CHAT_PRIVATE, CHAT_SAVED);
     
@@ -55,7 +57,9 @@ void search_chats(cJSON *client_json, t_client_info *client_info)
     {
         cJSON_AddItemToArray(chats_json, get_chat_json(stmt));
         // cJSON_AddItemToArray(users_json, get_user_json(stmt));
+        mx_logs((char *)sqlite3_errmsg(db), LOG_ERROR);
     }
+    mx_logs((char *)sqlite3_errmsg(db), LOG_ERROR);
 
     cJSON *json = cJSON_CreateObject();
     cJSON_AddItemReferenceToObject(json, "chats", chats_json);

@@ -19,6 +19,7 @@ typedef struct s_chat
     int id;
     char *name;
     int image_id;
+    char *image_path;
     int chat_type;
     int user_privilege;
 
@@ -34,6 +35,7 @@ typedef enum e_req_type
     REQ_USER_LOGIN,
     REQ_SEND_MSG,
     REQ_CHECK_FILE,
+    REQ_UPDATE_CHAT_PHOTO,
     REQ_SEND_FILE_TO_SERVER,
     REQ_SEND_FILE_TO_CLIENT,
     REQ_CREATE_CHAT,

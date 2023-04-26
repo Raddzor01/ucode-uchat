@@ -1,41 +1,5 @@
 #include "../../inc/server.h"
 
-bool write_file_to_data(char *filename, long file_size, SSL *ssl)
-{
-    int fd, bytes_received, bytes_written;
-    int bytes_total = 0;
-    char buffer[BUFFER_SIZE];
-
-    fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (fd == -1) {
-        fprintf(stderr, "Error opening file %s: %s\n", filename, strerror(errno));
-        return -1;
-    }
-
-    while (bytes_total < file_size) {
-        bytes_received = SSL_read(ssl, buffer, BUFFER_SIZE);
-        if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
-            continue;
-
-        if (bytes_received <= 0) {
-            fprintf(stderr, "Error receiving file: %s\n", ERR_error_string(ERR_get_error(), NULL));
-            close(fd);
-            return -1;
-        }
-
-        bytes_written = write(fd, buffer, bytes_received);
-        if (bytes_written <= 0) {
-            fprintf(stderr, "Error writing file: %s\n", strerror(errno));
-            close(fd);
-            return -1;
-        }
-
-        bytes_total += bytes_received;
-    }
-    close(fd);
-    return false;
-}
-
 void update_user_photo(cJSON *json, t_client_info *client_info)
 {
     char *query = NULL;
@@ -52,8 +16,8 @@ void update_user_photo(cJSON *json, t_client_info *client_info)
     if(write_file_to_data(file_path, size, client_info->ssl))
         return;
     
-    query = sqlite3_mprintf("INSERT INTO files (filename, file_size, file_path, time) VALUES('%s', %d, '%s', %d); ",
-                            file_name, size, file_path, time);
+    query = sqlite3_mprintf("INSERT INTO files (filename, file_size, file_path) VALUES('%s', %d, '%s'); ",
+                            file_name, size, file_path);
     db_execute_query(query);
     sqlite3_free(query);
     

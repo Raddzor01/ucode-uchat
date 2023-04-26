@@ -166,7 +166,7 @@ void user_box(t_chat *chat, bool is_search)
     char *last_msg = NULL;
 
     // pixbuf = gdk_pixbuf_new_from_file(get_image_from_server(chat->id), &error);
-    pixbuf = gdk_pixbuf_new_from_file(get_user_image(chat->image_id, chat->chat_type), &error);
+    pixbuf = gdk_pixbuf_new_from_file(access(chat->image_path, F_OK) == 0 ? chat->image_path : get_user_image(chat->image_id, chat->chat_type), &error);
     if (error != NULL)
         g_error("Error loading image: %s", error->message);
 
@@ -603,6 +603,7 @@ void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
         return;
 
     t_chat *chat = chat_prepare_node(chat_id, text, 1, PRIV_ADMIN, CHAT_NORMAL);
+    chat->image_path = mx_strdup(DEFAULT_CHAT_IMAGE);
 
     pthread_mutex_lock(&account->mutex);
     chat_push_front(&account->chats, chat);
@@ -624,6 +625,7 @@ void create_saved(GtkButton *__attribute__((unused)) button)
         return;
 
     t_chat *chat = chat_prepare_node(chat_id, "Saved messages", 1, PRIV_ADMIN, CHAT_SAVED);
+    chat->image_path = mx_strdup(SAVED_IMAGE);
 
     pthread_mutex_lock(&account->mutex);
     chat_push_front(&account->chats, chat);
@@ -784,49 +786,46 @@ void copy_image(char *original_path, char *new_path)
     fclose(new_file);
 }
 
-// void change_chat_image(GtkWidget *button)
-// {
-//     GtkWidget *dialog;
-//     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
-//     gint res;
+void change_chat_image(GtkWidget *__attribute__((unused)) button)
+{
+    GtkWidget *dialog;
+    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+    gint res;
 
-//     dialog = gtk_file_chooser_dialog_new("Choose avatar", NULL, action, "_Cancel",
-//                                          GTK_RESPONSE_CANCEL, "_Select", GTK_RESPONSE_ACCEPT, NULL);
-//     res = gtk_dialog_run(GTK_DIALOG(dialog));
-//     if (res == GTK_RESPONSE_ACCEPT)
-//     {
-//         char *filename;
-//         GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
-//         filename = gtk_file_chooser_get_filename(chooser);
+    dialog = gtk_file_chooser_dialog_new("Choose avatar", NULL, action, "_Cancel",
+                                         GTK_RESPONSE_CANCEL, "_Select", GTK_RESPONSE_ACCEPT, NULL);
+    res = gtk_dialog_run(GTK_DIALOG(dialog));
+    if (res == GTK_RESPONSE_ACCEPT)
+    {
+        char *filename;
+        GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
+        filename = gtk_file_chooser_get_filename(chooser);
 
-//         time_t send_time = send_file_to_server(filename);
-//         char *file_name = mx_strjoin(mx_ltoa(send_time), mx_itoa(account->id));
-//         char *file_path = mx_strjoin(DATA_DIR, file_name);
+        time_t send_time = update_chat_photo(filename, account->current_chat->id);
+        char *file_name = mx_strjoin(mx_ltoa(send_time), mx_itoa(account->id));
+        char *file_with_extension = mx_strjoin(file_name, get_file_extension(filename));
+        char *file_path = mx_strjoin(DATA_DIR, file_with_extension);
 
-//         copy_image(filename, file_path);
+        copy_image(filename, file_path);
 
-//         pthread_mutex_lock(&account->mutex);
-//         mx_strdel(&account->image_path);
-//         curren->image_path = mx_strdup(file_path);
-//         pthread_mutex_unlock(&account->mutex);
+        pthread_mutex_lock(&account->mutex);
+        mx_strdel(&account->current_chat->image_path);
+        account->current_chat->image_path = mx_strdup(file_path);
+        pthread_mutex_unlock(&account->mutex);
 
-//         GtkWidget *widget_to_remove = gtk_grid_get_child_at(GTK_GRID(get_widget_by_name_r(main_window, "chat_grid")), 0, 0);
-//         gtk_container_remove(GTK_CONTAINER(get_widget_by_name_r(main_window, "chat_grid")), widget_to_remove);
-//         build_users();
-//         GdkPixbuf *pixbuf;
+        mx_strdel(&file_name);
+        mx_strdel(&file_with_extension);
+        mx_strdel(&file_path);
 
-//         pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-//         pixbuf = gdk_pixbuf_scale_simple(pixbuf, 60, 60, GDK_INTERP_BILINEAR);
+        chat_info();
+        GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
 
-//         GtkWidget *new_image = gtk_image_new_from_pixbuf(pixbuf);
-//         gtk_button_set_image(GTK_BUTTON(button), new_image);
-//         g_free(filename);
-//         gtk_widget_queue_draw(main_window);
-//         g_object_unref(pixbuf);
-//     }
+        clear_box(box);
+        display_users();
+    }
 
-//     gtk_widget_destroy(dialog);
-// }
+    gtk_widget_destroy(dialog);
+}
 
 void change_image(GtkWidget *button)
 {
