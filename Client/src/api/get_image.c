@@ -1,44 +1,43 @@
 #include "../../inc/client.h"
 
-bool write_file_to_data(char *file_path, long size)
+bool write_file_to_data(char *filename, long file_size)
 {
-    FILE *image;
-    char buffer[1024];
-    size_t bytes_received = 0;
-    long bytes_left = size;
+    int fd, bytes_received, bytes_written;
+    int bytes_total = 0;
+    char buffer[BUFFER_SIZE];
 
-    image = fopen(file_path, "wb");
-
-    if (image == NULL)
-        return true;
-    
-    while (bytes_left > 0)
+    fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (fd == -1)
     {
-        bytes_received = recv(info->server_socket, buffer, BUFSIZ, 0);
-        if (bytes_received < 0)
+        fprintf(stderr, "Error opening file %s: %s\n", filename, strerror(errno));
+        return true;
+    }
+
+    while (bytes_total < file_size)
+    {
+        bytes_received = SSL_read(info->ssl, buffer, BUFFER_SIZE);
+        if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
+            continue;
+
+        if (bytes_received <= 0)
         {
-            mx_logs("Getting file error", LOG_ERROR);
+            fprintf(stderr, "Error receiving file: %s\n", ERR_error_string(ERR_get_error(), NULL));
+            close(fd);
             return true;
         }
-        fwrite(buffer, sizeof(char), bytes_received, image);
-        bytes_left -= bytes_received;
+
+        bytes_written = write(fd, buffer, bytes_received);
+        if (bytes_written <= 0)
+        {
+            fprintf(stderr, "Error writing file: %s\n", strerror(errno));
+            close(fd);
+            return true;
+        }
+
+        bytes_total += bytes_received;
     }
 
-    // pthread_mutex_unlock(&account->mutex);
-    fclose(image);
-
-    int bytes_pending;
-    if (ioctl(info->server_socket, FIONREAD, &bytes_pending) == -1)
-    {
-        mx_logs("Ioctl error", LOG_ERROR);
-        return true;
-    }
-    if (bytes_pending > 0)
-    {
-        remove(file_path);
-        printf("File is not fully received\n");
-        return true;
-    }
+    close(fd);
     return false;
 }
 
@@ -46,11 +45,10 @@ char *get_image_from_server(int image_id)
 {
     cJSON *json = cJSON_CreateObject();
 
-    cJSON_AddNumberToObject(json, "type", REQ_SEND_FILE_TO_CLIENT);
+    cJSON_AddNumberToObject(json, "type", REQ_CHECK_FILE);
     cJSON_AddNumberToObject(json, "image_id", image_id);
     char *json_str = cJSON_PrintUnformatted(json);
 
-    // pthread_mutex_lock(&account->mutex);
     SSL_write(info->ssl, json_str, mx_strlen(json_str));
 
     mx_strdel(&json_str);
@@ -59,15 +57,26 @@ char *get_image_from_server(int image_id)
     json_str = read_from_server();
     json = cJSON_Parse(json_str);
 
-    char *user_image_name = mx_strjoin(cJSON_GetObjectItemCaseSensitive(json, "filename")->valuestring, cJSON_GetObjectItemCaseSensitive(json, "extension")->valuestring);
+    char *user_image_name = mx_strdup(cJSON_GetObjectItemCaseSensitive(json, "filename")->valuestring);
     char *user_image_path = mx_strjoin(DATA_DIR, user_image_name);
     long size = cJSON_GetObjectItemCaseSensitive(json, "size")->valueint;    
 
     if (access(user_image_path, F_OK) == 0)
         return user_image_path;
 
-    if (write_file_to_data(user_image_path, size))
-        return NULL;
+    json = cJSON_CreateObject();
+
+    cJSON_AddNumberToObject(json, "type", REQ_SEND_FILE_TO_CLIENT);
+    cJSON_AddNumberToObject(json, "image_id", image_id);
+    json_str = cJSON_PrintUnformatted(json);
+
+    SSL_write(info->ssl, json_str, mx_strlen(json_str));
+
+    mx_strdel(&json_str);
+    cJSON_Delete(json);
+
+    if (write_file_to_data(user_image_path, size) == 1)
+        return DEFAULT_IMAGE;
 
     mx_strdel(&user_image_name);
     

@@ -5,6 +5,7 @@ typedef struct s_msg
 {
     int msg_id;
     int user_id;
+    int image_id;
     char *text;
     char *username;
     time_t time;
@@ -32,6 +33,7 @@ typedef enum e_req_type
     REQ_USER_SIGNUP,
     REQ_USER_LOGIN,
     REQ_SEND_MSG,
+    REQ_CHECK_FILE,
     REQ_SEND_FILE_TO_SERVER,
     REQ_SEND_FILE_TO_CLIENT,
     REQ_CREATE_CHAT,
@@ -82,6 +84,13 @@ typedef enum e_chat_type
     CHAT_PRIVATE,
     CHAT_SAVED
 }   t_chat_type;
+
+typedef enum e_pfp_type
+{
+    PFP_CHAT,
+    PFP_USER,
+    PFP_SAVED
+}   t_pfp_type;
 
 // message list functions
 t_msg *msg_prepare_node(const int id, const char *message, const time_t time, const int user_id, const char *username);

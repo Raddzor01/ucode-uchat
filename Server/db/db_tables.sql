@@ -30,7 +30,6 @@ CREATE TABLE messages (
 CREATE TABLE files (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   filename VARCHAR(255) NOT NULL,
-  file_type VARCHAR(6) NOT NULL,
   file_size INT NOT NULL,
   file_path VARCHAR(255) NOT NULL,
   time INTEGER NOT NULL

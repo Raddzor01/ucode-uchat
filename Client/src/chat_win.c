@@ -54,7 +54,7 @@ void find_chats(GtkWidget *entry)
 
 void chat_window()
 {
-    hog();
+    // hog();
 
     get_user_chats();
 

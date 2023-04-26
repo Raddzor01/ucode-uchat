@@ -39,6 +39,7 @@ t_msg *get_msg_by_id_from_server(int msg_id, int chat_id)
                                     cJSON_GetObjectItemCaseSensitive(message_json, "time")->valueint,
                                     cJSON_GetObjectItem(message_json, "user_id")->valueint,
                                     cJSON_GetObjectItemCaseSensitive(message_json, "username")->valuestring);
-
+    new_node->image_id = cJSON_GetObjectItem(message_json, "image_id")->valueint;
+    
     return new_node;
 }

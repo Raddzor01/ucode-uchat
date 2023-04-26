@@ -22,9 +22,9 @@ static void structs_init()
 #ifdef MACOS_VER
     semaphore = sem_open("/my_semaphore", O_CREAT, 0644, 1);
 #else
-    pthread_mutex_init(&account->mutex, NULL);
-#endif
     sem_init(&account->semaphore, 0, 1);
+#endif
+    pthread_mutex_init(&account->mutex, NULL);
     account->chats = NULL;
     account->username = NULL;
     account->current_chat = NULL;

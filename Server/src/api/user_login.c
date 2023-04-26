@@ -53,7 +53,8 @@ t_user_info *get_user_info(sqlite3 *db, char *username)
     //                         "WHERE users.username = ?; ", -1, &stmt, NULL);
     // sqlite3_bind_text(stmt, 1, username, -1, NULL);
 
-    sqlite3_prepare_v2(db, "SELECT users.id, users.username, users.password, users.image_id FROM users "
+    sqlite3_prepare_v2(db, "SELECT users.id, users.username, users.password, users.image_id, files.filename FROM users "
+                            "INNER JOIN files ON files.id = users.image_id "
                             "WHERE users.username = ?; ", -1, &stmt, NULL);
     sqlite3_bind_text(stmt, 1, username, -1, NULL);
 
@@ -64,12 +65,8 @@ t_user_info *get_user_info(sqlite3 *db, char *username)
         user_info->username = mx_strdup((const char *)sqlite3_column_text(stmt, 1));
         user_info->password = (unsigned char *)mx_strdup((const char *)sqlite3_column_text(stmt, 2));
         user_info->image_id = sqlite3_column_int(stmt, 3);
-        // if(user_info->image_id > 1)
-        // {
-        //     user_info->filename = mx_strdup((const char *)sqlite3_column_text(stmt, 4));
-        //     user_info->file_path = mx_strdup((const char *)sqlite3_column_text(stmt, 5));
-        //     user_info->extension = mx_strdup((const char *)sqlite3_column_text(stmt, 6));
-        // }
+        user_info->file_path = mx_strdup((const char *)sqlite3_column_text(stmt, 4));
+        
     } else {
         mx_logs((char *)sqlite3_errmsg(db), LOG_ERROR);
     }
@@ -90,6 +87,7 @@ void send_login_response(SSL *ssl, t_user_info *user_info)
     cJSON_AddNumberToObject(json, "id", user_info->id);
     cJSON_AddNumberToObject(json, "image_id", user_info->image_id);
     cJSON_AddStringToObject(json, "password", (char *)user_info->password);
+    cJSON_AddStringToObject(json, "filename", user_info->file_path);
 
     json_str = cJSON_PrintUnformatted(json);
 

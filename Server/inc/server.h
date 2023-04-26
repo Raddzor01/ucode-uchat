@@ -23,6 +23,8 @@
 #include <pthread.h>
 #include <time.h>
 
+#define BUFFER_SIZE 1024
+
 #define LISTEN_BACKLOG 10
 #define MAX_BUF_SIZE 4000
 
@@ -90,7 +92,7 @@ int db_get_id_by_username(char *username);
 bool db_check_chat_exists(int id);
 bool db_check_chat_membership(int chat_id, int user_id);
 int db_get_last_message_id(int user_id, int chat_id);
-int db_get_last_file_id(char *filename, char *file_type);
+int db_get_last_file_id(char *filename);
 int db_get_last_join_chat_id(int user_id, int chat_id);
 
 void handle_responde(cJSON *json, t_client_info *client_info);
