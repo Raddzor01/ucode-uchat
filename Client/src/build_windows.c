@@ -617,19 +617,27 @@ void create_chat_menu()
     g_signal_connect(window, "delete_event", G_CALLBACK(close_window), window);
 
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_widget_set_name(box, "chatname_box");
     gtk_container_add(GTK_CONTAINER(window), box);
 
     GtkWidget *chatname_label = gtk_label_new("Chatname:");
+
     gtk_box_pack_start(GTK_BOX(box), chatname_label, FALSE, FALSE, 0);
 
     GtkWidget *chatname_entry = gtk_entry_new();
+    gtk_widget_set_name(chatname_entry, "chatname_entry");
     gtk_entry_set_placeholder_text(GTK_ENTRY(chatname_entry), "Chat name");
     gtk_box_pack_start(GTK_BOX(box), chatname_entry, FALSE, FALSE, 0);
+    
+    GtkWidget *chatname_error_label = gtk_label_new(" ");
+    gtk_widget_set_name(chatname_error_label, "chatname_error_label");
+    add_class(chatname_error_label, "error-label");
+    gtk_box_pack_start(GTK_BOX(box), chatname_error_label, FALSE, FALSE, 0);
 
     GtkWidget *make_chat_button = gtk_button_new_with_label("create chat");
     gtk_box_pack_start(GTK_BOX(box), make_chat_button, FALSE, FALSE, 0);
-    g_signal_connect(make_chat_button, "clicked", G_CALLBACK(create_chat), chatname_entry);
-    g_signal_connect(make_chat_button, "clicked", G_CALLBACK(close_window_by_button), window);
+    g_signal_connect(make_chat_button, "clicked", G_CALLBACK(create_chat), window);
+    // g_signal_connect(make_chat_button, "clicked", G_CALLBACK(close_window_by_button), window);
 
     if (!chat_get_chat_by_type(account->chats, CHAT_SAVED))
     {

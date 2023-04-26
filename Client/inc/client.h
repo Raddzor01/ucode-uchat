@@ -158,7 +158,7 @@ void cancel_edit(GtkButton *__attribute__((unused)) button, gpointer data);
 void change_msg_id_for_edit(GtkButton *__attribute__((unused)) button, gpointer msg_id);
 GtkWidget *create_image_button(char *image_path, int width, int height);
 void receive_bubble(t_msg *message);
-void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname);
+void create_chat(GtkButton *__attribute__((unused)) button, GtkWidget *window);
 void create_saved(GtkButton *__attribute__((unused)) button);
 void join_chat(GtkWidget *__attribute__((unused)) widget, gpointer id);
 void create_chat_menu();
@@ -175,6 +175,7 @@ void delete_account(GtkWidget *__attribute__((unused)) button, GtkWidget *window
 bool check_str_for_spec_char(const char *str);
 void empty_right_bar();
 void empty_left_bar();
+void close_window_by_button(GtkButton *button, gpointer *data);
 
 // CSS part
 void load_css();

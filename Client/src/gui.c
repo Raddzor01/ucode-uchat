@@ -590,12 +590,17 @@ void change_msg_id_for_edit(GtkButton *__attribute__((unused)) button, gpointer 
     info->msg_id_for_edit = GPOINTER_TO_INT(msg_id);
 }
 
-void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
+void create_chat(GtkButton *__attribute__((unused)) button, GtkWidget *window)
 {
-    const char *text = gtk_entry_get_text(GTK_ENTRY(GTK_ENTRY(chatname)));
+    GtkWidget *box = get_widget_by_name_r(window, "chatname_box");
+    GtkWidget *chatname_error_label = get_widget_by_name_r(box, "chatname_error_label");
+    const char *text = gtk_entry_get_text(GTK_ENTRY(GTK_ENTRY(get_widget_by_name_r(box, "chatname_entry"))));
 
-    if (!mx_strcmp(text, ""))
+    if (!mx_strcmp(text, "") || !mx_strcmp(text, " "))
+    {
+        gtk_label_set_text(GTK_LABEL(chatname_error_label), "Forbidden chat name\nPlease try again");
         return;
+    }
 
     int chat_id = create_chat_in_server(text, CHAT_NORMAL);
 
@@ -609,8 +614,10 @@ void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
     chat_push_front(&account->chats, chat);
     pthread_mutex_unlock(&account->mutex);
 
-    GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
-    clear_box(box);
+    close_window_by_button(button, (gpointer *)window);
+
+    GtkWidget *box_for_users = get_widget_by_name_r(main_window, "box_for_users");
+    clear_box(box_for_users);
 
     display_users();
 }
@@ -729,8 +736,8 @@ char *str_to_display_last_msg(const char *msg, const char *username)
         {
             result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_LAST_MSG);
             sprintf(result_str, "You: ");
-            strncat(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - 7));
-            mx_strcat(result_str, "...");
+            strncat(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - 5));
+            result_str = mx_strjoin(result_str, "...");
             return result_str;
         }
     }
@@ -746,8 +753,8 @@ char *str_to_display_last_msg(const char *msg, const char *username)
         {
             result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_LAST_MSG);
             sprintf(result_str, "%s: ", username);
-            strncat(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - strlen(result_str) - 2));
-            mx_strcat(result_str, "...");
+            strncat(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - strlen(result_str)));
+            result_str = mx_strjoin(result_str, "...");
             return result_str;
         }
     }
@@ -761,7 +768,7 @@ char *str_to_display_chat_name(char *chat_name)
     else
     {
         result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_CHAT_NAME);
-        strncpy(result_str, chat_name, (MAX_NUMBER_OF_CHAR_FOR_CHAT_NAME - 2));
+        strncpy(result_str, chat_name, (MAX_NUMBER_OF_CHAR_FOR_CHAT_NAME - 1));
         strcat(result_str, "...");
         return result_str;
     }
