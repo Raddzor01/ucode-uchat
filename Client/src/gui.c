@@ -249,6 +249,9 @@ void receive_bubble(t_msg *message)
     GtkWidget *time_label;
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
+    char *msg_name = mx_strjoin(MSG_NAME, mx_itoa(message->msg_id));
+    gtk_widget_set_name(box, msg_name);
+    mx_strdel(&msg_name);
     gtk_box_pack_start(GTK_BOX(box_container), box, FALSE, FALSE, 0);
     gtk_widget_set_halign(box, GTK_ALIGN_START);
 
@@ -291,6 +294,8 @@ void receive_bubble(t_msg *message)
 
     // text
     text_view = gtk_text_view_new();
+
+    gtk_widget_set_name(text_view, "message_text_view");
 
     gtk_widget_set_valign(text_view, GTK_ALIGN_END);
 
@@ -361,6 +366,9 @@ void text_bubble(t_msg *message)
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
     gtk_widget_set_halign(box, GTK_ALIGN_END);
     gtk_widget_set_size_request(box, -1, 30);
+    char *msg_name = mx_strjoin(MSG_NAME, mx_itoa(message->msg_id));
+    gtk_widget_set_name(box, msg_name);
+    mx_strdel(&msg_name);
     add_class(box, "bubble");
     gtk_widget_set_hexpand(box, TRUE);
     gtk_widget_set_vexpand(box, FALSE);

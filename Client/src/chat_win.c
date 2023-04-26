@@ -56,7 +56,7 @@ void chat_window()
 {
     // hog();
 
-    get_user_chats();
+    account->chats = get_user_chats();
 
     if (main_window)
         clear_window(main_window);
