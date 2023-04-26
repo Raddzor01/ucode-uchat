@@ -45,12 +45,80 @@ void delete_chat_from_thread(int id)
     g_usleep(10000);
 }
 
+gboolean delete_message_from_thread_by_id(gpointer data)
+{
+    int msg_id = GPOINTER_TO_INT(data);
+    char *msg_name = mx_strjoin(MSG_NAME, mx_itoa(msg_id));
+    GtkWidget *msg = get_widget_by_name_r(main_window, msg_name);
+
+    gtk_widget_destroy(msg);
+
+    gtk_widget_show_all(main_window);
+
+    mx_strdel(&msg_name);
+    return FALSE;
+}
+
+gboolean edit_message_from_thread_by_id(gpointer data)
+{
+    t_msg *msg = (t_msg *)data;
+    char *msg_name = mx_strjoin(MSG_NAME, mx_itoa(msg->msg_id));
+    GtkWidget *msg_box = get_widget_by_name_r(main_window, msg_name);
+    GtkWidget *msg_text_view = get_widget_by_name_r(msg_box, "message_text_view");
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(msg_text_view));
+
+    PangoLayout *layout = gtk_widget_create_pango_layout(msg_text_view, msg->text);
+    int width, height;
+    pango_layout_get_pixel_size(layout, &width, &height);
+
+    if (width > 400)
+    {
+        gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(msg_text_view), GTK_WRAP_WORD_CHAR);
+        gtk_widget_set_size_request(msg_text_view, 400, -1);
+        gtk_widget_set_halign(msg_text_view, GTK_ALIGN_END);
+    }
+    else
+    {
+        gtk_widget_set_size_request(msg_text_view, width, -1);
+        gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(msg_text_view), GTK_WRAP_NONE);
+        gtk_widget_set_halign(msg_text_view, GTK_ALIGN_START);
+    }
+
+    g_object_unref(layout);
+    gtk_text_buffer_set_text(buffer, msg->text, -1);
+    // gtk_widget_destroy(msg_box);
+
+    gtk_widget_show_all(main_window);
+
+    mx_strdel(&msg_name);
+    return FALSE;
+}
+
+void delete_message_from_thread(t_chat *chat, int msg_id, bool is_current)
+{
+    if (is_current)
+        g_idle_add(delete_message_from_thread_by_id, GINT_TO_POINTER(msg_id));
+    pthread_mutex_lock(&account->mutex);
+    msg_pop_by_message_id(&chat->messages, msg_id);
+    pthread_mutex_unlock(&account->mutex);
+    g_usleep(10000);
+}
+
+void edit_message_from_thread(t_chat *chat, t_msg *server_msg, bool is_current)
+{
+    if (is_current)
+        g_idle_add(edit_message_from_thread_by_id, (gpointer)server_msg);
+    pthread_mutex_lock(&account->mutex);
+    msg_get_by_id(chat->messages, server_msg->msg_id)->text = server_msg->text;
+    pthread_mutex_unlock(&account->mutex);
+    g_usleep(10000);
+}
+
 void update_message(t_msg *server_message_node, t_chat *chat, bool is_current)
 {
     char *last_message_str = NULL;
     if (chat->id == account->chats->id)
     {
-        // this will burn down gtk bruh, change it
         last_message_str = str_to_display_last_msg(server_message_node->text, server_message_node->username);
         last_massage_display(chat->name, last_message_str);
         mx_strdel(&last_message_str);
@@ -74,11 +142,13 @@ void update_message(t_msg *server_message_node, t_chat *chat, bool is_current)
 void *server_update_thread()
 {
     int last_server_msg_id = 0;
-    int last_client_msg_id = 0;
     t_chat *chat = NULL;
-    t_msg *last_message_node = NULL;
-    t_msg *server_message_node = NULL;
     bool is_current = false;
+    t_msg *server_messages = NULL;
+    int server_messages_size = 0;
+    int client_messages_size = 0;
+    t_msg *msg = NULL;
+    t_msg *server_msg = NULL;
 
     while (true)
     {
@@ -95,18 +165,47 @@ void *server_update_thread()
                     chat = chat ? chat->next : NULL;
                 continue;
             }
-            last_message_node = chat ? msg_get_last_message(chat->messages) : NULL;
-            last_client_msg_id = last_message_node ? last_message_node->msg_id : 0;
+
+            server_messages = chat ? get_chat_messages_from_server(chat->id) : NULL;
+            server_messages_size = msg_list_size(server_messages);
+            client_messages_size = msg_list_size(chat->messages);
             is_current = account->current_chat && account->current_chat->id == chat->id;
-            if ((last_server_msg_id <= 0) || (last_server_msg_id <= last_client_msg_id && !is_current))
+            
+            msg = chat ? chat->messages : NULL;
+            server_msg = server_messages;
+            while (server_msg)
             {
-                chat = chat ? chat->next : NULL;
-                continue;
+                if (server_msg && !msg && (client_messages_size < server_messages_size))
+                {
+                    update_message(server_msg, chat, is_current);
+                    client_messages_size++;
+                    server_msg = server_msg->next;
+                    continue;
+                }
+
+                if (server_msg->msg_id != msg->msg_id)
+                {
+                    delete_message_from_thread(chat, msg->msg_id, is_current);
+                    client_messages_size--;
+                    msg = chat ? msg->next : NULL;
+                    continue;
+                }
+
+                if (strcmp(server_messages ? server_msg->text : msg->text, msg->text) != 0)
+                {
+                    edit_message_from_thread(chat, server_msg, is_current);
+                }
+
+                msg = chat ? msg->next : NULL;
+                server_msg = server_msg->next;
             }
 
-            server_message_node = get_msg_by_id_from_server(last_server_msg_id, chat->id);
-            if (last_server_msg_id > last_client_msg_id)
-                update_message(server_message_node, chat, is_current);
+
+            if(msg)
+            {
+                delete_message_from_thread(chat, msg->msg_id, is_current);
+                msg = chat ? msg->next : NULL;
+            }
 
             g_usleep(500000);
             chat = chat ? chat->next : NULL;

@@ -41,6 +41,7 @@
 #define CHAT_ERROR -1
 
 #define SAVED_NAME "Saved"
+#define MSG_NAME "msg_name_id"
 
 // struct for sending to server
 typedef struct s_info
@@ -104,7 +105,7 @@ int send_exit_to_server();
 int send_logout_to_server();
 char *read_from_server();
 void read_from_server_to_logs();
-int get_user_chats();
+t_chat *get_user_chats();
 int join_to_found_chat(int chat_id);
 t_msg *get_chat_messages_from_server(int chat_id);
 int get_msg_id();
