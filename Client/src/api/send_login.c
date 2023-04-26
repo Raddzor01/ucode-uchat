@@ -27,6 +27,7 @@ bool check_account_from_server()
     account->username = mx_strdup(cJSON_GetObjectItemCaseSensitive(json, "username")->valuestring);
     account->password = (unsigned char *)mx_strdup(cJSON_GetObjectItemCaseSensitive(json, "password")->valuestring);
     account->image_id = cJSON_GetObjectItem(json, "image_id")->valueint;
+    account->image_path =  mx_strjoin(DATA_DIR, cJSON_GetObjectItemCaseSensitive(json, "filename")->valuestring);
     pthread_mutex_unlock(&account->mutex);
 
     cJSON_Delete(json);

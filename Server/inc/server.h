@@ -23,6 +23,8 @@
 #include <pthread.h>
 #include <time.h>
 
+#define BUFFER_SIZE 1024
+
 #define LISTEN_BACKLOG 10
 #define MAX_BUF_SIZE 4000
 
@@ -79,6 +81,7 @@ void daemon();
 t_req_type handle_request(t_client_info *client_info, char *request);
 void usage_error_check(int argc);
 void log_client_conection(struct in_addr sa);
+bool write_file_to_data(char *filename, long file_size, SSL *ssl);
 
 sqlite3 *db_open();
 int db_init();
@@ -90,7 +93,7 @@ int db_get_id_by_username(char *username);
 bool db_check_chat_exists(int id);
 bool db_check_chat_membership(int chat_id, int user_id);
 int db_get_last_message_id(int user_id, int chat_id);
-int db_get_last_file_id(char *filename, char *file_type);
+int db_get_last_file_id(char *filename);
 int db_get_last_join_chat_id(int user_id, int chat_id);
 
 void handle_responde(cJSON *json, t_client_info *client_info);

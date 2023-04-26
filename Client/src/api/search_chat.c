@@ -36,7 +36,9 @@ t_chat *find_chats_from_server(const char *search_pattern)
         temp_json = cJSON_GetArrayItem(json_2, i);
 
         int chat_id = cJSON_GetObjectItem(temp_json, "chat_id")->valueint;
-        t_chat *new_node = chat_prepare_node(chat_id, cJSON_GetObjectItemCaseSensitive(temp_json, "chat_name")->valuestring, 3, PRIV_USER, CHAT_NORMAL);
+        int image_id = cJSON_GetObjectItem(temp_json, "image_id")->valueint;
+        t_chat *new_node = chat_prepare_node(chat_id, cJSON_GetObjectItemCaseSensitive(temp_json, "chat_name")->valuestring, image_id, PRIV_USER, CHAT_NORMAL);
+        new_node->image_path = mx_strdup(cJSON_GetObjectItemCaseSensitive(temp_json, "filename")->valuestring);
         new_node->messages = get_chat_messages_from_server(chat_id);
         chat_push_back(&chats, new_node);
     }

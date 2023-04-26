@@ -1,6 +1,6 @@
 #include "../../inc/server.h"
 
-int db_get_last_file_id(char *filename, char *file_type)
+int db_get_last_file_id(char *filename)
 {
     sqlite3 *db;
     sqlite3_stmt *stmt;
@@ -8,9 +8,9 @@ int db_get_last_file_id(char *filename, char *file_type)
     int file_id;
 
     db = db_open();
-    query = sqlite3_mprintf("SELECT id FROM files WHERE filename = '%s' AND file_type = '%s' "
+    query = sqlite3_mprintf("SELECT id FROM files WHERE filename = '%s' "
                             "ORDER BY id DESC LIMIT 1; ",
-                            filename, file_type);
+                            filename);
     stmt = db_execute_query_and_return_stmt(query, db);
 
     file_id = sqlite3_column_int(stmt, 0);

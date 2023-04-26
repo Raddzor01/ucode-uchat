@@ -8,6 +8,7 @@ OBJDIR = obj
 SRCDIR = src
 SRCDIRS = $(SRCDIR) $(SRCDIR)/api $(SRCDIR)/lists_functions
 UCHAT = ../uchat
+DATA_DIR = data
 
 SRC = $(foreach dir, $(SRCDIRS), $(wildcard $(dir)/*.c))
 OBJS = $(OBJDIR)/*.o
@@ -27,10 +28,11 @@ LIB_FLAGS = -lmx -lcjson -lsqlite3 -lssl -lcrypto\
 			-L$(CJSON_DIR) $(CJSON_NAME)\
 			# -L$(SSL_FILES) -I$(SSL_INC_FILES)
 
-all: uninstall $(UCHAT)
+all: clean $(UCHAT)
 
 $(UCHAT):
 	mkdir $(OBJDIR)
+	mkdir $(DATA_DIR)
 	$(CC) $(CFLAGS) $(GTK_FLAGS) -c $(SRC)
 	mv *.o $(OBJDIR)
 	$(CC) $(CFLAGS) $(GTK_LIBS_FLAGS) -o $(UCHAT) $(OBJS) $(LIB_FLAGS)
@@ -39,6 +41,7 @@ $(UCHAT):
 clean:
 	rm -f $(OBJS)
 	rm -rdf $(OBJDIR)
+	rm -rdf $(DATA_DIR)
 
 uninstall:
 	make clean

@@ -15,6 +15,9 @@ int send_logout_to_server()
     username_display = TRUE;
 
     mx_strdel(&account->username);
+    free(account->password);
+    account->password = NULL;
+    mx_strdel(&account->image_path);
     pthread_cancel(account->server_update_thread);
     pthread_cancel(account->server_online_thread);
     chat_clear_list(&account->chats);

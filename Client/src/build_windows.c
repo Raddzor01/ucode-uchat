@@ -3,19 +3,28 @@
 GtkWidget *password_entry;
 GtkWidget *username_entry;
 
-char *get_user_image(int image_id)
+char *get_user_image(int image_id, int pfp_type)
 {
     if (image_id == 1)
+    {
+        switch (pfp_type)
+        {
+        case CHAT_NORMAL:
+            return DEFAULT_CHAT_IMAGE;
+            break;
+        case CHAT_SAVED:
+            return SAVED_IMAGE;
+            break;
+        case PFP_USER:
+            return DEFAULT_IMAGE;
+            break;
+        }
         return DEFAULT_IMAGE;
-
-    if (image_id == 2)
-        return SAVED_IMAGE;
-
-    if (image_id == 3)
-        return DEFAULT_CHAT_IMAGE;
-
-    // return get_image_from_server(image_id);
-    return DEFAULT_IMAGE;
+    }
+    sem_wait(&account->semaphore);
+    char *path = get_image_from_server(image_id);
+    sem_post(&account->semaphore);
+    return path;
 }
 
 bool check_field_size(const gchar *field, GtkWidget *field_widget)
@@ -296,19 +305,21 @@ void chat_info()
     GtkWidget *image;
     GtkWidget *chat_name;
 
-    GdkPixbuf *pixbuf;
+    // GdkPixbuf *pixbuf;
+    // pixbuf = gdk_pixbuf_new_from_file(get_user_image(account->current_chat->image_id, account->current_chat->chat_type), NULL);
+    // pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
 
-    pixbuf = gdk_pixbuf_new_from_file(get_user_image(account->current_chat->image_id), NULL);
-    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
-
-    image = gtk_image_new_from_pixbuf(pixbuf);
+    // image = gtk_image_new_from_pixbuf(pixbuf);
+    image = create_image_button(access(account->current_chat->image_path, F_OK) == 0 ? account->current_chat->image_path : get_user_image(account->current_chat->image_id, account->current_chat->chat_type), 35, 35);
     gtk_widget_set_name(image, "chat_pfp_image");
-    g_object_unref(pixbuf);
+    // g_object_unref(pixbuf);
 
     chat_name = gtk_label_new(account->current_chat->name);
 
     gtk_widget_set_halign(image, GTK_ALIGN_START);
     gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+
+    g_signal_connect(image, "clicked", G_CALLBACK(change_chat_image), NULL);
 
     gtk_widget_set_halign(chat_name, GTK_ALIGN_START);
     gtk_box_pack_start(GTK_BOX(box), chat_name, FALSE, FALSE, 0);
@@ -468,7 +479,7 @@ void build_users()
     gtk_widget_set_size_request(user_info_box, -1, 20);
     add_class(user_info_box, "profile");
 
-    pixbuf = gdk_pixbuf_new_from_file(get_user_image(account->image_id), &error);
+    pixbuf = gdk_pixbuf_new_from_file(access(account->image_path, F_OK) == 0 ? account->image_path : get_user_image(account->image_id, PFP_USER), &error);
     if (error != NULL)
         g_error("Error loading image: %s", error->message);
 
@@ -563,7 +574,7 @@ void hog()
     gtk_container_set_border_width(GTK_CONTAINER(popup_window), 10);
 
     // Create an image widget and add it to the window
-    GtkWidget *image = gtk_image_new_from_file("Client/data/default_image.png");
+    GtkWidget *image = gtk_image_new_from_file("Client/icons/HOG.png");
     gtk_container_add(GTK_CONTAINER(popup_window), image);
 
     // Show the window
@@ -620,7 +631,7 @@ void create_chat_menu()
     g_signal_connect(make_chat_button, "clicked", G_CALLBACK(create_chat), chatname_entry);
     g_signal_connect(make_chat_button, "clicked", G_CALLBACK(close_window_by_button), window);
 
-    if(!chat_get_chat_by_type(account->chats, CHAT_SAVED))
+    if (!chat_get_chat_by_type(account->chats, CHAT_SAVED))
     {
         GtkWidget *make_saved_button = gtk_button_new_with_label("created saved chat");
         gtk_box_pack_start(GTK_BOX(box), make_saved_button, FALSE, FALSE, 0);
@@ -672,7 +683,7 @@ void build_edit_profile()
     gtk_box_pack_start(GTK_BOX(box), edit_box, FALSE, FALSE, 0);
     gtk_widget_set_name(edit_box, "edit");
 
-    GtkWidget *image = create_image_button(get_user_image(account->image_id), 60, 60);
+    GtkWidget *image = create_image_button(access(account->image_path, F_OK) == 0 ? account->image_path : get_user_image(account->image_id, PFP_USER), 60, 60);
     gtk_box_pack_start(GTK_BOX(profile_info), image, FALSE, FALSE, 0);
     add_class(image, "image");
     g_signal_connect(image, "clicked", G_CALLBACK(change_image), NULL);

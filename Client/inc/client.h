@@ -23,14 +23,13 @@
 
 #include <gtk/gtk.h>
 
-// local host
-#define IP_ADDRESS "127.0.0.1"
+#define BUFFER_SIZE 1024
 
 #define DATA_DIR "Client/data/"
 
-#define DEFAULT_IMAGE "Client/data/default_user.png"
+#define DEFAULT_IMAGE "Client/icons/default_user.png"
 #define SAVED_IMAGE "Client/icons/saved.png"
-#define DEFAULT_CHAT_IMAGE "Client/data/default_chat.png"
+#define DEFAULT_CHAT_IMAGE "Client/icons/default_chat.png"
 
 #define MIN_NUMBER_OF_CHARACTERS 1
 #define MAX_NUMBER_OF_CHARACTERS 16
@@ -39,7 +38,7 @@
 #define MAX_NUMBER_OF_CHAR_FOR_LAST_MSG 22
 
 #define CHAT_DIDNT_EXISTS -2
-#define CHAT_ERROR -13
+#define CHAT_ERROR -1
 
 #define SAVED_NAME "Saved"
 
@@ -67,6 +66,7 @@ typedef struct s_account
     unsigned char *password;
     int id;
     int image_id;
+    char *image_path;
 
     pthread_t server_update_thread;
     pthread_t server_online_thread;
@@ -82,18 +82,20 @@ typedef struct s_account
     t_chat *current_chat;
 } t_account;
 
-int send_file_to_server(char *filedir);
+time_t send_file_to_server(char *filedir);
 extern GtkWidget *main_window;
 extern t_info *info;
 extern t_account *account;
 extern bool username_display;
 
 void *server_update_thread();
-char *get_user_image(int image_id);
+char *get_user_image(int image_id, int pfp_type);
 bool check_server_online();
 void *server_online_check_thread();
-
-
+void change_chat_image(GtkWidget *button);
+char *get_file_extension(char *url);
+void change_chat_image(GtkWidget *button);
+time_t update_chat_photo(char *str, int chat_id);
 // Interaction with the server
 int send_sign_up_to_server(const char *username, const unsigned char *password);
 int send_login_to_server(const char *username, const unsigned char *password);

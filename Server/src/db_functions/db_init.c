@@ -39,7 +39,7 @@ int db_init()
         return 1;
     }
 
-    if (sqlite3_exec(db, "INSERT INTO files (filename, file_type, file_size, file_path, time) VALUES('default_avatar', '.png', 14171, 'Server/db/data/default_avatar.png', 0); ", NULL, 0, &error) != SQLITE_OK)
+    if (sqlite3_exec(db, "INSERT INTO files (filename, file_size, file_path) VALUES('default_avatar', 14171, 'Server/db/data/default_avatar.png'); ", NULL, 0, &error) != SQLITE_OK)
     {
         mx_logs(error, LOG_ERROR);
         sqlite3_free(error);
