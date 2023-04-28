@@ -3,7 +3,8 @@
         "ssl.h": "c",
         "client.h": "c",
         "err.h": "c",
-        "server.h": "c"
+        "server.h": "c",
+        "cjson.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
     "clang-format.language.c.enable": true

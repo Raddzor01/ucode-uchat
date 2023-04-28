@@ -311,7 +311,7 @@ void receive_bubble(t_msg *message)
 
     if (width > 400)
     {
-        gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
+        gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD_CHAR);
         gtk_widget_set_size_request(text_view, 400, -1);
         gtk_widget_set_hexpand(text_view, TRUE);
         gtk_widget_set_halign(text_view, GTK_ALIGN_FILL);

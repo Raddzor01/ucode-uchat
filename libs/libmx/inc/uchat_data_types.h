@@ -13,6 +13,13 @@ typedef struct s_msg
     struct s_msg *next;
 } t_msg;
 
+typedef struct s_user
+{
+    int id;
+    char *username;
+    int image_id;
+}   t_user;
+
 // chat list structure, functions starting with msg_
 typedef struct s_chat
 {
@@ -23,6 +30,7 @@ typedef struct s_chat
     int chat_type;
     int user_privilege;
 
+    t_user *users;
     t_msg *messages;
     struct s_chat *next;
 } t_chat;
@@ -49,6 +57,7 @@ typedef enum e_req_type
     REQ_DEL_CHAT,
     REQ_JOIN_CHAT,
     REQ_LEAVE_CHAT,
+    REQ_GET_CHAT_USERS,
     REQ_EDIT_USERNAME,
     REQ_EDIT_PASSWORD,
     REQ_DEL_ACCOUNT,

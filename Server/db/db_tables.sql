@@ -10,7 +10,7 @@ CREATE TABLE chats (
     name VARCHAR(64) NOT NULL,
     type INTEGER NOT NULL,
     date INTEGER NOT NULL,
-    image_id INTEGER NOT NULL  DEFAULT 1
+    image_id INTEGER NOT NULL DEFAULT 1
 );
 
 CREATE TABLE members (

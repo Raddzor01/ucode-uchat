@@ -85,8 +85,7 @@ gboolean edit_message_from_thread_by_id(gpointer data)
     }
 
     g_object_unref(layout);
-    gtk_text_buffer_set_text(buffer, msg->text, -1);
-    // gtk_widget_destroy(msg_box);
+    gtk_text_buffer_set_text(buffer, msg->text, strlen(msg->text));
 
     gtk_widget_show_all(main_window);
 
@@ -165,7 +164,6 @@ void *server_update_thread()
                     chat = chat ? chat->next : NULL;
                 continue;
             }
-
             server_messages = chat ? get_chat_messages_from_server(chat->id) : NULL;
             server_messages_size = msg_list_size(server_messages);
             client_messages_size = msg_list_size(chat->messages);
@@ -192,9 +190,7 @@ void *server_update_thread()
                 }
 
                 if (strcmp(server_messages ? server_msg->text : msg->text, msg->text) != 0)
-                {
                     edit_message_from_thread(chat, server_msg, is_current);
-                }
 
                 msg = chat ? msg->next : NULL;
                 server_msg = server_msg->next;
