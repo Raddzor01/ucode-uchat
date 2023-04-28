@@ -305,35 +305,30 @@ void chat_info()
     GtkWidget *image;
     GtkWidget *chat_name;
 
-    // GdkPixbuf *pixbuf;
-    // pixbuf = gdk_pixbuf_new_from_file(get_user_image(account->current_chat->image_id, account->current_chat->chat_type), NULL);
-    // pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
-
-    // image = gtk_image_new_from_pixbuf(pixbuf);
     image = create_image_button(access(account->current_chat->image_path, F_OK) == 0 ? account->current_chat->image_path : get_user_image(account->current_chat->image_id, account->current_chat->chat_type), 35, 35);
     gtk_widget_set_name(image, "chat_pfp_image");
-    // g_object_unref(pixbuf);
 
     chat_name = gtk_label_new(account->current_chat->name);
 
     gtk_widget_set_halign(image, GTK_ALIGN_START);
     gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
 
-    g_signal_connect(image, "clicked", G_CALLBACK(change_chat_image), NULL);
+    // g_signal_connect(image, "clicked", G_CALLBACK(change_chat_image), NULL);
+    g_signal_connect(image, "clicked", G_CALLBACK(chat_menu), NULL);
 
     gtk_widget_set_halign(chat_name, GTK_ALIGN_START);
     gtk_box_pack_start(GTK_BOX(box), chat_name, FALSE, FALSE, 0);
 
-    if (account->current_chat->user_privilege == PRIV_ADMIN)
-    {
-        GtkWidget *cancel_button = create_image_button("Client/icons/trash.png", 30, 30);
-        add_class(cancel_button, "image");
-        gtk_widget_set_halign(cancel_button, GTK_ALIGN_END);
-        gtk_widget_set_valign(cancel_button, GTK_ALIGN_CENTER);
-        gtk_box_pack_start(GTK_BOX(box), cancel_button, TRUE, TRUE, 0);
+    // if (account->current_chat->user_privilege == PRIV_ADMIN)
+    // {
+    //     GtkWidget *cancel_button = create_image_button("Client/icons/trash.png", 30, 30);
+    //     add_class(cancel_button, "image");
+    //     gtk_widget_set_halign(cancel_button, GTK_ALIGN_END);
+    //     gtk_widget_set_valign(cancel_button, GTK_ALIGN_CENTER);
+    //     gtk_box_pack_start(GTK_BOX(box), cancel_button, TRUE, TRUE, 0);
 
-        g_signal_connect(cancel_button, "clicked", G_CALLBACK(confirm_window), NULL);
-    }
+    //     g_signal_connect(cancel_button, "clicked", G_CALLBACK(confirm_window), NULL);
+    // }
 
     gtk_widget_show_all(box);
 }
@@ -617,19 +612,27 @@ void create_chat_menu()
     g_signal_connect(window, "delete_event", G_CALLBACK(close_window), window);
 
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_widget_set_name(box, "chatname_box");
     gtk_container_add(GTK_CONTAINER(window), box);
 
     GtkWidget *chatname_label = gtk_label_new("Chatname:");
+
     gtk_box_pack_start(GTK_BOX(box), chatname_label, FALSE, FALSE, 0);
 
     GtkWidget *chatname_entry = gtk_entry_new();
+    gtk_widget_set_name(chatname_entry, "chatname_entry");
     gtk_entry_set_placeholder_text(GTK_ENTRY(chatname_entry), "Chat name");
     gtk_box_pack_start(GTK_BOX(box), chatname_entry, FALSE, FALSE, 0);
+    
+    GtkWidget *chatname_error_label = gtk_label_new(" ");
+    gtk_widget_set_name(chatname_error_label, "chatname_error_label");
+    add_class(chatname_error_label, "error-label");
+    gtk_box_pack_start(GTK_BOX(box), chatname_error_label, FALSE, FALSE, 0);
 
     GtkWidget *make_chat_button = gtk_button_new_with_label("create chat");
     gtk_box_pack_start(GTK_BOX(box), make_chat_button, FALSE, FALSE, 0);
-    g_signal_connect(make_chat_button, "clicked", G_CALLBACK(create_chat), chatname_entry);
-    g_signal_connect(make_chat_button, "clicked", G_CALLBACK(close_window_by_button), window);
+    g_signal_connect(make_chat_button, "clicked", G_CALLBACK(create_chat), window);
+    // g_signal_connect(make_chat_button, "clicked", G_CALLBACK(close_window_by_button), window);
 
     if (!chat_get_chat_by_type(account->chats, CHAT_SAVED))
     {
@@ -750,4 +753,85 @@ void edit_username()
     gtk_box_pack_start(GTK_BOX(box), accept_button, FALSE, FALSE, 0);
     g_signal_connect(accept_button, "clicked", G_CALLBACK(accept_clicked), edit_window);
     gtk_widget_show_all(box);
+}
+
+void chat_menu(GtkWidget *__attribute__((unused)) button) {
+    if (window_check == true)
+        gtk_widget_destroy(edit_window);
+
+    edit_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(edit_window), 300, 1);
+    g_signal_connect(edit_window, "delete_event", G_CALLBACK(close_window), edit_window);
+
+    GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_container_add(GTK_CONTAINER(edit_window), box);
+
+    GtkWidget *chat_info = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+    gtk_box_pack_start(GTK_BOX(box), chat_info, FALSE, FALSE, 0);
+
+    GtkWidget *edit_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_box_pack_start(GTK_BOX(box), edit_box, FALSE, FALSE, 0);
+    gtk_widget_set_name(edit_box, "edit");
+
+    GtkWidget *image = create_image_button(access(account->current_chat->image_path, F_OK) == 0 ? account->current_chat->image_path : get_user_image(account->current_chat->image_id, account->current_chat->chat_type), 60, 60);
+    gtk_box_pack_start(GTK_BOX(chat_info), image, FALSE, FALSE, 0);
+    add_class(image, "image");
+    g_signal_connect(image, "clicked", G_CALLBACK(change_chat_image), NULL);
+
+    GtkWidget *text_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_box_pack_start(GTK_BOX(chat_info), text_box, FALSE, FALSE, 0);
+
+    // GtkWidget *delete_button = create_image_button("Client/icons/trash.png", 20, 20);
+    // add_class(delete_button, "image");
+    // gtk_widget_set_halign(delete_button, GTK_ALIGN_END);
+    // gtk_widget_set_valign(delete_button, GTK_ALIGN_CENTER);
+    // gtk_box_pack_start(GTK_BOX(box), delete_button, TRUE, TRUE, 0);
+
+    // g_signal_connect(delete_button, "clicked", G_CALLBACK(delete_chat), edit_window);
+
+    if (account->current_chat->user_privilege == PRIV_ADMIN)
+    {
+        GtkWidget *delete_button = create_image_button("Client/icons/trash.png", 20, 20);
+        add_class(delete_button, "image");
+        gtk_widget_set_halign(delete_button, GTK_ALIGN_END);
+        gtk_widget_set_valign(delete_button, GTK_ALIGN_CENTER);
+        gtk_box_pack_start(GTK_BOX(box), delete_button, TRUE, TRUE, 0);
+
+        g_signal_connect(delete_button, "clicked", G_CALLBACK(confirm_window), NULL);
+    }
+
+    GtkWidget *name = gtk_text_view_new();
+    add_class(text_box, "edit");
+    gtk_widget_set_halign(name, GTK_ALIGN_START);
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(name), FALSE);
+    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(name), FALSE);
+    gtk_box_pack_start(GTK_BOX(text_box), name, FALSE, FALSE, 0);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(name));
+    gtk_text_buffer_set_text(buffer, account->current_chat->name, -1);
+
+    GtkWidget *edit_profile_box = gtk_event_box_new();
+    gtk_box_pack_start(GTK_BOX(text_box), edit_profile_box, FALSE, FALSE, 10);
+    GtkWidget *edit_profile = gtk_label_new(NULL);
+    gtk_label_set_markup(GTK_LABEL(edit_profile), "<u>Change Name</u>");
+    gtk_container_add(GTK_CONTAINER(edit_profile_box), edit_profile);
+    add_class(edit_profile, "links");
+
+    // g_signal_connect(edit_profile_box, "button_press_event", G_CALLBACK(edit_username), NULL);
+
+    //users
+    GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_widget_set_size_request(scrolled_window, 400, 300);
+    gtk_widget_set_vexpand(scrolled_window, TRUE);
+    gtk_widget_set_valign(scrolled_window, GTK_ALIGN_FILL);
+    gtk_box_pack_start(GTK_BOX(box), scrolled_window, TRUE, TRUE, 0);
+
+    GtkWidget *box_for_users = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), box_for_users);
+    gtk_widget_set_name(box_for_users, "box_for_users");
+
+    chat_users(edit_window);
+
+    gtk_widget_show_all(edit_window);
+    window_check = true;
 }

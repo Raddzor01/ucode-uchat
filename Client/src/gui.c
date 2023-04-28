@@ -598,12 +598,17 @@ void change_msg_id_for_edit(GtkButton *__attribute__((unused)) button, gpointer 
     info->msg_id_for_edit = GPOINTER_TO_INT(msg_id);
 }
 
-void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
+void create_chat(GtkButton *__attribute__((unused)) button, GtkWidget *window)
 {
-    const char *text = gtk_entry_get_text(GTK_ENTRY(GTK_ENTRY(chatname)));
+    GtkWidget *box = get_widget_by_name_r(window, "chatname_box");
+    GtkWidget *chatname_error_label = get_widget_by_name_r(box, "chatname_error_label");
+    const char *text = gtk_entry_get_text(GTK_ENTRY(GTK_ENTRY(get_widget_by_name_r(box, "chatname_entry"))));
 
-    if (!mx_strcmp(text, ""))
+    if (!mx_strcmp(text, "") || !mx_strcmp(text, " "))
+    {
+        gtk_label_set_text(GTK_LABEL(chatname_error_label), "Forbidden chat name\nPlease try again");
         return;
+    }
 
     int chat_id = create_chat_in_server(text, CHAT_NORMAL);
 
@@ -617,8 +622,10 @@ void create_chat(GtkButton *__attribute__((unused)) button, gpointer chatname)
     chat_push_front(&account->chats, chat);
     pthread_mutex_unlock(&account->mutex);
 
-    GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
-    clear_box(box);
+    close_window_by_button(button, (gpointer *)window);
+
+    GtkWidget *box_for_users = get_widget_by_name_r(main_window, "box_for_users");
+    clear_box(box_for_users);
 
     display_users();
 }
@@ -737,8 +744,8 @@ char *str_to_display_last_msg(const char *msg, const char *username)
         {
             result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_LAST_MSG);
             sprintf(result_str, "You: ");
-            strncat(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - 7));
-            mx_strcat(result_str, "...");
+            strncat(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - 5));
+            result_str = mx_strjoin(result_str, "...");
             return result_str;
         }
     }
@@ -754,8 +761,8 @@ char *str_to_display_last_msg(const char *msg, const char *username)
         {
             result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_LAST_MSG);
             sprintf(result_str, "%s: ", username);
-            strncat(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - strlen(result_str) - 2));
-            mx_strcat(result_str, "...");
+            strncat(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - strlen(result_str)));
+            result_str = mx_strjoin(result_str, "...");
             return result_str;
         }
     }
@@ -769,7 +776,7 @@ char *str_to_display_chat_name(char *chat_name)
     else
     {
         result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_CHAT_NAME);
-        strncpy(result_str, chat_name, (MAX_NUMBER_OF_CHAR_FOR_CHAT_NAME - 2));
+        strncpy(result_str, chat_name, (MAX_NUMBER_OF_CHAR_FOR_CHAT_NAME - 1));
         strcat(result_str, "...");
         return result_str;
     }
@@ -960,3 +967,53 @@ void empty_right_bar()
     gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
 }
+
+void chat_users(GtkWidget *window) {
+    //must update users here
+    chat_user_box(window);
+    chat_user_box(window);
+}
+
+void chat_user_box(GtkWidget *window) {
+    GtkWidget *image;
+    GtkWidget *label;
+    GtkWidget *box;
+    GtkWidget *out_box = get_widget_by_name_r(window, "box_for_users");
+
+    GdkPixbuf *pixbuf;
+    GError *error = NULL;
+
+    // pixbuf = gdk_pixbuf_new_from_file(get_image_from_server(chat->id), &error);
+    pixbuf = gdk_pixbuf_new_from_file("Client/icons/HOG.png", &error);
+    if (error != NULL)
+        g_error("Error loading image: %s", error->message);
+
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
+    image = gtk_image_new_from_pixbuf(pixbuf);
+
+    label = gtk_label_new("HOG");
+    gtk_widget_set_halign(label, GTK_ALIGN_START);
+
+    GtkWidget *text_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_box_pack_start(GTK_BOX(text_box), label, FALSE, FALSE, 0);
+
+    box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(box), text_box, FALSE, FALSE, 0);
+
+    if (account->current_chat->user_privilege == PRIV_ADMIN)
+    {
+        GtkWidget *delete_button = create_image_button("Client/icons/trash.png", 20, 20);
+        add_class(delete_button, "image");
+        gtk_widget_set_halign(delete_button, GTK_ALIGN_END);
+        gtk_widget_set_valign(delete_button, GTK_ALIGN_CENTER);
+        gtk_box_pack_start(GTK_BOX(box), delete_button, TRUE, TRUE, 0);
+
+        // g_signal_connect(delete_button, "clicked", G_CALLBACK(kick_user), NULL);
+    }
+    
+    gtk_box_pack_start(GTK_BOX(out_box), box, FALSE, FALSE, 0);
+
+    g_object_unref(pixbuf);
+}
+
