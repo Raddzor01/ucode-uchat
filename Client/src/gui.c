@@ -967,3 +967,53 @@ void empty_right_bar()
     gtk_widget_set_valign(label, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
 }
+
+void chat_users(GtkWidget *window) {
+    //must update users here
+    chat_user_box(window);
+    chat_user_box(window);
+}
+
+void chat_user_box(GtkWidget *window) {
+    GtkWidget *image;
+    GtkWidget *label;
+    GtkWidget *box;
+    GtkWidget *out_box = get_widget_by_name_r(window, "box_for_users");
+
+    GdkPixbuf *pixbuf;
+    GError *error = NULL;
+
+    // pixbuf = gdk_pixbuf_new_from_file(get_image_from_server(chat->id), &error);
+    pixbuf = gdk_pixbuf_new_from_file("Client/icons/HOG.png", &error);
+    if (error != NULL)
+        g_error("Error loading image: %s", error->message);
+
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
+    image = gtk_image_new_from_pixbuf(pixbuf);
+
+    label = gtk_label_new("HOG");
+    gtk_widget_set_halign(label, GTK_ALIGN_START);
+
+    GtkWidget *text_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_box_pack_start(GTK_BOX(text_box), label, FALSE, FALSE, 0);
+
+    box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(box), text_box, FALSE, FALSE, 0);
+
+    if (account->current_chat->user_privilege == PRIV_ADMIN)
+    {
+        GtkWidget *delete_button = create_image_button("Client/icons/trash.png", 20, 20);
+        add_class(delete_button, "image");
+        gtk_widget_set_halign(delete_button, GTK_ALIGN_END);
+        gtk_widget_set_valign(delete_button, GTK_ALIGN_CENTER);
+        gtk_box_pack_start(GTK_BOX(box), delete_button, TRUE, TRUE, 0);
+
+        // g_signal_connect(delete_button, "clicked", G_CALLBACK(kick_user), NULL);
+    }
+    
+    gtk_box_pack_start(GTK_BOX(out_box), box, FALSE, FALSE, 0);
+
+    g_object_unref(pixbuf);
+}
+

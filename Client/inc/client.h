@@ -177,6 +177,9 @@ bool check_str_for_spec_char(const char *str);
 void empty_right_bar();
 void empty_left_bar();
 void close_window_by_button(GtkButton *button, gpointer *data);
+void chat_menu(GtkWidget *__attribute__((unused)) button);
+void chat_users(GtkWidget *window);
+void chat_user_box(GtkWidget *window);
 
 // CSS part
 void load_css();
