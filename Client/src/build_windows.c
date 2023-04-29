@@ -802,6 +802,7 @@ void chat_menu(GtkWidget *__attribute__((unused)) button) {
 
     GtkWidget *name = gtk_text_view_new();
     add_class(text_box, "edit");
+    gtk_widget_set_name(name, "chatname");
     gtk_widget_set_halign(name, GTK_ALIGN_START);
     gtk_text_view_set_editable(GTK_TEXT_VIEW(name), FALSE);
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(name), FALSE);
@@ -817,7 +818,7 @@ void chat_menu(GtkWidget *__attribute__((unused)) button) {
     gtk_container_add(GTK_CONTAINER(edit_profile_box), edit_profile);
     add_class(edit_profile, "links");
 
-    // g_signal_connect(edit_profile_box, "button_press_event", G_CALLBACK(edit_username), NULL);
+    g_signal_connect(edit_profile_box, "button_press_event", G_CALLBACK(edit_chatname), NULL);
 
     //users
     GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
@@ -834,4 +835,24 @@ void chat_menu(GtkWidget *__attribute__((unused)) button) {
 
     gtk_widget_show_all(edit_window);
     window_check = true;
+}
+
+void edit_chatname()
+{
+    GtkWidget *box = get_widget_by_name_r(edit_window, "edit");
+    clear_box(box);
+
+    GtkWidget *username_label = gtk_label_new("enter new name for chat:");
+    gtk_widget_set_valign(username_label, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(box), username_label, FALSE, FALSE, 0);
+
+    GtkWidget *name_entry = gtk_entry_new();
+    gtk_widget_set_name(name_entry, "chatname_entry");
+    gtk_entry_set_text(GTK_ENTRY(name_entry), account->current_chat->name);
+    gtk_box_pack_start(GTK_BOX(box), name_entry, FALSE, FALSE, 0);
+
+    GtkWidget *accept_button = gtk_button_new_with_label("Accept");
+    gtk_box_pack_start(GTK_BOX(box), accept_button, FALSE, FALSE, 0);
+    g_signal_connect(accept_button, "clicked", G_CALLBACK(chat_accept_clicked), edit_window);
+    gtk_widget_show_all(box);
 }
