@@ -23,22 +23,22 @@ void get_chat_users(cJSON *json, t_client_info *client_info)
     while(sqlite3_step(stmt) == SQLITE_ROW)
     {
         temp = cJSON_CreateObject();
-        cJSON_AddNumberToObject(json, "id", sqlite3_column_int(stmt, 0));
-        cJSON_AddStringToObject(json, "username", (const char *)sqlite3_column_text(stmt, 1));
-        cJSON_AddNumberToObject(json, "image_id", sqlite3_column_int(stmt, 2));
+        cJSON_AddNumberToObject(temp, "id", sqlite3_column_int(stmt, 0));
+        cJSON_AddStringToObject(temp, "username", (const char *)sqlite3_column_text(stmt, 1));
+        cJSON_AddNumberToObject(temp, "image_id", sqlite3_column_int(stmt, 2));
 
         cJSON_AddItemToArray(users, temp);
     }
 
     responde = cJSON_CreateObject();
-    cJSON_AddItemReferenceToObject(json, "users", users);
-    cJSON_AddNumberToObject(json, "type", REQ_GET_CHAT_USERS);
-    cJSON_AddNumberToObject(json, "error_code", ERR_SUCCESS);
+    cJSON_AddNumberToObject(responde, "type", REQ_GET_CHAT_USERS);
+    cJSON_AddNumberToObject(responde, "error_code", ERR_SUCCESS);
+    cJSON_AddItemReferenceToObject(responde, "users", users);
     char *json_str = cJSON_PrintUnformatted(responde);
 
     SSL_write(client_info->ssl, json_str, mx_strlen(json_str));
 
-    mx_strdel(&query);
+    sqlite3_free(query);
     mx_strdel(&json_str);
     cJSON_Delete(responde);
     sqlite3_finalize(stmt);

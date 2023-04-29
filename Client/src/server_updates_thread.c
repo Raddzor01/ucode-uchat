@@ -203,6 +203,8 @@ void *server_update_thread()
                 msg = chat ? msg->next : NULL;
             }
 
+            msg_clear_list(&server_messages);
+
             g_usleep(500000);
             chat = chat ? chat->next : NULL;
         }

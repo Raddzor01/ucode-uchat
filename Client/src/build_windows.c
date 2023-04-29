@@ -687,9 +687,10 @@ void build_edit_profile()
     gtk_widget_set_name(edit_box, "edit");
 
     GtkWidget *image = create_image_button(access(account->image_path, F_OK) == 0 ? account->image_path : get_user_image(account->image_id, PFP_USER), 60, 60);
+    gtk_widget_set_name(image, "chat_menu_image");
     gtk_box_pack_start(GTK_BOX(profile_info), image, FALSE, FALSE, 0);
     add_class(image, "image");
-    g_signal_connect(image, "clicked", G_CALLBACK(change_image), NULL);
+    g_signal_connect(image, "clicked", G_CALLBACK(change_image), edit_window);
 
     GtkWidget *text_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_box_pack_start(GTK_BOX(profile_info), text_box, FALSE, FALSE, 0);

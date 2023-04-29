@@ -124,6 +124,9 @@ int edit_username_in_server(const char *new_username);
 int edit_password_in_server(const char *new_password);
 int delete_account_in_server();
 int delete_chat_in_server();
+t_user **get_chat_users_from_server(const int chat_id);
+int edit_chat_name_in_server(const char *new_name);
+
 
 // Conection to the server
 bool init_ssl(SSL_CTX **ctx);
@@ -179,7 +182,7 @@ void empty_left_bar();
 void close_window_by_button(GtkButton *button, gpointer *data);
 void chat_menu(GtkWidget *__attribute__((unused)) button);
 void chat_users(GtkWidget *window);
-void chat_user_box(GtkWidget *window);
+void chat_user_box(GtkWidget *window, t_user *user);
 
 // CSS part
 void load_css();

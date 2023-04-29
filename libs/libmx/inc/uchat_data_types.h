@@ -30,7 +30,7 @@ typedef struct s_chat
     int chat_type;
     int user_privilege;
 
-    t_user *users;
+    t_user **users;
     t_msg *messages;
     struct s_chat *next;
 } t_chat;
@@ -55,6 +55,7 @@ typedef enum e_req_type
     REQ_EDIT_MESSAGE,
     REQ_DEL_MESSAGE,
     REQ_DEL_CHAT,
+    REQ_EDIT_CHAT_NAME,
     REQ_JOIN_CHAT,
     REQ_LEAVE_CHAT,
     REQ_GET_CHAT_USERS,

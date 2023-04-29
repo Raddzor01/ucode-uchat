@@ -969,12 +969,11 @@ void empty_right_bar()
 }
 
 void chat_users(GtkWidget *window) {
-    //must update users here
-    chat_user_box(window);
-    chat_user_box(window);
+    for (int i = 0; account->current_chat->users[i] != NULL; i++)
+        chat_user_box(window, account->current_chat->users[i]);
 }
 
-void chat_user_box(GtkWidget *window) {
+void chat_user_box(GtkWidget *window, t_user *user) {
     GtkWidget *image;
     GtkWidget *label;
     GtkWidget *box;
@@ -984,14 +983,15 @@ void chat_user_box(GtkWidget *window) {
     GError *error = NULL;
 
     // pixbuf = gdk_pixbuf_new_from_file(get_image_from_server(chat->id), &error);
-    pixbuf = gdk_pixbuf_new_from_file("Client/icons/HOG.png", &error);
+    pixbuf = gdk_pixbuf_new_from_file(get_user_image(user->image_id, PFP_USER), &error);
     if (error != NULL)
         g_error("Error loading image: %s", error->message);
 
     pixbuf = gdk_pixbuf_scale_simple(pixbuf, 50, 50, GDK_INTERP_BILINEAR);
     image = gtk_image_new_from_pixbuf(pixbuf);
+    gtk_widget_set_name(image, "chat_menu_image");
 
-    label = gtk_label_new("HOG");
+    label = gtk_label_new(user->username);
     gtk_widget_set_halign(label, GTK_ALIGN_START);
 
     GtkWidget *text_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
