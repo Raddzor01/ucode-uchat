@@ -837,6 +837,7 @@ void change_chat_image(GtkWidget *__attribute__((unused)) button)
 
         clear_box(box);
         display_users();
+        chat_menu(NULL);
     }
 
     gtk_widget_destroy(dialog);
@@ -1015,5 +1016,34 @@ void chat_user_box(GtkWidget *window, t_user *user) {
     gtk_box_pack_start(GTK_BOX(out_box), box, FALSE, FALSE, 0);
 
     g_object_unref(pixbuf);
+}
+
+void chat_accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window)
+{
+    GtkWidget *box = get_widget_by_name_r(window, "edit");
+    GtkWidget *name_label = get_widget_by_name_r(window, "chatname");
+
+    const gchar *chatname = gtk_entry_get_text(GTK_ENTRY(get_widget_by_name_r(window, "chatname_entry")));
+
+    if (strlen(chatname) && (strcmp(chatname, account->current_chat->name) != 0))
+    {
+        GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(name_label));
+
+        gtk_text_buffer_set_text(buffer, chatname, -1);
+
+        // edit_username_in_server(chatname);
+    }
+    // else if (!strlen(chatname))
+    //     pop_up_window("New name must store at least one character");
+
+    // if ((strcmp(chatname, account->current_chat->name) != 0))
+    //     pop_up_window("You didn't change anything");
+
+    clear_box(box);
+    gtk_window_resize(GTK_WINDOW(window), 300, 1);
+    gtk_widget_show_all(window);
+
+    chat_info();
+    chat_menu(NULL);
 }
 

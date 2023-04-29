@@ -183,6 +183,8 @@ void close_window_by_button(GtkButton *button, gpointer *data);
 void chat_menu(GtkWidget *__attribute__((unused)) button);
 void chat_users(GtkWidget *window);
 void chat_user_box(GtkWidget *window, t_user *user);
+void chat_accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window);
+void edit_chatname();
 
 // CSS part
 void load_css();
