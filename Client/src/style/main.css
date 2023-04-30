@@ -187,7 +187,7 @@ button:hover {
 
 .image {
     background-color: @fill-bg-color;
-    border-radius: 50%;
+    border-radius: 100px;
 }
 
 .user{
@@ -208,4 +208,8 @@ button:hover {
 .users-list {
     padding: 2px;
     margin: 2px;
+}
+
+.count {
+    font-size: 10px;
 }

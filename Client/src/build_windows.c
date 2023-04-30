@@ -308,30 +308,44 @@ void chat_info()
     GtkWidget *image;
     GtkWidget *chat_name;
 
-    image = create_image_button(access(account->current_chat->image_path, F_OK) == 0 ? account->current_chat->image_path : get_user_image(account->current_chat->image_id, account->current_chat->chat_type), 35, 35);
+    GdkPixbuf *pixbuf;
+
+    pixbuf = gdk_pixbuf_new_from_file(access(account->current_chat->image_path, F_OK) == 0 ? account->current_chat->image_path : get_user_image(account->current_chat->image_id, account->current_chat->chat_type), NULL);
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf, 40, 40, GDK_INTERP_BILINEAR);
+
+    image = gtk_image_new_from_pixbuf(pixbuf);
+    add_class(image, "image");
+    
+
     gtk_widget_set_name(image, "chat_pfp_image");
+
+    GtkWidget *text_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
     chat_name = gtk_label_new(account->current_chat->name);
 
     gtk_widget_set_halign(image, GTK_ALIGN_START);
     gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(box), text_box, FALSE, FALSE, 0);
 
-    // g_signal_connect(image, "clicked", G_CALLBACK(change_chat_image), NULL);
-    g_signal_connect(image, "clicked", G_CALLBACK(chat_menu), NULL);
+    // g_signal_connect(image, "clicked", G_CALLBACK(chat_menu), NULL);
 
     gtk_widget_set_halign(chat_name, GTK_ALIGN_START);
-    gtk_box_pack_start(GTK_BOX(box), chat_name, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(text_box), chat_name, FALSE, FALSE, 0);
 
-    // if (account->current_chat->user_privilege == PRIV_ADMIN)
-    // {
-    //     GtkWidget *cancel_button = create_image_button("Client/icons/trash.png", 30, 30);
-    //     add_class(cancel_button, "image");
-    //     gtk_widget_set_halign(cancel_button, GTK_ALIGN_END);
-    //     gtk_widget_set_valign(cancel_button, GTK_ALIGN_CENTER);
-    //     gtk_box_pack_start(GTK_BOX(box), cancel_button, TRUE, TRUE, 0);
+    GtkWidget *user_count = gtk_label_new("users: 9999");
+    add_class(user_count, "count"); 
+    gtk_widget_set_halign(user_count, GTK_ALIGN_START);
+    gtk_widget_set_valign(user_count, GTK_ALIGN_START);
+    gtk_box_pack_start(GTK_BOX(text_box), user_count, FALSE, FALSE, 0);
 
-    //     g_signal_connect(cancel_button, "clicked", G_CALLBACK(confirm_window), NULL);
-    // }
+    GtkWidget *settings_button = create_image_button("Client/icons/settings.png", 20, 20);
+    add_class(settings_button, "image");
+    gtk_widget_set_hexpand(settings_button, TRUE);
+    gtk_widget_set_halign(settings_button, GTK_ALIGN_END);
+    gtk_widget_set_valign(settings_button, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(box), settings_button, FALSE, FALSE, 0);
+
+    g_signal_connect(settings_button, "clicked", G_CALLBACK(chat_menu), NULL);
 
     gtk_widget_show_all(box);
 }
@@ -776,6 +790,8 @@ void chat_menu(GtkWidget *__attribute__((unused)) button) {
     gtk_widget_set_name(edit_box, "edit");
 
     GtkWidget *image = create_image_button(access(account->current_chat->image_path, F_OK) == 0 ? account->current_chat->image_path : get_user_image(account->current_chat->image_id, account->current_chat->chat_type), 60, 60);
+    gtk_widget_set_size_request(image, 60, 60);
+    gtk_widget_set_valign(image, GTK_ALIGN_START);
     gtk_box_pack_start(GTK_BOX(chat_info), image, FALSE, FALSE, 0);
     add_class(image, "image");
     g_signal_connect(image, "clicked", G_CALLBACK(change_chat_image), NULL);
@@ -812,6 +828,12 @@ void chat_menu(GtkWidget *__attribute__((unused)) button) {
 
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(name));
     gtk_text_buffer_set_text(buffer, account->current_chat->name, -1);
+
+    GtkWidget *user_count = gtk_label_new("users: 9999");
+    add_class(user_count, "count"); 
+    gtk_widget_set_halign(user_count, GTK_ALIGN_START);
+    gtk_widget_set_valign(user_count, GTK_ALIGN_START);
+    gtk_box_pack_start(GTK_BOX(text_box), user_count, FALSE, FALSE, 0);
 
     GtkWidget *edit_profile_box = gtk_event_box_new();
     gtk_box_pack_start(GTK_BOX(text_box), edit_profile_box, FALSE, FALSE, 10);
