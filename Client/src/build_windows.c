@@ -436,6 +436,7 @@ void build_chat_window()
 void logout_event(GtkWidget *__attribute__((unused)) widget)
 {
     send_logout_to_server();
+    gtk_widget_destroy(edit_window);
 }
 
 void build_users()
@@ -617,20 +618,20 @@ void close_window(gpointer *data)
 void create_chat_menu()
 {
     if (window_check == true)
-        return;
+        gtk_widget_destroy(edit_window);
 
-    GtkWidget *window;
+    // GtkWidget *window;
 
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(window), 300, 1);
+    edit_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(edit_window), 300, 1);
 
-    gtk_widget_set_name(window, "create_chat");
+    gtk_widget_set_name(edit_window, "create_chat");
 
-    g_signal_connect(window, "delete_event", G_CALLBACK(close_window), window);
+    g_signal_connect(edit_window, "delete_event", G_CALLBACK(close_window), edit_window);
 
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_widget_set_name(box, "chatname_box");
-    gtk_container_add(GTK_CONTAINER(window), box);
+    gtk_container_add(GTK_CONTAINER(edit_window), box);
 
     GtkWidget *chatname_label = gtk_label_new("Chatname:");
 
@@ -648,7 +649,7 @@ void create_chat_menu()
 
     GtkWidget *make_chat_button = gtk_button_new_with_label("create chat");
     gtk_box_pack_start(GTK_BOX(box), make_chat_button, FALSE, FALSE, 0);
-    g_signal_connect(make_chat_button, "clicked", G_CALLBACK(create_chat), window);
+    g_signal_connect(make_chat_button, "clicked", G_CALLBACK(create_chat), edit_window);
     // g_signal_connect(make_chat_button, "clicked", G_CALLBACK(close_window_by_button), window);
 
     if (!chat_get_chat_by_type(account->chats, CHAT_SAVED))
@@ -656,9 +657,9 @@ void create_chat_menu()
         GtkWidget *make_saved_button = gtk_button_new_with_label("created saved chat");
         gtk_box_pack_start(GTK_BOX(box), make_saved_button, FALSE, FALSE, 0);
         g_signal_connect(make_saved_button, "clicked", G_CALLBACK(create_saved), NULL);
-        g_signal_connect(make_saved_button, "clicked", G_CALLBACK(close_window_by_button), window);
+        g_signal_connect(make_saved_button, "clicked", G_CALLBACK(close_window_by_button), edit_window);
     }
-    gtk_widget_show_all(window);
+    gtk_widget_show_all(edit_window);
     window_check = true;
 }
 

@@ -217,6 +217,7 @@ void change_chat_id(GtkWidget *__attribute__((unused)) widget, gpointer user_dat
     build_chat_window();
     account->current_chat = (t_chat *)user_data;
     chat_info();
+    username_display = TRUE;
 
     GtkWidget *chat = get_widget_by_name_r(main_window, "box_holder");
     clear_box(chat);
@@ -405,7 +406,7 @@ void text_bubble(t_msg *message)
         gtk_widget_set_hexpand(time_box, TRUE);
         gtk_widget_set_halign(time_box, GTK_ALIGN_END);
     }
-
+    
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
     gtk_text_buffer_set_text(buffer, message->text, mx_strlen(message->text));
 
