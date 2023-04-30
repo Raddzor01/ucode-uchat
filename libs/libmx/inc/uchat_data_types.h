@@ -32,6 +32,8 @@ typedef struct s_chat
     int user_privilege;
 
     t_user **users;
+    int users_count;
+
     t_msg *messages;
     struct s_chat *next;
 } t_chat;

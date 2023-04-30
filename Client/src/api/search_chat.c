@@ -41,6 +41,9 @@ t_chat *find_chats_from_server(const char *search_pattern)
         new_node->image_path = mx_strdup(cJSON_GetObjectItemCaseSensitive(temp_json, "filename")->valuestring);
         new_node->messages = get_chat_messages_from_server(chat_id);
         new_node->users = get_chat_users_from_server(chat_id);
+        new_node->users_count = 0;
+        while (new_node->users[new_node->users_count])
+            new_node->users_count++;
         chat_push_back(&chats, new_node);
     }
     pthread_mutex_unlock(&account->mutex);

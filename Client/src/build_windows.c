@@ -292,11 +292,13 @@ void confirm_window(GtkWidget *__attribute__((unused)) button)
                                     GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
                                     "Are you sure?");
     gint result = gtk_dialog_run(GTK_DIALOG(dialog));
-    if (result == GTK_RESPONSE_YES) {
+    if (result == GTK_RESPONSE_YES)
+    {
         delete_chat_confirm();
         gtk_widget_destroy(edit_window);
         window_check = false;
-    } else if (result == GTK_RESPONSE_NO)
+    }
+    else if (result == GTK_RESPONSE_NO)
         pop_up_window("Something went wrong\nTry again");
     gtk_widget_destroy(dialog);
 }
@@ -315,11 +317,10 @@ void chat_info()
 
     image = gtk_image_new_from_pixbuf(pixbuf);
     add_class(image, "image");
-    
 
     gtk_widget_set_name(image, "chat_pfp_image");
 
-    GtkWidget *text_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    GtkWidget *text_box = gtk_box_new(account->current_chat->chat_type == CHAT_SAVED ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL, 0);
 
     chat_name = gtk_label_new(account->current_chat->name);
 
@@ -332,11 +333,17 @@ void chat_info()
     gtk_widget_set_halign(chat_name, GTK_ALIGN_START);
     gtk_box_pack_start(GTK_BOX(text_box), chat_name, FALSE, FALSE, 0);
 
-    GtkWidget *user_count = gtk_label_new("users: 9999");
-    add_class(user_count, "count"); 
-    gtk_widget_set_halign(user_count, GTK_ALIGN_START);
-    gtk_widget_set_valign(user_count, GTK_ALIGN_START);
-    gtk_box_pack_start(GTK_BOX(text_box), user_count, FALSE, FALSE, 0);
+    if (account->current_chat->chat_type != CHAT_SAVED)
+    {
+        char *users_count_text= mx_strjoin("users: ", mx_itoa(account->current_chat->users_count));
+
+        GtkWidget *user_count = gtk_label_new(users_count_text);
+        mx_strdel(&users_count_text);
+        add_class(user_count, "count");
+        gtk_widget_set_halign(user_count, GTK_ALIGN_START);
+        gtk_widget_set_valign(user_count, GTK_ALIGN_START);
+        gtk_box_pack_start(GTK_BOX(text_box), user_count, FALSE, FALSE, 0);
+    }
 
     GtkWidget *settings_button = create_image_button("Client/icons/settings.png", 20, 20);
     add_class(settings_button, "image");
@@ -640,7 +647,7 @@ void create_chat_menu()
     gtk_widget_set_name(chatname_entry, "chatname_entry");
     gtk_entry_set_placeholder_text(GTK_ENTRY(chatname_entry), "Chat name");
     gtk_box_pack_start(GTK_BOX(box), chatname_entry, FALSE, FALSE, 0);
-    
+
     GtkWidget *chatname_error_label = gtk_label_new(" ");
     gtk_widget_set_name(chatname_error_label, "chatname_error_label");
     add_class(chatname_error_label, "error-label");
@@ -771,7 +778,8 @@ void edit_username()
     gtk_widget_show_all(box);
 }
 
-void chat_menu(GtkWidget *__attribute__((unused)) button) {
+void chat_menu(GtkWidget *__attribute__((unused)) button)
+{
     if (window_check == true)
         gtk_widget_destroy(edit_window);
 
@@ -829,8 +837,12 @@ void chat_menu(GtkWidget *__attribute__((unused)) button) {
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(name));
     gtk_text_buffer_set_text(buffer, account->current_chat->name, -1);
 
-    GtkWidget *user_count = gtk_label_new("users: 9999");
-    add_class(user_count, "count"); 
+    char *users_count_text = mx_strjoin("users: ", mx_itoa(account->current_chat->users_count));
+
+    GtkWidget *user_count = gtk_label_new(users_count_text);
+
+    mx_strdel(&users_count_text);
+    add_class(user_count, "count");
     gtk_widget_set_halign(user_count, GTK_ALIGN_START);
     gtk_widget_set_valign(user_count, GTK_ALIGN_START);
     gtk_box_pack_start(GTK_BOX(text_box), user_count, FALSE, FALSE, 0);
@@ -844,7 +856,7 @@ void chat_menu(GtkWidget *__attribute__((unused)) button) {
 
     g_signal_connect(edit_profile_box, "button_press_event", G_CALLBACK(edit_chatname), NULL);
 
-    //users
+    // users
     GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_widget_set_size_request(scrolled_window, 400, 300);
     add_class(scrolled_window, "users-list");

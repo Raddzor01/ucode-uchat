@@ -31,6 +31,9 @@ t_chat *get_user_chats()
         t_chat *new_node = chat_prepare_node(chat_id, chat_type == CHAT_SAVED ? "Saved messages" : cJSON_GetObjectItemCaseSensitive(temp_json, "chat_name")->valuestring, image_id, user_privilege, chat_type);
         new_node->messages = get_chat_messages_from_server(chat_id);
         new_node->users = get_chat_users_from_server(chat_id);
+        new_node->users_count = 0;
+        while (new_node->users[new_node->users_count] != NULL)
+            new_node->users_count++;
         new_node->image_path = mx_strdup(cJSON_GetObjectItemCaseSensitive(temp_json, "filename")->valuestring);
         chat_push_back(&chats, new_node);
     }
