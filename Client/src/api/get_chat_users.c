@@ -29,6 +29,7 @@ t_user **get_chat_users_from_server(const int chat_id)
         chat_users[i]->id = cJSON_GetObjectItem(temp, "id")->valueint;
         chat_users[i]->username = mx_strdup(cJSON_GetObjectItem(temp, "username")->valuestring);
         chat_users[i]->image_id = cJSON_GetObjectItem(temp, "image_id")->valueint;
+        chat_users[i]->privilege = cJSON_GetObjectItem(temp, "privilege")->valueint;
     }
     chat_users[users_count] = NULL;
 

@@ -10,7 +10,7 @@ void get_chat_users(cJSON *json, t_client_info *client_info)
     int chat_id = cJSON_GetObjectItemCaseSensitive(json, "chat_id")->valueint;
 
     db = db_open();
-    query = sqlite3_mprintf("SELECT users.id, users.username, users.image_id "
+    query = sqlite3_mprintf("SELECT users.id, users.username, users.image_id, members.privilege "
                             "FROM users "
                             "JOIN members ON users.id = members.user_id "
                             "JOIN chats ON members.chat_id = chats.id "
@@ -26,6 +26,7 @@ void get_chat_users(cJSON *json, t_client_info *client_info)
         cJSON_AddNumberToObject(temp, "id", sqlite3_column_int(stmt, 0));
         cJSON_AddStringToObject(temp, "username", (const char *)sqlite3_column_text(stmt, 1));
         cJSON_AddNumberToObject(temp, "image_id", sqlite3_column_int(stmt, 2));
+        cJSON_AddNumberToObject(temp, "privilege", sqlite3_column_int(stmt, 3));
 
         cJSON_AddItemToArray(users, temp);
     }
