@@ -343,7 +343,7 @@ void chat_info()
     gtk_widget_set_hexpand(settings_button, TRUE);
     gtk_widget_set_halign(settings_button, GTK_ALIGN_END);
     gtk_widget_set_valign(settings_button, GTK_ALIGN_CENTER);
-    gtk_box_pack_start(GTK_BOX(box), settings_button, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(box), settings_button, TRUE, TRUE, 0);
 
     g_signal_connect(settings_button, "clicked", G_CALLBACK(chat_menu), NULL);
 
