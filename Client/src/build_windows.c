@@ -839,6 +839,7 @@ void chat_menu(GtkWidget *__attribute__((unused)) button) {
     GtkWidget *edit_profile_box = gtk_event_box_new();
     gtk_box_pack_start(GTK_BOX(text_box), edit_profile_box, FALSE, FALSE, 10);
     GtkWidget *edit_profile = gtk_label_new(NULL);
+    gtk_widget_set_halign(edit_profile, GTK_ALIGN_START);
     gtk_label_set_markup(GTK_LABEL(edit_profile), "<u>Change Name</u>");
     gtk_container_add(GTK_CONTAINER(edit_profile_box), edit_profile);
     add_class(edit_profile, "links");
