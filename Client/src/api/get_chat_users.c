@@ -33,8 +33,8 @@ t_user **get_chat_users_from_server(const int chat_id)
     }
     chat_users[users_count] = NULL;
 
-    mx_strdel(&json_str);
     cJSON_Delete(json);
+    mx_strdel(&json_str);
 
     return chat_users;
 }

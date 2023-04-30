@@ -1007,6 +1007,20 @@ void kick_user(GtkWidget *__attribute__((unused)) button, gpointer data)
     gtk_widget_show_all(edit_window);
 }
 
+char *get_user_privilege_str(t_privilege_type privilege)
+{
+    switch (privilege)
+    {
+    case PRIV_ADMIN:
+        return "Admin";
+    
+    case PRIV_MODERATOR:
+        return "Moderator";
+    default:
+        return "User";
+    }
+}
+
 void chat_user_box(GtkWidget *window, t_user *user)
 {
     GtkWidget *image;
@@ -1040,7 +1054,7 @@ void chat_user_box(GtkWidget *window, t_user *user)
     gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(box), text_box, FALSE, FALSE, 0);
 
-    GtkWidget *status = gtk_label_new("human");
+    GtkWidget *status = gtk_label_new(get_user_privilege_str(user->privilege));
     add_class(status, "count"); 
     gtk_widget_set_halign(status, GTK_ALIGN_END);
     gtk_widget_set_valign(status, GTK_ALIGN_CENTER);

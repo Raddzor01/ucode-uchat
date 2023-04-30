@@ -24,7 +24,7 @@ gboolean update_chatlist_from_thread(gpointer __attribute__((unused)) data)
 
 gboolean update_chatbox_from_thread(gpointer __attribute__((unused)) data)
 {
-    if(GTK_IS_WINDOW(edit_window))
+    if (GTK_IS_WINDOW(edit_window))
         gtk_widget_destroy(edit_window);
     GtkWidget *chat = get_widget_by_name_r(main_window, "chat");
     GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
@@ -107,6 +107,24 @@ void delete_message_from_thread(t_chat *chat, int msg_id, bool is_current)
     g_usleep(10000);
 }
 
+void update_chat_users_from_thread(t_chat *chat, t_user **server_users, int users_count, bool is_current)
+{
+    pthread_mutex_lock(&account->mutex);
+    for (int i = 0; chat->users[i] != NULL; i++)
+    {
+        free(chat->users[i]);
+        chat->users[i] = NULL;
+    }
+    free(chat->users);
+    chat->users = NULL;
+    chat->users = server_users;
+    chat->users_count = users_count;
+    pthread_mutex_unlock(&account->mutex);
+
+    if (is_current)
+        g_idle_add(update_chatbox_from_thread, NULL);
+}
+
 void edit_message_from_thread(t_chat *chat, t_msg *server_msg, bool is_current)
 {
     if (is_current)
@@ -174,7 +192,7 @@ void *server_update_thread()
             server_messages_size = msg_list_size(server_messages);
             client_messages_size = msg_list_size(chat->messages);
             is_current = account->current_chat && account->current_chat->id == chat->id;
-            
+
             msg = chat ? chat->messages : NULL;
             server_msg = server_messages;
             while (server_msg)
@@ -203,14 +221,41 @@ void *server_update_thread()
                 server_msg = server_msg->next;
             }
 
-
-            if(msg)
+            if (msg)
             {
                 delete_message_from_thread(chat, msg->msg_id, is_current);
                 msg = chat ? msg->next : NULL;
             }
 
             msg_clear_list(&server_messages);
+
+            bool is_chat_users_changed = false;
+            t_user **server_chat_users = get_chat_users_from_server(chat->id);
+            int users_count;
+            for (users_count = 0; server_chat_users[users_count] != NULL; users_count++)
+            {
+                if (server_chat_users[users_count] && !chat->users[users_count] && users_count > chat->users_count - 1)
+                {
+                    is_chat_users_changed = true;
+                    break;
+                }
+            }
+
+            if(users_count + 1 < chat->users_count)
+                is_chat_users_changed = true;
+
+            if (is_chat_users_changed)
+                update_chat_users_from_thread(chat, server_chat_users, users_count + 1, is_current);
+            else
+            {
+                for (int i = 0; server_chat_users[i] != NULL; i++)
+                {
+                    free(server_chat_users[i]);
+                    server_chat_users[i] = NULL;
+                }
+                free(server_chat_users);
+                server_chat_users = NULL;
+            }
 
             g_usleep(500000);
             chat = chat ? chat->next : NULL;

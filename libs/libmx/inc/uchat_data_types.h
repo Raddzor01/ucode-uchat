@@ -1,5 +1,8 @@
 #include <time.h>
 
+#define LOG_ERROR 1
+#define LOG_INFO 0
+
 // message list structure, functions starting with chat_
 typedef struct s_msg
 {

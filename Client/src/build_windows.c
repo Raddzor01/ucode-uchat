@@ -335,7 +335,7 @@ void chat_info()
 
     if (account->current_chat->chat_type != CHAT_SAVED)
     {
-        char *users_count_text= mx_strjoin("users: ", mx_itoa(account->current_chat->users_count));
+        char *users_count_text = mx_strjoin("users: ", mx_itoa(account->current_chat->users_count));
 
         GtkWidget *user_count = gtk_label_new(users_count_text);
         mx_strdel(&users_count_text);
@@ -804,7 +804,7 @@ void chat_menu(GtkWidget *__attribute__((unused)) button)
     add_class(image, "image");
     g_signal_connect(image, "clicked", G_CALLBACK(change_chat_image), NULL);
 
-    GtkWidget *text_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    GtkWidget *text_box = gtk_box_new(account->current_chat->chat_type == CHAT_SAVED ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL, 10);
     gtk_box_pack_start(GTK_BOX(chat_info), text_box, FALSE, FALSE, 0);
 
     // GtkWidget *delete_button = create_image_button("Client/icons/trash.png", 20, 20);
@@ -837,6 +837,12 @@ void chat_menu(GtkWidget *__attribute__((unused)) button)
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(name));
     gtk_text_buffer_set_text(buffer, account->current_chat->name, -1);
 
+    if (account->current_chat->chat_type == CHAT_SAVED)
+    {
+        gtk_widget_show_all(edit_window);
+        window_check = true;
+        return;
+    }
     char *users_count_text = mx_strjoin("users: ", mx_itoa(account->current_chat->users_count));
 
     GtkWidget *user_count = gtk_label_new(users_count_text);
