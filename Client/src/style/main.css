@@ -189,3 +189,23 @@ button:hover {
     background-color: @fill-bg-color;
     border-radius: 50%;
 }
+
+.user{
+    font-family: Gill Sans;
+    font-size: 15px;
+    font-weight: bold;
+    background-color: @main-bg-color;
+    color: @fill-hbg-color;
+    padding: 10px;
+    margin-bottom: -8px;
+    border-radius: 6px;
+}
+
+.user button {
+    border-radius: 10px;
+}
+
+.users-list {
+    padding: 2px;
+    margin: 2px;
+}

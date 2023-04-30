@@ -2,7 +2,7 @@
 
 GtkWidget *password_entry;
 GtkWidget *username_entry;
-GtkWidget *edit_window = NULL;
+GtkWidget *edit_window;
 
 char *get_user_image(int image_id, int pfp_type)
 {
@@ -292,9 +292,11 @@ void confirm_window(GtkWidget *__attribute__((unused)) button)
                                     GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
                                     "Are you sure?");
     gint result = gtk_dialog_run(GTK_DIALOG(dialog));
-    if (result == GTK_RESPONSE_YES)
+    if (result == GTK_RESPONSE_YES) {
         delete_chat_confirm();
-    else if (result == GTK_RESPONSE_NO)
+        gtk_widget_destroy(edit_window);
+        window_check = false;
+    } else if (result == GTK_RESPONSE_NO)
         pop_up_window("Something went wrong\nTry again");
     gtk_widget_destroy(dialog);
 }
@@ -794,8 +796,8 @@ void chat_menu(GtkWidget *__attribute__((unused)) button) {
         GtkWidget *delete_button = create_image_button("Client/icons/trash.png", 20, 20);
         add_class(delete_button, "image");
         gtk_widget_set_halign(delete_button, GTK_ALIGN_END);
-        gtk_widget_set_valign(delete_button, GTK_ALIGN_CENTER);
-        gtk_box_pack_start(GTK_BOX(box), delete_button, TRUE, TRUE, 0);
+        gtk_widget_set_valign(delete_button, GTK_ALIGN_START);
+        gtk_box_pack_start(GTK_BOX(box), delete_button, FALSE, FALSE, 0);
 
         g_signal_connect(delete_button, "clicked", G_CALLBACK(confirm_window), NULL);
     }
@@ -823,6 +825,7 @@ void chat_menu(GtkWidget *__attribute__((unused)) button) {
     //users
     GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_widget_set_size_request(scrolled_window, 400, 300);
+    add_class(scrolled_window, "users-list");
     gtk_widget_set_vexpand(scrolled_window, TRUE);
     gtk_widget_set_valign(scrolled_window, GTK_ALIGN_FILL);
     gtk_box_pack_start(GTK_BOX(box), scrolled_window, TRUE, TRUE, 0);

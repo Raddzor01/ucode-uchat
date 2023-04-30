@@ -1021,6 +1021,7 @@ void chat_user_box(GtkWidget *window, t_user *user)
     gtk_box_pack_start(GTK_BOX(text_box), label, FALSE, FALSE, 0);
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    add_class(box, "user");
     char *msg_name = mx_strjoin(USER_NAME, mx_itoa(user->id));
     gtk_widget_set_name(box, msg_name);
     mx_strdel(&msg_name);

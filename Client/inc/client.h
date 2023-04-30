@@ -89,6 +89,7 @@ extern GtkWidget *main_window;
 extern t_info *info;
 extern t_account *account;
 extern bool username_display;
+extern bool window_check;
 
 void *server_update_thread();
 char *get_user_image(int image_id, int pfp_type);
