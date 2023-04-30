@@ -212,7 +212,7 @@ void user_box(t_chat *chat, bool is_search)
 
 void change_chat_id(GtkWidget *__attribute__((unused)) widget, gpointer user_data)
 {
-    if(GTK_IS_WINDOW(edit_window))
+    if (GTK_IS_WINDOW(edit_window))
         gtk_widget_destroy(edit_window);
     build_chat_window();
     account->current_chat = (t_chat *)user_data;
@@ -618,6 +618,12 @@ void create_chat(GtkButton *__attribute__((unused)) button, GtkWidget *window)
 
     t_chat *chat = chat_prepare_node(chat_id, text, 1, PRIV_ADMIN, CHAT_NORMAL);
     chat->image_path = mx_strdup(DEFAULT_CHAT_IMAGE);
+    chat->users = malloc(sizeof(t_user *));
+    chat->users[0] = (t_user *)malloc(sizeof(t_user));
+    chat->users[0]->id = account->id;
+    chat->users[0]->image_id = account->image_id;
+    chat->users[0]->username = mx_strdup(account->username);
+    chat->users[0]->privilege = PRIV_ADMIN;
 
     pthread_mutex_lock(&account->mutex);
     chat_push_front(&account->chats, chat);
@@ -642,6 +648,12 @@ void create_saved(GtkButton *__attribute__((unused)) button)
 
     t_chat *chat = chat_prepare_node(chat_id, "Saved messages", 1, PRIV_ADMIN, CHAT_SAVED);
     chat->image_path = mx_strdup(SAVED_IMAGE);
+    chat->users = malloc(sizeof(t_user *));
+    chat->users[0] = (t_user *)malloc(sizeof(t_user));
+    chat->users[0]->id = account->id;
+    chat->users[0]->image_id = account->image_id;
+    chat->users[0]->username = mx_strdup(account->username);
+    chat->users[0]->privilege = PRIV_ADMIN;
 
     pthread_mutex_lock(&account->mutex);
     chat_push_front(&account->chats, chat);

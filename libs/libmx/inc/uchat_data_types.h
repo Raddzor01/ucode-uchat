@@ -18,6 +18,7 @@ typedef struct s_user
     int id;
     char *username;
     int image_id;
+    int privilege;
 }   t_user;
 
 // chat list structure, functions starting with msg_
