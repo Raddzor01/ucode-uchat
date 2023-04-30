@@ -1040,6 +1040,12 @@ void chat_user_box(GtkWidget *window, t_user *user)
     gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(box), text_box, FALSE, FALSE, 0);
 
+    GtkWidget *status = gtk_label_new("human");
+    add_class(status, "count"); 
+    gtk_widget_set_halign(status, GTK_ALIGN_END);
+    gtk_widget_set_valign(status, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(text_box), status, FALSE, FALSE, 0);
+
     if (user->id != account->id)
     {
         if (account->current_chat->user_privilege == PRIV_ADMIN)
