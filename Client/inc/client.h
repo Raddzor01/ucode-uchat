@@ -32,7 +32,7 @@
 #define DEFAULT_CHAT_IMAGE "Client/icons/default_chat.png"
 
 #define MIN_NUMBER_OF_CHARACTERS 1
-#define MAX_NUMBER_OF_CHARACTERS 16
+#define MAX_NUMBER_OF_CHARACTERS 64
 
 #define MAX_NUMBER_OF_CHAR_FOR_CHAT_NAME 15
 #define MAX_NUMBER_OF_CHAR_FOR_LAST_MSG 22
@@ -41,7 +41,8 @@
 #define CHAT_ERROR -1
 
 #define SAVED_NAME "Saved"
-#define MSG_NAME "msg_name_id"
+#define MSG_NAME "msg_name_id_"
+#define USER_NAME "chat_user_id"
 
 // struct for sending to server
 typedef struct s_info
@@ -126,7 +127,7 @@ int delete_account_in_server();
 int delete_chat_in_server();
 t_user **get_chat_users_from_server(const int chat_id);
 int edit_chat_name_in_server(const char *new_name);
-
+int kick_user_in_server(int chat_id, int user_id);
 
 // Conection to the server
 bool init_ssl(SSL_CTX **ctx);

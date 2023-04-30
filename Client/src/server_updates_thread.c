@@ -1,5 +1,7 @@
 #include "../inc/client.h"
 
+extern GtkWidget *edit_window;
+
 gboolean update_messages_from_thread(gpointer user_data)
 {
     t_msg *server_message_node = (t_msg *)user_data;
@@ -22,6 +24,8 @@ gboolean update_chatlist_from_thread(gpointer __attribute__((unused)) data)
 
 gboolean update_chatbox_from_thread(gpointer __attribute__((unused)) data)
 {
+    if(GTK_IS_WINDOW(edit_window))
+        gtk_widget_destroy(edit_window);
     GtkWidget *chat = get_widget_by_name_r(main_window, "chat");
     GtkWidget *box = get_widget_by_name_r(main_window, "box_for_users");
 
@@ -130,8 +134,10 @@ void update_message(t_msg *server_message_node, t_chat *chat, bool is_current)
     if (is_current)
         g_idle_add(update_messages_from_thread, (gpointer)server_message_node);
 
+    t_msg *new_node = msg_prepare_node(server_message_node->msg_id, server_message_node->text, server_message_node->time, server_message_node->user_id, server_message_node->username);
+    new_node->image_id = server_message_node->image_id;
     pthread_mutex_lock(&account->mutex);
-    msg_push_back(&chat->messages, server_message_node);
+    msg_push_back(&chat->messages, new_node);
     chat_move_node_to_head(&account->chats, chat->id);
     pthread_mutex_unlock(&account->mutex);
 
@@ -177,6 +183,7 @@ void *server_update_thread()
                 {
                     update_message(server_msg, chat, is_current);
                     client_messages_size++;
+                    msg = chat ? msg_get_last_message(chat->messages)->next : NULL;
                     server_msg = server_msg->next;
                     continue;
                 }

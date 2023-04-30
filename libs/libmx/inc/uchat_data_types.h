@@ -58,6 +58,7 @@ typedef enum e_req_type
     REQ_EDIT_CHAT_NAME,
     REQ_JOIN_CHAT,
     REQ_LEAVE_CHAT,
+    REQ_KICK_USER,
     REQ_GET_CHAT_USERS,
     REQ_EDIT_USERNAME,
     REQ_EDIT_PASSWORD,
@@ -78,7 +79,8 @@ typedef enum e_error_type
     ERR_CHAT_EXIST,
     ERR_CHAT_NONEXIST,
     ERR_USER_IN_CHAT,
-    ERR_USER_NOT_IN_CHAT
+    ERR_USER_NOT_IN_CHAT,
+    ERR_USER_DONT_HAVE_PERMISSION
 } t_error_type;
 
 // enumeration of user privilege

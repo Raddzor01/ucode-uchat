@@ -2,6 +2,7 @@
 
 GtkWidget *password_entry;
 GtkWidget *username_entry;
+GtkWidget *edit_window = NULL;
 
 char *get_user_image(int image_id, int pfp_type)
 {
@@ -655,8 +656,6 @@ void display_users()
     }
 }
 
-GtkWidget *edit_window;
-
 void build_edit_profile()
 {
     if (window_check == true)
@@ -843,7 +842,7 @@ void edit_chatname()
     GtkWidget *box = get_widget_by_name_r(edit_window, "edit");
     clear_box(box);
 
-    GtkWidget *username_label = gtk_label_new("enter new name for chat:");
+    GtkWidget *username_label = gtk_label_new("New chat name:");
     gtk_widget_set_valign(username_label, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(box), username_label, FALSE, FALSE, 0);
 

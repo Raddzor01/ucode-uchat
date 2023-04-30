@@ -35,5 +35,5 @@ int edit_chat_name_in_server(const char *new_name)
     cJSON_Delete(json);
     mx_strdel(&json_str);
 
-    return 0;
+    return ERR_SUCCESS;
 }

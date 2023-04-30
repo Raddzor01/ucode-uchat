@@ -12,6 +12,12 @@ void delete_chat(cJSON *json, t_client_info *client_info)
         return;
     }
 
+    if(db_check_user_privilege(client_info->user->id, chat_id) != PRIV_ADMIN)
+    {
+        send_responde(client_info->ssl, REQ_DEL_CHAT, ERR_USER_DONT_HAVE_PERMISSION);
+        return;
+    }
+
     query = sqlite3_mprintf("DELETE FROM chats WHERE id = %d; ", chat_id);
     db_execute_query(query);
 

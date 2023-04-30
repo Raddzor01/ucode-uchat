@@ -10,11 +10,17 @@ void get_last_message_id(cJSON *json, t_client_info *client_info)
 
     chat_id = cJSON_GetObjectItem(json, "chat_id")->valueint;
 
-    if(!db_check_chat_exists(chat_id))
+    if (!db_check_chat_exists(chat_id))
     {
         send_responde(client_info->ssl, REQ_GET_LAST_MSG_ID, ERR_CHAT_NONEXIST);
         return;
     }
+
+    // if (!db_check_chat_membership(chat_id, client_info->user->id))
+    // {
+    //     send_responde(client_info->ssl, REQ_GET_LAST_MSG_ID, ERR_USER_NOT_IN_CHAT);
+    //     return;
+    // }
 
     db = db_open();
     query = sqlite3_mprintf("SELECT id FROM messages WHERE chat_id = %d ORDER BY id DESC LIMIT 1; ",

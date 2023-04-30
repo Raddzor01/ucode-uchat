@@ -5,6 +5,7 @@ guint accept_handler_id;
 guint cancel_entry_id;
 guint accept_entry_id;
 bool username_display = TRUE;
+extern GtkWidget *edit_window;
 
 void change_chat_id(GtkWidget *widget, gpointer user_data);
 
@@ -211,11 +212,11 @@ void user_box(t_chat *chat, bool is_search)
 
 void change_chat_id(GtkWidget *__attribute__((unused)) widget, gpointer user_data)
 {
+    if(GTK_IS_WINDOW(edit_window))
+        gtk_widget_destroy(edit_window);
     build_chat_window();
     account->current_chat = (t_chat *)user_data;
     chat_info();
-
-    // printf("\ncurrent chat: %d\n", account->current_chat->id);
 
     GtkWidget *chat = get_widget_by_name_r(main_window, "box_holder");
     clear_box(chat);
@@ -969,12 +970,33 @@ void empty_right_bar()
     gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
 }
 
-void chat_users(GtkWidget *window) {
+void chat_users(GtkWidget *window)
+{
     for (int i = 0; account->current_chat->users[i] != NULL; i++)
         chat_user_box(window, account->current_chat->users[i]);
 }
 
-void chat_user_box(GtkWidget *window, t_user *user) {
+void kick_user(GtkWidget *__attribute__((unused)) button, gpointer data)
+{
+    t_user *user = (t_user *)data;
+    int error_code = kick_user_in_server(account->current_chat->id, user->id);
+    if (error_code != ERR_SUCCESS)
+    {
+        if (error_code == ERR_USER_DONT_HAVE_PERMISSION)
+            pop_up_window("You don't have permission to kick this user");
+        if (error_code == ERR_USER_NOT_IN_CHAT)
+            pop_up_window("This user is not in this chat");
+        return;
+    }
+    char *user_name = mx_strjoin(USER_NAME, mx_itoa(user->id));
+    GtkWidget *user_box = get_widget_by_name_r(edit_window, user_name);
+    mx_strdel(&user_name);
+    gtk_widget_destroy(user_box);
+    gtk_widget_show_all(edit_window);
+}
+
+void chat_user_box(GtkWidget *window, t_user *user)
+{
     GtkWidget *image;
     GtkWidget *label;
     GtkWidget *box;
@@ -999,20 +1021,26 @@ void chat_user_box(GtkWidget *window, t_user *user) {
     gtk_box_pack_start(GTK_BOX(text_box), label, FALSE, FALSE, 0);
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    char *msg_name = mx_strjoin(USER_NAME, mx_itoa(user->id));
+    gtk_widget_set_name(box, msg_name);
+    mx_strdel(&msg_name);
     gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(box), text_box, FALSE, FALSE, 0);
 
-    if (account->current_chat->user_privilege == PRIV_ADMIN)
+    if (user->id != account->id)
     {
-        GtkWidget *delete_button = create_image_button("Client/icons/trash.png", 20, 20);
-        add_class(delete_button, "image");
-        gtk_widget_set_halign(delete_button, GTK_ALIGN_END);
-        gtk_widget_set_valign(delete_button, GTK_ALIGN_CENTER);
-        gtk_box_pack_start(GTK_BOX(box), delete_button, TRUE, TRUE, 0);
+        if (account->current_chat->user_privilege == PRIV_ADMIN)
+        {
+            GtkWidget *delete_button = create_image_button("Client/icons/trash.png", 20, 20);
+            add_class(delete_button, "image");
+            gtk_widget_set_halign(delete_button, GTK_ALIGN_END);
+            gtk_widget_set_valign(delete_button, GTK_ALIGN_CENTER);
+            gtk_box_pack_start(GTK_BOX(box), delete_button, TRUE, TRUE, 0);
 
-        // g_signal_connect(delete_button, "clicked", G_CALLBACK(kick_user), NULL);
+            g_signal_connect(delete_button, "clicked", G_CALLBACK(kick_user), (gpointer)user);
+        }
     }
-    
+
     gtk_box_pack_start(GTK_BOX(out_box), box, FALSE, FALSE, 0);
 
     g_object_unref(pixbuf);
@@ -1027,12 +1055,19 @@ void chat_accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *w
 
     if (strlen(chatname) && (strcmp(chatname, account->current_chat->name) != 0))
     {
+        int error_code = edit_chat_name_in_server(chatname);
+        if (error_code != ERR_SUCCESS)
+        {
+            if (error_code == ERR_CHAT_EXIST)
+                pop_up_window("Chat with this name already exists!");
+            return;
+        }
+
         GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(name_label));
 
         gtk_text_buffer_set_text(buffer, chatname, -1);
-
-        // edit_username_in_server(chatname);
     }
+
     // else if (!strlen(chatname))
     //     pop_up_window("New name must store at least one character");
 
@@ -1043,7 +1078,10 @@ void chat_accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *w
     gtk_window_resize(GTK_WINDOW(window), 300, 1);
     gtk_widget_show_all(window);
 
+    GtkWidget *widget_to_remove = gtk_grid_get_child_at(GTK_GRID(get_widget_by_name_r(main_window, "chat_grid")), 0, 0);
+    gtk_container_remove(GTK_CONTAINER(get_widget_by_name_r(main_window, "chat_grid")), widget_to_remove);
+    build_users();
+
     chat_info();
     chat_menu(NULL);
 }
-

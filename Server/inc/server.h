@@ -95,6 +95,7 @@ bool db_check_chat_membership(int chat_id, int user_id);
 int db_get_last_message_id(int user_id, int chat_id);
 int db_get_last_file_id(char *filename);
 int db_get_last_join_chat_id(int user_id, int chat_id);
+t_privilege_type db_check_user_privilege(int user_id, int chat_id);
 
 void handle_responde(cJSON *json, t_client_info *client_info);
 void send_responde(SSL *ssl, t_req_type req_type, t_error_type err_code);

@@ -31,7 +31,7 @@ int get_last_msg_id_from_server(int chat_id)
     if (error_code != ERR_SUCCESS)
     {
         printf("Error getting last message, error code - %d\n", error_code);
-        if (error_code == ERR_CHAT_NONEXIST)
+        if (error_code == ERR_CHAT_NONEXIST || error_code == ERR_USER_NOT_IN_CHAT)
             return CHAT_DIDNT_EXISTS;
         return CHAT_ERROR;
     }
