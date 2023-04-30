@@ -436,7 +436,8 @@ void build_chat_window()
 void logout_event(GtkWidget *__attribute__((unused)) widget)
 {
     send_logout_to_server();
-    close_window(edit_window);
+    gtk_widget_destroy(edit_window);
+    window_check = FALSE;
 }
 
 void build_users()
