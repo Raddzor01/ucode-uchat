@@ -212,8 +212,6 @@ void user_box(t_chat *chat, bool is_search)
 
 void change_chat_id(GtkWidget *__attribute__((unused)) widget, gpointer user_data)
 {
-    if (GTK_IS_WINDOW(edit_window))
-        gtk_widget_destroy(edit_window);
     build_chat_window();
     account->current_chat = (t_chat *)user_data;
     chat_info();
