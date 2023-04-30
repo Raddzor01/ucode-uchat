@@ -217,6 +217,7 @@ void change_chat_id(GtkWidget *__attribute__((unused)) widget, gpointer user_dat
     build_chat_window();
     account->current_chat = (t_chat *)user_data;
     chat_info();
+    username_display = TRUE;
 
     GtkWidget *chat = get_widget_by_name_r(main_window, "box_holder");
     clear_box(chat);
@@ -405,7 +406,7 @@ void text_bubble(t_msg *message)
         gtk_widget_set_hexpand(time_box, TRUE);
         gtk_widget_set_halign(time_box, GTK_ALIGN_END);
     }
-
+    
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
     gtk_text_buffer_set_text(buffer, message->text, mx_strlen(message->text));
 
@@ -742,40 +743,70 @@ void accept_clicked(GtkButton *__attribute__((unused)) button, GtkWidget *window
     build_users();
 }
 
+int count_max_size_for_str(int size, const char *str)
+{
+    int result_size = size;
+    int upper_case_count = 0;
+    int i = 0;
+
+    while (*str != '\0' && i < size)
+    {
+        if (mx_isupper(*str))
+            upper_case_count++;
+
+        if (upper_case_count == 7)
+        {
+            result_size--;
+            upper_case_count = 0;
+        }
+
+        str++;
+        i++;
+    }
+
+    return result_size;
+}
+
 char *str_to_display_last_msg(const char *msg, const char *username)
 {
     char *result_str = NULL;
+    int max_number_for_char = count_max_size_for_str(MAX_NUMBER_OF_CHAR_FOR_LAST_MSG, msg);
+
     if (mx_strcmp(username, account->username) == 0)
     {
-        if ((mx_strlen(msg) + 5) < MAX_NUMBER_OF_CHAR_FOR_LAST_MSG)
+        if ((mx_strlen(msg) + 5) < max_number_for_char)
         {
-            result_str = (char *)malloc(strlen(msg) + 5);
+            result_str = mx_strnew(strlen(msg) + 5);
             sprintf(result_str, "You: %s", msg);
             return result_str;
         }
         else
         {
-            result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_LAST_MSG);
+            result_str = mx_strnew(max_number_for_char);
             sprintf(result_str, "You: ");
-            strncat(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - 5));
-            result_str = mx_strjoin(result_str, "...");
+            strncat(result_str, msg, (max_number_for_char - 7));
+            mx_strcat(result_str, "...");
+            // result_str = mx_strjoin(result_str, "...");
             return result_str;
         }
     }
     else
     {
-        if ((mx_strlen(msg) + mx_strlen(username) + 2) < MAX_NUMBER_OF_CHAR_FOR_LAST_MSG)
+        max_number_for_char = count_max_size_for_str(max_number_for_char, username);
+
+        if ((mx_strlen(msg) + mx_strlen(username) + 2) < max_number_for_char)
         {
-            result_str = (char *)malloc(strlen(username) + strlen(msg) + 2);
+            result_str = mx_strnew(strlen(username) + strlen(msg) + 2);
             sprintf(result_str, "%s: %s", username, msg);
             return result_str;
         }
         else
         {
-            result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_LAST_MSG);
+            result_str = mx_strnew(max_number_for_char);
             sprintf(result_str, "%s: ", username);
-            strncat(result_str, msg, (MAX_NUMBER_OF_CHAR_FOR_LAST_MSG - strlen(result_str)));
-            result_str = mx_strjoin(result_str, "...");
+            strncat(result_str, msg, (max_number_for_char - strlen(result_str) - 2));
+            mx_strcat(result_str, "...");
+            // result_str = mx_strjoin(result_str, "...");
             return result_str;
         }
     }
@@ -784,13 +815,16 @@ char *str_to_display_last_msg(const char *msg, const char *username)
 char *str_to_display_chat_name(char *chat_name)
 {
     char *result_str = NULL;
-    if (strlen(chat_name) < MAX_NUMBER_OF_CHAR_FOR_CHAT_NAME)
+    int max_number_for_char = count_max_size_for_str(MAX_NUMBER_OF_CHAR_FOR_CHAT_NAME, chat_name);
+
+    if (mx_strlen(chat_name) < max_number_for_char)
         return mx_strdup(chat_name);
     else
     {
-        result_str = (char *)malloc(MAX_NUMBER_OF_CHAR_FOR_CHAT_NAME);
-        strncpy(result_str, chat_name, (MAX_NUMBER_OF_CHAR_FOR_CHAT_NAME - 1));
-        strcat(result_str, "...");
+        result_str = mx_strnew(max_number_for_char);
+        strncat(result_str, chat_name, (max_number_for_char - 2));
+        // mx_strjoin(result_str, "...");
+        mx_strcat(result_str, "...");
         return result_str;
     }
 }

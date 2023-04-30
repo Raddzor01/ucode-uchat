@@ -79,6 +79,7 @@ void mx_logs(char* info, bool is_error);
 bool mx_isspace(char c);
 bool mx_isdigit(int c);
 bool mx_isalpha(int c);
+bool mx_isupper(int c);
 int mx_atoi(const char *str);
 char *mx_ltoa(long long number);
 int mx_get_strarr_index(char **strarr, char *str);
